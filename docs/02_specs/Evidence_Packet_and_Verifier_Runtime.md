@@ -42,6 +42,7 @@ Define the structured evidence and verifier outputs needed to reduce invalid com
 - Evidence Packet is not an explanation; it is structured material for verification, audit, recovery, and regression.
 - Provenance should come from external tools, environment diffs, source documents, or runtime metadata when possible.
 - False accept is more dangerous than false reject for side-effectful actions.
+- Verifier Runtime must not be reduced to final-answer-only judging.
 
 ## Open Questions
 
@@ -49,7 +50,8 @@ Define the structured evidence and verifier outputs needed to reduce invalid com
 - What calibration method should be used for verifier confidence?
 - How should verifier disagreement be represented?
 
-## Related Theory Documents
+## Related Documents
 
+- [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)

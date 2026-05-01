@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Evidence Packet",
   "type": "object",
+  "description": "Structured evidence for verification, audit, recovery, and regression. This is not an explanation field.",
   "required": [
     "schema_version"
   ],
@@ -10,28 +11,36 @@
       "type": "string"
     },
     "evidence_id": {
-      "type": "string"
+      "type": "string",
+      "description": "Stable identifier for this Evidence Packet."
     },
     "episode_id": {
-      "type": "string"
+      "type": "string",
+      "description": "Episode Journal identifier this evidence belongs to."
     },
     "step_id": {
-      "type": "string"
+      "type": "string",
+      "description": "Execution step identifier this evidence supports."
     },
     "pre_state_summary": {
-      "type": "string"
+      "type": "string",
+      "description": "Summary of accepted state before the action."
     },
     "action_ref": {
-      "type": "string"
+      "type": "string",
+      "description": "Reference to the ExecutionStep or action record."
     },
     "observation": {
-      "type": "object"
+      "type": "object",
+      "description": "Structured observation, diff, or tool/environment output normalized for verification."
     },
     "post_state_summary": {
-      "type": "string"
+      "type": "string",
+      "description": "Summary of accepted or candidate post-action state."
     },
     "verifier_result": {
-      "type": "object"
+      "type": "object",
+      "description": "Verifier output associated with this evidence, when available."
     },
     "confidence": {
       "type": "number",
@@ -54,10 +63,12 @@
       "type": "object"
     },
     "provenance": {
-      "type": "object"
+      "type": "object",
+      "description": "Source, runtime, tool, environment, document, or version metadata backing the evidence."
     },
     "runtime_context": {
-      "type": "object"
+      "type": "object",
+      "description": "Runtime metadata needed to interpret this evidence packet."
     }
   },
   "additionalProperties": false

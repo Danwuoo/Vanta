@@ -2,12 +2,39 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Verifier Output",
   "type": "object",
+  "description": "Verifier decision and diagnostics. Verifier Runtime is not limited to final-answer judging.",
   "required": [
     "schema_version"
   ],
   "properties": {
     "schema_version": {
       "type": "string"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "accept",
+        "reject",
+        "abstain",
+        "request_evidence"
+      ],
+      "description": "Verifier action for the item under review."
+    },
+    "verification_scope": {
+      "type": "array",
+      "description": "Aspects checked by this verifier output.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "preconditions",
+          "postconditions",
+          "evidence_sufficiency",
+          "policy_constraints",
+          "side_effect_safety",
+          "state_consistency",
+          "final_answer_correctness"
+        ]
+      }
     },
     "validity_score": {
       "type": "number",

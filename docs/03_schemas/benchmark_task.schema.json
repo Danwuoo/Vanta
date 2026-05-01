@@ -39,10 +39,25 @@
         "type": "string"
       }
     },
+    "required_logs": {
+      "type": "array",
+      "description": "Runtime artifacts required for evaluating this task, such as execution steps, evidence packets, verifier outputs, and episode journal entries.",
+      "items": {
+        "type": "string"
+      }
+    },
     "side_effect_classes": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "READ_ONLY",
+          "SIMULATED",
+          "REVERSIBLE",
+          "COMMITTABLE",
+          "IRREVERSIBLE",
+          "MEMORY_WRITE"
+        ]
       }
     }
   },

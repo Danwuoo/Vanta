@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Working Set",
+  "type": "object",
+  "required": [
+    "schema_version"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version of this schema used by the runtime."
+    },
+    "working_set_id": {
+      "type": "string",
+      "description": "Stable identifier for this compiled working set artifact."
+    },
+    "active_goal_ref": {
+      "type": "string",
+      "description": "Reference to the active goal or task this working set serves."
+    },
+    "canonical_state_ref": {
+      "type": "string",
+      "description": "Reference to the accepted canonical state used as input."
+    },
+    "memory_refs": {
+      "type": "array",
+      "description": "References to selected memory items. This is not a full memory dump.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "description": "References to selected Evidence Packet records.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "constraint_refs": {
+      "type": "array",
+      "description": "References to selected runtime, policy, or task constraints.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recovery_context_refs": {
+      "type": "array",
+      "description": "References to recovery context selected after a failure or verifier request.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "selection_policy": {
+      "type": "string",
+      "description": "Identifier or description of the policy used to select the working set."
+    },
+    "selection_rationale": {
+      "type": "string",
+      "description": "Short audit note for why the included references were selected."
+    },
+    "token_budget": {
+      "type": "object",
+      "description": "Budget metadata for compiling this working set."
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Source and version metadata for included working-set references."
+    },
+    "omitted_context_notes": {
+      "type": "array",
+      "description": "Important known omissions or exclusions that may affect verification, recovery, or evaluation.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

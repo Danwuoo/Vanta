@@ -40,6 +40,7 @@ Define how planned actions are represented as executable, auditable, and replay-
 
 - Execution IR describes action semantics, not cognition.
 - Tool outputs must be normalized into observations before influencing canonical state.
+- Execution records and raw tool logs must not be treated as canonical state.
 - Dependency edges should represent causal, evidence, or ordering constraints.
 - Side-effect class determines governance requirements.
 
@@ -49,7 +50,8 @@ Define how planned actions are represented as executable, auditable, and replay-
 - Should rollback policy be inline or referenced by policy ID?
 - How should compensable but non-reversible actions be represented?
 
-## Related Theory Documents
+## Related Documents
 
+- [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)

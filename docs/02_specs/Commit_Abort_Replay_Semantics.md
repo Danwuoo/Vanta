@@ -42,6 +42,7 @@ Define the semantics for committing, aborting, rolling back, reconciling, and re
 - `rollback` applies only to reversible changes.
 - `reconcile` or compensation is required when external effects cannot be strictly rolled back.
 - `replay` requires enough versioned runtime and tool metadata to reconstruct the episode.
+- Episode Journal records audit and replay data; it is not durable memory.
 
 ## Open Questions
 
@@ -49,7 +50,8 @@ Define the semantics for committing, aborting, rolling back, reconciling, and re
 - What state hash granularity is required?
 - How should compensation be represented for non-reversible actions?
 
-## Related Theory Documents
+## Related Documents
 
+- [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)

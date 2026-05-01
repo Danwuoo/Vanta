@@ -48,13 +48,17 @@ Define the initial failure categories used for labeling, credit routing, targete
 | `F_EVAL` | Evaluation Failure |
 | `F_EXEC` | Execution Governance Failure |
 
+Stage 0 boundary violations should route to existing v0 labels until an
+experiment or labeling guide justifies a new subtype.
+
 ## Open Questions
 
 - Should failures be single-label, multi-label, or probability vectors?
 - How should annotators handle ambiguous root causes?
 - What labels are needed before training signals can use failure credit?
 
-## Related Theory Documents
+## Related Documents
 
+- [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)

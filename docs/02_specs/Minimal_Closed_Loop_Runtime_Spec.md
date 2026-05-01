@@ -45,6 +45,7 @@ Define the MVP runtime loop that turns state into action, action into evidence, 
 - Every non-trivial action must produce evidence before commit.
 - The verifier may abstain or request additional evidence.
 - Failed steps should preserve enough journal data for later recovery analysis.
+- Stage 0 boundary locks constrain this loop: state, execution trace, evidence, verifier output, journal, memory, and rollback semantics remain separate artifacts.
 
 ## Open Questions
 
@@ -52,7 +53,8 @@ Define the MVP runtime loop that turns state into action, action into evidence, 
 - What verifier implementation is acceptable for the first prototype?
 - What minimum evidence fields are required for a commit?
 
-## Related Theory Documents
+## Related Documents
 
+- [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)

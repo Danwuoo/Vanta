@@ -11,6 +11,11 @@ This document prevents scope creep while the Vanta documentation system is still
 - Supporting irreversible real-world side effects without explicit escalation.
 - Treating memory append as learning.
 - Treating tool traces as canonical reasoning state.
+- Treating Evidence Packet content as explanation instead of structured evidence.
+- Treating Episode Journal as durable memory.
+- Treating Context OS as long-context stuffing.
+- Treating Verifier Runtime as final-answer-only judging.
+- Assuming rollback is available for all side effects.
 - Optimizing only final task success while ignoring process integrity.
 - Replacing external policy engines or human approval in high-risk settings.
 - Implementing full long-term memory governance before the minimal closed loop is measured.
