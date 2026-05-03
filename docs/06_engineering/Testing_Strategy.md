@@ -35,6 +35,9 @@ Define how implementation should be tested once runtime code exists.
   paths, rollback metadata, baseline invalid-action recording, mock LLM
   structured output, mock OpenClaw agent payload parsing, replay consistency,
   and compact experiment run output.
+- Experiment 002 tests cover mock OpenClaw verifier output parsing, JSON fence
+  parsing, parse-failure-to-abstain normalization, fixture oracle review item
+  generation, strict false-reject policy, and compact three-arm metrics.
 
 ## Open Questions
 

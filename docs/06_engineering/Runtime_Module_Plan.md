@@ -14,6 +14,7 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 | Action Executor | Execute or simulate allowed fixture-local actions. | Implemented for Stage 1 action scope |
 | Evidence Builder | Create Evidence Packet records. | Implemented for Stage 1 required evidence |
 | Verifier Runtime | Accept, reject, abstain, or request evidence. | Implemented as deterministic Verifier v0 with fixture acceptance checks |
+| LLM Verifier Adapter | Evaluate verifier input arms without entering the commit path. | Implemented for Experiment 002 through OpenClaw local harness |
 | Commit Controller | Commit, abort, rollback, or reconcile. | Implemented for accept-only commit and reversible rollback metadata checks |
 | Episode Journal | Persist replay and audit data. | Implemented for Stage 1 in-memory/file fixture prototype |
 | Evaluation Harness | Compute metrics from logs. | Implemented for initial audit and experiment metrics |
@@ -31,6 +32,9 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 - OpenClaw adapter results are not pure model-only results. They include the
   OpenClaw local agent harness and must be labeled accordingly in experiment
   reports.
+- `Vanta.OpenClawVerifierAdapter` reuses the OpenClaw local harness pattern for
+  Experiment 002 verifier judging and normalizes malformed verifier responses to
+  `abstain` for parse failures.
 
 ## Stage 1 Closure Status
 

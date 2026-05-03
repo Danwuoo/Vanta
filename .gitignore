@@ -11,3 +11,4 @@ docs/01_theory/Theory_Index.md
 /deps/
 /.elixir_ls/
 docs/04_experiments/results/experiment_001/*/raw/
+docs/04_experiments/results/*/*/*.json

@@ -46,6 +46,14 @@ empirical baselines exist.
 - Interpretation: Higher means evidence is more complete, grounded, and auditable.
 - Failure modes: Scores may be inflated if labels reward fluent explanations rather than provenance-backed evidence.
 
+## `verifier_brier_score`
+
+- Definition: Mean squared error between verifier confidence and strict verifier correctness.
+- Formula or computation rule: `mean((confidence - correctness)^2)`, where correctness is `1.0` when the verifier decision matches the oracle under the experiment policy and `0.0` otherwise.
+- Required fields: verifier decision, verifier confidence, oracle validity label, evidence packet ID where available, task type.
+- Interpretation: Lower is better; it measures confidence calibration for the chosen decision policy.
+- Failure modes: Not comparable across experiments unless abstain and request-evidence policies are fixed.
+
 ## `commit_integrity_score`
 
 - Definition: Fraction of commits passing journal, verification, and side-effect integrity checks.
