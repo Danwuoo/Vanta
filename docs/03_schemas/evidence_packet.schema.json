@@ -4,7 +4,17 @@
   "type": "object",
   "description": "Structured evidence for verification, audit, recovery, and regression. This is not an explanation field.",
   "required": [
-    "schema_version"
+    "schema_version",
+    "evidence_id",
+    "episode_id",
+    "step_id",
+    "pre_state_hash",
+    "post_state_hash",
+    "action_ref",
+    "observation",
+    "post_state_summary",
+    "provenance",
+    "runtime_context"
   ],
   "properties": {
     "schema_version": {
@@ -22,6 +32,10 @@
       "type": "string",
       "description": "Execution step identifier this evidence supports."
     },
+    "pre_state_hash": {
+      "type": "string",
+      "description": "Accepted state hash before the action."
+    },
     "pre_state_summary": {
       "type": "string",
       "description": "Summary of accepted state before the action."
@@ -37,6 +51,10 @@
     "post_state_summary": {
       "type": "string",
       "description": "Summary of accepted or candidate post-action state."
+    },
+    "post_state_hash": {
+      "type": "string",
+      "description": "Accepted or candidate state hash after the action."
     },
     "verifier_result": {
       "type": "object",

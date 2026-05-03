@@ -3,7 +3,17 @@
   "title": "Benchmark Task",
   "type": "object",
   "required": [
-    "schema_version"
+    "schema_version",
+    "task_id",
+    "task_type",
+    "prompt",
+    "initial_state",
+    "input_artifacts",
+    "allowed_actions",
+    "success_criteria",
+    "failure_criteria",
+    "side_effect_classes",
+    "required_logs"
   ],
   "properties": {
     "schema_version": {
@@ -13,7 +23,10 @@
       "type": "string"
     },
     "task_type": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "document_ops"
+      ]
     },
     "prompt": {
       "type": "string"
@@ -21,10 +34,41 @@
     "initial_state": {
       "type": "object"
     },
+    "input_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "role"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "allowed_actions": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "string",
+        "enum": [
+          "read_file",
+          "list_files",
+          "compute_hash",
+          "simulate_patch",
+          "compute_diff",
+          "apply_reversible_patch",
+          "validate_artifact"
+        ]
       }
     },
     "success_criteria": {

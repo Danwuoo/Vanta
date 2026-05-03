@@ -27,9 +27,16 @@ Define how implementation should be tested once runtime code exists.
 - Episode journal contains required audit fields.
 - Verifier cannot commit missing-evidence actions in controlled tests.
 - Replay succeeds in deterministic fixtures.
+- Document Ops fixture mirrors under `docs/` and `test/` remain byte-for-byte
+  synchronized.
+- Stage 1 commit controller rejects non-`accept` verifier decisions and
+  disallowed side-effect classes.
+- Runtime integration tests cover positive commit paths, negative rejection
+  paths, rollback metadata, baseline invalid-action recording, mock LLM
+  structured output, mock OpenClaw agent payload parsing, replay consistency,
+  and compact experiment run output.
 
 ## Open Questions
 
-- Which tests should block commits?
 - How should non-deterministic tool outputs be simulated?
 - What is the minimum replay fidelity requirement for MVP?

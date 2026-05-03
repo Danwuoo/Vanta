@@ -3,13 +3,28 @@
   "title": "Execution Step",
   "type": "object",
   "required": [
-    "schema_version"
+    "schema_version",
+    "step_id",
+    "episode_id",
+    "action_type",
+    "action_payload",
+    "expected_effect",
+    "preconditions",
+    "postconditions",
+    "dependency_edges",
+    "verifier_requirements",
+    "rollback_policy",
+    "side_effect_class",
+    "status"
   ],
   "properties": {
     "schema_version": {
       "type": "string"
     },
     "step_id": {
+      "type": "string"
+    },
+    "episode_id": {
       "type": "string"
     },
     "parent_step_id": {
@@ -19,7 +34,16 @@
       ]
     },
     "action_type": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "read_file",
+        "list_files",
+        "compute_hash",
+        "simulate_patch",
+        "compute_diff",
+        "apply_reversible_patch",
+        "validate_artifact"
+      ]
     },
     "action_payload": {
       "type": "object"
@@ -63,6 +87,20 @@
         "COMMITTABLE",
         "IRREVERSIBLE",
         "MEMORY_WRITE"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "ready",
+        "running",
+        "succeeded",
+        "failed",
+        "rejected",
+        "aborted",
+        "committed",
+        "rolled_back"
       ]
     }
   },

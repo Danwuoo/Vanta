@@ -12,11 +12,24 @@ Record documentation and research decisions that materially affect scope, interf
 | 2026-05-01 | Use JSON Schema draft-07 skeletons with `schema_version` as the only required field initially. | The runtime fields are not yet empirically validated or fully specified. | Accepted |
 | 2026-05-01 | Accept `Stage_0_Boundary_Lock.md` as the Stage 0 conceptual boundary gate. | The boundary rules were previously scattered across theory, specs, non-goals, and engineering notes. | Accepted |
 | 2026-05-01 | Add a minimal `working_set.schema.json` while deferring full Context OS implementation. | Stage 0 needs a data-contract boundary for working sets, but Phase 5 remains the implementation point for Context OS optimization. | Accepted |
+| 2026-05-02 | Use Document Ops as the first Stage 1 MVP vertical domain. | Document operations provide reversible, inspectable, provenance-friendly tasks without irreversible external side effects. | Accepted |
+| 2026-05-02 | Promote Stage 1 runtime schemas from skeletons to required-field contracts. | Phase 1 runtime artifacts and fixtures need stable required fields before Experiment 001 can run. | Accepted |
+| 2026-05-02 | Implement Phase 1 runtime skeleton in Elixir/Mix. | The first runtime should be small, deterministic, and testable against JSON artifacts and fixture-local actions. | Accepted |
+| 2026-05-02 | Mirror Document Ops fixtures under `docs/04_experiments/fixtures/` and `test/fixtures/`. | Research-readable fixtures and executable test fixtures must remain synchronized while serving different consumers. | Accepted |
+| 2026-05-02 | Defer Experiment 001 execution until Stage 1 contracts, fixtures, runtime skeleton, and tests are in place. | The repository must not report validation results before measured experiment execution. | Accepted |
+| 2026-05-02 | Add an env-gated OpenAI LLM action-sequence baseline for Experiment 001. | The baseline should compare direct execution against the runtime governance spine while keeping Verifier v0 deterministic and rule-based. | Accepted |
+| 2026-05-02 | Treat negative Document Ops fixtures as benchmark and test cases. | Stage 1 must measure rejection, path guard, and fixture-specific verifier behavior, not only successful commits. | Accepted |
+| 2026-05-02 | Track compact Experiment 001 `run.json` and `summary.md`, while ignoring raw scratch logs. | Measured runs should be reviewable and machine-readable without committing bulky transient artifacts. | Accepted |
+| 2026-05-03 | Add an OpenClaw local agent harness planner adapter for Experiment 001 candidate runs. | The local environment can authenticate through OpenClaw `openai-codex`; results must be labeled as OpenClaw harness runs, not pure model-only baselines. | Accepted |
+| 2026-05-03 | Treat OpenClaw `openai-codex/gpt-5.4-mini` as the candidate canonical local LLM baseline for Experiment 001 smoke runs. | The latest measured local OpenClaw run completed the seven-fixture smoke gate, while still remaining an OpenClaw harness baseline rather than a pure model-only or statistically validated canonical baseline. | Accepted |
+| 2026-05-03 | Close Stage 1 and Experiment 001 as `Closed: local smoke completed`. | The measured OpenClaw candidate canonical local baseline run satisfied the Stage 1 local smoke gate; broader baselines, larger samples, false accept / false reject analysis, and audit completeness remain deferred work. | Accepted |
 
-## Open Decisions
+## Post-Stage-1 Open Decisions
 
-- First MVP vertical domain.
-- Verifier architecture.
-- Minimum benchmark size.
+- Minimum benchmark size beyond the current seven Document Ops fixtures.
 - Human labeling budget.
-- Side-effect classes allowed in the first runtime.
+- Metric thresholds for broader MVP acceptance beyond the Stage 1 local smoke
+  gate.
+- Whether the candidate canonical local baseline should be promoted beyond local
+  smoke status, replaced by a direct OpenAI Responses baseline, or kept alongside
+  Responses as a separately labeled harness baseline.

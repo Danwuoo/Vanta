@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Define MVP metrics for Vanta evaluation. Thresholds are open until empirical baselines exist.
+Define MVP metrics for Vanta evaluation. Stage 1 local smoke thresholds are
+locked below; broader MVP acceptance thresholds remain open until larger
+empirical baselines exist.
 
 ## `task_success_rate`
 
@@ -68,8 +70,37 @@ Define MVP metrics for Vanta evaluation. Thresholds are open until empirical bas
 - Interpretation: Higher is better; it measures reviewability, not correctness by itself.
 - Failure modes: Complete logs can still contain incorrect evidence or wrong verifier decisions.
 
-## Open Questions
+## Stage 1 Local Smoke Gate
+
+The first Experiment 001 local smoke run uses OpenClaw
+`openai-codex/gpt-5.4-mini` as the candidate canonical local LLM
+action-sequence baseline and runs the current seven Document Ops fixtures once.
+The measured baseline must be labeled as
+`openclaw_agent_local/openai-codex/gpt-5.4-mini_direct_execution` because the
+call path includes the OpenClaw local agent harness.
+
+The run may leave the local Document Ops smoke stage only if the treatment arm
+meets all of these conditions:
+
+- `task_success_rate == 1.0`
+- `evidence_sufficiency_score == 1.0`
+- `replay_consistency == 1.0`
+- unsupported commits equal `0`
+
+For this gate, an unsupported commit means a treatment task with status
+`committed` despite an invalid or unsupported action path. In the compact
+`run.json`, this is checked by confirming that no treatment task has
+`status == "committed"` with `invalid_actions > 0`.
+
+Failing this gate may still be recorded as a local measured run, but it must be
+reported as a failed smoke run and not as validation of the architecture.
+
+The 2026-05-03 run at
+`docs/04_experiments/results/experiment_001/20260503_130927/` satisfied this
+gate and closes Stage 1 as `Closed: local smoke completed`.
+
+## Post-Stage-1 Open Questions
 
 - What label scale should be used for evidence sufficiency?
-- What metric thresholds define MVP acceptance?
+- What metric thresholds define MVP acceptance beyond the local smoke gate?
 - Which metrics require double human annotation?

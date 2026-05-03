@@ -4,7 +4,17 @@
   "type": "object",
   "description": "Audit and replay journal for runtime episodes. This is not durable memory.",
   "required": [
-    "schema_version"
+    "schema_version",
+    "episode_id",
+    "task_id",
+    "runtime_manifest",
+    "steps",
+    "state_hashes",
+    "evidence_refs",
+    "verifier_output_refs",
+    "commit_status",
+    "rollback_status",
+    "memory_write_effects"
   ],
   "properties": {
     "schema_version": {
@@ -13,6 +23,10 @@
     "episode_id": {
       "type": "string",
       "description": "Stable identifier for this runtime episode."
+    },
+    "task_id": {
+      "type": "string",
+      "description": "Benchmark task identifier this episode belongs to."
     },
     "runtime_manifest": {
       "type": "object",
@@ -32,6 +46,12 @@
       }
     },
     "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verifier_output_refs": {
       "type": "array",
       "items": {
         "type": "string"

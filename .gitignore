@@ -7,3 +7,7 @@ docs/04_experiments/Experiments_Index.md
 docs/03_schemas/Schemas_Index.md
 /docs/02_specs/Specs_Index.md
 docs/01_theory/Theory_Index.md
+/_build/
+/deps/
+/.elixir_ls/
+docs/04_experiments/results/experiment_001/*/raw/

@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Experiment Run",
+  "type": "object",
+  "description": "Compact measured run record for local experiments.",
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "status",
+    "baseline",
+    "treatment",
+    "fixture_count",
+    "tasks",
+    "metrics"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "experiment_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "not_run",
+        "partial"
+      ]
+    },
+    "baseline": {
+      "type": "string"
+    },
+    "treatment": {
+      "type": "string"
+    },
+    "fixture_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "metrics": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,23 @@
+defmodule Vanta do
+  @moduledoc """
+  Stage 1 MVP runtime skeleton for fixture-local Document Ops tasks.
+  """
+
+  @schema_version "stage1-mvp-v0"
+  @allowed_side_effect_classes ~w(READ_ONLY SIMULATED REVERSIBLE)
+  @action_types ~w(
+    read_file
+    list_files
+    compute_hash
+    simulate_patch
+    compute_diff
+    apply_reversible_patch
+    validate_artifact
+  )
+
+  def schema_version, do: @schema_version
+
+  def allowed_side_effect_classes, do: @allowed_side_effect_classes
+
+  def action_types, do: @action_types
+end

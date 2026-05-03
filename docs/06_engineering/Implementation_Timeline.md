@@ -15,6 +15,7 @@ Define a staged engineering path that follows the research priorities and avoids
 
 - Implement state manager, Execution IR compiler, evidence builder, verifier stub, commit/abort controller, and episode journal.
 - Run Experiment 001 on controlled tasks.
+- Status: `Closed: local smoke completed` on 2026-05-03.
 
 ## Phase 2: Evidence And Verifier
 
@@ -36,7 +37,7 @@ Define a staged engineering path that follows the research priorities and avoids
 
 - Add working set compiler only after earlier phases produce stable logs and metrics.
 
-## Open Questions
+## Post-Stage-1 Open Questions
 
 - What milestone gates are required before advancing phases?
-- What sample size is feasible for first experiments?
+- What sample size is feasible for broader experiments?

@@ -4,11 +4,37 @@
   "type": "object",
   "description": "Verifier decision and diagnostics. Verifier Runtime is not limited to final-answer judging.",
   "required": [
-    "schema_version"
+    "schema_version",
+    "verifier_output_id",
+    "episode_id",
+    "step_id",
+    "evidence_refs",
+    "decision",
+    "verification_scope",
+    "validity_score",
+    "confidence",
+    "risk_score",
+    "violated_constraints",
+    "required_extra_evidence"
   ],
   "properties": {
     "schema_version": {
       "type": "string"
+    },
+    "verifier_output_id": {
+      "type": "string"
+    },
+    "episode_id": {
+      "type": "string"
+    },
+    "step_id": {
+      "type": "string"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
     "decision": {
       "type": "string",

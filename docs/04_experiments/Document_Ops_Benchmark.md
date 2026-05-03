@@ -39,9 +39,30 @@ Document operations tasks should require multi-step reasoning, source tracking, 
 - Required provenance is missing.
 - The runtime commits an invalid or unsafe action.
 
+## Stage 1 Fixture Set
+
+The first fixture set is prepared under
+`docs/04_experiments/fixtures/document_ops/` and mirrored under
+`test/fixtures/document_ops/`.
+
+Initial fixtures:
+
+- `docops_read_traceability_001`
+- `docops_detect_terms_001`
+- `docops_simulate_patch_001`
+- `docops_reversible_edit_001`
+- `docops_action_not_allowed_001`
+- `docops_path_escape_001`
+- `docops_wrong_diff_001`
+
+These fixtures include positive and negative Stage 1 acceptance cases. They are
+readiness artifacts for Phase 1 runtime testing and Experiment 001 execution.
+They are not Experiment 001 results.
+
 ## Status
 
-Not yet run.
+Fixture set prepared with deterministic acceptance recipes. Experiment not yet
+run with a configured LLM baseline.
 
 ## Related Documents
 

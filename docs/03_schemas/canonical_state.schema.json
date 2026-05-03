@@ -4,7 +4,16 @@
   "type": "object",
   "description": "Accepted task-relevant state. This schema is not an execution trace and must not contain raw tool logs.",
   "required": [
-    "schema_version"
+    "schema_version",
+    "state_id",
+    "task_id",
+    "task_intent",
+    "objects",
+    "relations",
+    "events",
+    "uncertainty",
+    "provenance",
+    "state_hash"
   ],
   "properties": {
     "schema_version": {
@@ -14,6 +23,10 @@
     "state_id": {
       "type": "string",
       "description": "Stable identifier for this canonical state snapshot."
+    },
+    "task_id": {
+      "type": "string",
+      "description": "Benchmark task identifier this state belongs to."
     },
     "task_intent": {
       "type": "string",
@@ -47,6 +60,10 @@
     "provenance": {
       "type": "object",
       "description": "Source and version metadata for accepted state content."
+    },
+    "state_hash": {
+      "type": "string",
+      "description": "Hash of the accepted canonical state content used for audit and replay."
     }
   },
   "additionalProperties": false

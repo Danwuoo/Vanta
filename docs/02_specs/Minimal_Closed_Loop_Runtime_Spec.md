@@ -47,14 +47,34 @@ Define the MVP runtime loop that turns state into action, action into evidence, 
 - Failed steps should preserve enough journal data for later recovery analysis.
 - Stage 0 boundary locks constrain this loop: state, execution trace, evidence, verifier output, journal, memory, and rollback semantics remain separate artifacts.
 
-## Open Questions
+## Stage 1 Locked Answers
 
-- What is the first controlled environment for MVP tasks?
-- What verifier implementation is acceptable for the first prototype?
-- What minimum evidence fields are required for a commit?
+- Stage 1 local smoke status: `Closed: local smoke completed`.
+- First controlled environment: local Document Ops fixtures.
+- Verifier implementation: deterministic Verifier v0 using JSON Schema validation,
+  side-effect-class rules, fixture-specific acceptance checks, required evidence
+  checks, and provenance completeness checks.
+- Minimum commit evidence: `pre_state_hash`, `post_state_hash`, `step_id`,
+  `action_ref`, normalized `observation`, `post_state_summary`, `provenance`,
+  and `runtime_context`. Simulated or reversible edits must include a diff or
+  result summary inside the normalized observation.
+- Allowed side-effect classes: `READ_ONLY`, `SIMULATED`, and `REVERSIBLE`.
+- Disallowed side-effect classes: `COMMITTABLE`, `IRREVERSIBLE`, and
+  `MEMORY_WRITE` for the first Stage 1 runtime.
+
+## Post-Stage-1 Deferred Questions
+
+- What metric thresholds define broader MVP acceptance beyond the Stage 1 local
+  smoke gate?
+- What sample size is required before Experiment 001 can support broader
+  comparison?
+- Should the OpenClaw harness baseline remain local-only, be replaced by direct
+  OpenAI Responses, or be reported alongside direct Responses?
 
 ## Related Documents
 
 - [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
+- [Stage 1 MVP Entry Gate](../00_manifest/Stage_1_MVP_Entry_Gate.md)
+- [Stage 1 Experiment 001 Closure](../00_manifest/Stage_1_Experiment_001_Closure.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
