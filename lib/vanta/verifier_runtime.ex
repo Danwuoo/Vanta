@@ -3,7 +3,7 @@ defmodule Vanta.VerifierRuntime do
   Deterministic Stage 1 Verifier v0.
   """
 
-  alias Vanta.{FixtureAcceptance, Hash, PathGuard}
+  alias Vanta.{ExecutionIRCompiler, FixtureAcceptance, Hash, PathGuard}
 
   @required_evidence_fields ~w(
     schema_version
@@ -24,28 +24,34 @@ defmodule Vanta.VerifierRuntime do
   def verify(step, evidence, context) do
     missing_fields = missing_evidence_fields(evidence)
     forbidden_side_effect? = step["side_effect_class"] not in Vanta.allowed_side_effect_classes()
-    fixture_violations = fixture_violations(step, evidence, context)
+    policy_violations = policy_violations(step, context)
 
     cond do
       forbidden_side_effect? ->
         output(step, evidence, "reject", 0.0, 1.0, 1.0, ["side_effect_class_not_allowed"], [])
 
-      missing_fields != [] ->
-        output(step, evidence, "request_evidence", 0.0, 0.95, 0.8, [], missing_fields)
-
       schema_invalid?(step, "execution_step") ->
         output(step, evidence, "reject", 0.0, 0.95, 0.7, ["execution_step_schema_invalid"], [])
+
+      policy_violations != [] ->
+        output(step, evidence, "reject", 0.0, 0.95, 0.8, Enum.sort(policy_violations), [])
+
+      missing_fields != [] ->
+        output(step, evidence, "request_evidence", 0.0, 0.95, 0.8, [], missing_fields)
 
       schema_invalid?(evidence, "evidence_packet") ->
         output(step, evidence, "request_evidence", 0.0, 0.95, 0.7, [], [
           "schema_valid_evidence_packet"
         ])
 
-      fixture_violations != [] ->
-        output(step, evidence, "reject", 0.0, 0.95, 0.8, Enum.sort(fixture_violations), [])
-
       true ->
-        output(step, evidence, "accept", 1.0, 0.9, 0.1, [], [])
+        case evidence_violations(step, evidence, context) do
+          [] ->
+            output(step, evidence, "accept", 1.0, 0.9, 0.1, [], [])
+
+          violations ->
+            output(step, evidence, "reject", 0.0, 0.95, 0.8, Enum.sort(violations), [])
+        end
     end
   end
 
@@ -60,12 +66,22 @@ defmodule Vanta.VerifierRuntime do
     end
   end
 
-  defp fixture_violations(step, evidence, context) do
+  defp policy_violations(step, context) do
+    task = Map.get(context, :task) || Map.get(context, "task")
+
+    []
+    |> require_task_allowed_action(task, step)
+    |> require_task_side_effect_class(task, step)
+    |> require_action_side_effect_match(step)
+    |> Enum.uniq()
+  end
+
+  defp evidence_violations(step, evidence, context) do
     observation = Map.get(evidence, "observation", %{})
     workspace = Map.get(context, :workspace) || Map.get(context, "workspace")
 
     []
-    |> require_workspace_paths(workspace, evidence)
+    |> require_workspace_paths(workspace, step, evidence, observation)
     |> require_observation_kind(step, observation)
     |> require_read_only_semantics(step, observation)
     |> require_simulated_semantics(step, observation, workspace)
@@ -74,18 +90,85 @@ defmodule Vanta.VerifierRuntime do
     |> Enum.uniq()
   end
 
-  defp require_workspace_paths(violations, nil, _evidence), do: violations
+  defp require_task_allowed_action(violations, nil, _step), do: violations
 
-  defp require_workspace_paths(violations, workspace, evidence) do
-    evidence
-    |> get_in(["provenance", "paths"])
-    |> List.wrap()
-    |> Enum.reduce(violations, fn path, acc ->
-      case PathGuard.safe_resolve(workspace, path) do
-        {:ok, _path} -> acc
-        {:error, _reason} -> ["provenance_path_escapes_workspace" | acc]
+  defp require_task_allowed_action(violations, task, step) do
+    if step["action_type"] in Map.get(task, "allowed_actions", []) do
+      violations
+    else
+      ["action_not_allowed_by_task" | violations]
+    end
+  end
+
+  defp require_task_side_effect_class(violations, nil, _step), do: violations
+
+  defp require_task_side_effect_class(violations, task, step) do
+    if step["side_effect_class"] in Map.get(task, "side_effect_classes", []) do
+      violations
+    else
+      ["side_effect_class_not_allowed_by_task" | violations]
+    end
+  end
+
+  defp require_action_side_effect_match(violations, step) do
+    actual_side_effect_class = step["side_effect_class"]
+
+    case ExecutionIRCompiler.action_side_effect_class(step["action_type"]) do
+      {:ok, ^actual_side_effect_class} ->
+        violations
+
+      {:ok, _side_effect_class} ->
+        ["action_side_effect_class_mismatch" | violations]
+
+      :error ->
+        ["action_type_unknown" | violations]
+    end
+  end
+
+  defp require_workspace_paths(violations, nil, _step, _evidence, _observation), do: violations
+
+  defp require_workspace_paths(violations, workspace, step, evidence, observation) do
+    [
+      {"provenance_path_escapes_workspace", get_in(evidence, ["provenance", "paths"])},
+      {"observation_path_escapes_workspace", observation_paths(observation)},
+      {"action_path_escapes_workspace", action_paths(step)}
+    ]
+    |> Enum.reduce(violations, fn {violation, paths}, acc ->
+      if paths |> path_list() |> Enum.any?(&path_escapes_workspace?(workspace, &1)) do
+        [violation | acc]
+      else
+        acc
       end
     end)
+  end
+
+  defp observation_paths(observation) do
+    [observation["path"], observation["paths"]]
+    |> path_list()
+  end
+
+  defp action_paths(step) do
+    payload = Map.get(step, "action_payload", %{})
+
+    [payload["path"], payload["paths"]]
+    |> path_list()
+  end
+
+  defp path_list(nil), do: []
+
+  defp path_list(paths) do
+    paths
+    |> List.wrap()
+    |> Enum.flat_map(&List.wrap/1)
+    |> Enum.filter(&is_binary/1)
+    |> Enum.uniq()
+  end
+
+  defp path_escapes_workspace?(workspace, path) do
+    case PathGuard.safe_resolve(workspace, path) do
+      {:ok, _path} -> false
+      {:error, _reason} -> true
+    end
   end
 
   defp require_observation_kind(violations, step, observation) do

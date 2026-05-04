@@ -82,7 +82,9 @@ defmodule Vanta.Experiment002 do
       "evidence_refs" => review_item["evidence_refs"],
       "oracle_label" => review_item["oracle_label"],
       "oracle_valid" => review_item["oracle_valid"],
-      "evidence_sufficiency_label" => evidence_sufficiency_label(review_item, arm)
+      "evidence_sufficiency_label" => evidence_sufficiency_label(review_item, arm),
+      "deterministic_verifier_output" => review_item["deterministic_verifier_output"],
+      "deterministic_gate_applied" => arm == "structured_evidence_packet"
     }
 
     Map.put(base, "verifier_input", verifier_payload(review_item, arm))
@@ -251,7 +253,12 @@ defmodule Vanta.Experiment002 do
       "normalized_step" => compact_step(review_item["compiled_step"]),
       "compile_error" => review_item["compile_error"],
       "evidence_packet" => compact_evidence_packet(review_item["evidence_packet"]),
-      "deterministic_verifier_scope_reference" => %{
+      "deterministic_gate_reference" => %{
+        "decision" => review_item["deterministic_verifier_output"]["decision"],
+        "violated_constraints" =>
+          review_item["deterministic_verifier_output"]["violated_constraints"],
+        "required_extra_evidence" =>
+          review_item["deterministic_verifier_output"]["required_extra_evidence"],
         "verification_scope" => review_item["deterministic_verifier_output"]["verification_scope"]
       }
     }
@@ -331,7 +338,31 @@ defmodule Vanta.Experiment002 do
 
   defp compact_observation(observation), do: observation
 
+  defp verify_item(
+         %{"arm" => "structured_evidence_packet"} = review_input,
+         verifier,
+         verifier_opts
+       ) do
+    deterministic_output = review_input["deterministic_verifier_output"]
+
+    if deterministic_hard_stop?(deterministic_output) do
+      review_input
+      |> Map.put("llm_invoked", false)
+      |> item_result(deterministic_output)
+    else
+      review_input
+      |> Map.put("llm_invoked", true)
+      |> call_llm_verifier(verifier, verifier_opts)
+    end
+  end
+
   defp verify_item(review_input, verifier, verifier_opts) do
+    review_input
+    |> Map.put("llm_invoked", true)
+    |> call_llm_verifier(verifier, verifier_opts)
+  end
+
+  defp call_llm_verifier(review_input, verifier, verifier_opts) do
     case verifier.verify(review_input, verifier_opts) do
       {:ok, verifier_output} ->
         item_result(review_input, verifier_output)
@@ -344,10 +375,17 @@ defmodule Vanta.Experiment002 do
     end
   end
 
+  defp deterministic_hard_stop?(%{"decision" => decision})
+       when decision in ["reject", "request_evidence"],
+       do: true
+
+  defp deterministic_hard_stop?(_deterministic_output), do: false
+
   defp item_result(review_input, verifier_output) do
     decision = verifier_output["decision"]
     oracle_valid? = review_input["oracle_valid"]
     correct? = strict_correct?(oracle_valid?, decision)
+    deterministic_output = review_input["deterministic_verifier_output"] || %{}
 
     %{
       "review_item_id" => review_input["review_item_id"],
@@ -361,6 +399,12 @@ defmodule Vanta.Experiment002 do
       "decision" => decision,
       "confidence" => verifier_output["confidence"],
       "correct" => correct?,
+      "llm_invoked" => Map.get(review_input, "llm_invoked", true),
+      "deterministic_gate_applied" => review_input["deterministic_gate_applied"],
+      "deterministic_gate_decision" => deterministic_output["decision"],
+      "deterministic_gate_violations" => deterministic_output["violated_constraints"] || [],
+      "deterministic_gate_required_extra_evidence" =>
+        deterministic_output["required_extra_evidence"] || [],
       "false_accept" => oracle_valid? == false and decision == "accept",
       "false_reject" => oracle_valid? == true and decision != "accept",
       "evidence_sufficiency_label" => review_input["evidence_sufficiency_label"],

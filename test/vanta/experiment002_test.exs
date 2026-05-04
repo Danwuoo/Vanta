@@ -101,6 +101,22 @@ defmodule Vanta.Experiment002Test do
     assert :ok = Schema.validate("verifier_output", verifier_output)
   end
 
+  test "openclaw verifier adapter generates short automatic session ids" do
+    long_review_item =
+      review_item(
+        "docops_action_not_allowed_001_step_1_structured_evidence_packet_with_long_suffix"
+      )
+
+    assert {:ok, env} =
+             OpenClawVerifierAdapter.env(
+               [wsl_executable: "mock-wsl", openclaw_dir: "~/openclaw", model: "test-model"],
+               long_review_item
+             )
+
+    assert String.length(env.session_id) <= 64
+    assert String.starts_with?(env.session_id, "vexp002-docops-action-not-allowed-")
+  end
+
   test "experiment002 runner computes three-arm strict verifier metrics" do
     out_dir =
       Path.join(System.tmp_dir!(), "vanta_experiment002_#{System.unique_integer([:positive])}")
@@ -131,6 +147,36 @@ defmodule Vanta.Experiment002Test do
     assert run["metrics"]["structured_evidence_packet"]["evidence_sufficiency_score"] == 1.0
   end
 
+  test "structured evidence gate rejects invalid fixtures before LLM verifier" do
+    assert {:ok, run} =
+             Experiment002.run(@fixture_root,
+               verifier: __MODULE__.AcceptAllProbeVerifier,
+               verifier_opts: [test_pid: self()]
+             )
+
+    calls = collect_llm_calls()
+    structured_items = arm_results(run, "structured_evidence_packet")
+    invalid_structured = Enum.filter(structured_items, &(&1["oracle_valid"] == false))
+    valid_structured = Enum.filter(structured_items, &(&1["oracle_valid"] == true))
+
+    assert run["metrics"]["structured_evidence_packet"]["verifier_false_accept_rate"] == 0.0
+    assert run["metrics"]["structured_evidence_packet"]["verifier_false_reject_rate"] == 0.0
+
+    assert Enum.all?(invalid_structured, &(&1["llm_invoked"] == false))
+    assert Enum.all?(invalid_structured, &(&1["decision"] in ["reject", "request_evidence"]))
+    assert Enum.all?(valid_structured, &(&1["llm_invoked"] == true))
+
+    refute {:llm_invoked, "structured_evidence_packet", "docops_action_not_allowed_001"} in calls
+    refute {:llm_invoked, "structured_evidence_packet", "docops_path_escape_001"} in calls
+    refute {:llm_invoked, "structured_evidence_packet", "docops_wrong_diff_001"} in calls
+
+    assert {:llm_invoked, "structured_evidence_packet", "docops_simulate_patch_001"} in calls
+
+    assert calls
+           |> Enum.filter(&match?({:llm_invoked, "structured_evidence_packet", _task_id}, &1))
+           |> length() == 4
+  end
+
   test "experiment002 review items cover compile rejects, execution rejects, wrong diffs, and reversible evidence" do
     review_items = Experiment002.build_review_items(@fixture_root)
 
@@ -146,6 +192,14 @@ defmodule Vanta.Experiment002Test do
     path_escape = Enum.find(review_items, &(&1["task_id"] == "docops_path_escape_001"))
     assert path_escape["observation"]["error"] =~ "path escapes fixture workspace"
     assert path_escape["oracle_label"] == "invalid"
+
+    assert "action_execution_failed" in path_escape["deterministic_verifier_output"][
+             "violated_constraints"
+           ]
+
+    assert "action_path_escapes_workspace" in path_escape["deterministic_verifier_output"][
+             "violated_constraints"
+           ]
 
     wrong_diff = Enum.find(review_items, &(&1["task_id"] == "docops_wrong_diff_001"))
     assert wrong_diff["oracle_label"] == "invalid"
@@ -179,6 +233,19 @@ defmodule Vanta.Experiment002Test do
     refute Map.has_key?(wrong_diff_structured, "content")
   end
 
+  defp arm_results(run, arm) do
+    run["tasks"]
+    |> Enum.flat_map(fn task -> task["arms"][arm] end)
+  end
+
+  defp collect_llm_calls(acc \\ []) do
+    receive do
+      {:llm_invoked, _arm, _task_id} = call -> collect_llm_calls([call | acc])
+    after
+      0 -> Enum.reverse(acc)
+    end
+  end
+
   defp review_item(id) do
     %{
       "review_item_id" => id,
@@ -190,6 +257,49 @@ defmodule Vanta.Experiment002Test do
       "evidence_sufficiency_label" => 0.0,
       "verifier_input" => %{"summary" => "mock"}
     }
+  end
+
+  defmodule AcceptAllProbeVerifier do
+    def env(_opts), do: {:ok, %{model: "mock"}}
+    def verifier_id(_opts), do: "accept_all_probe_verifier"
+
+    def verify(review_input, opts) do
+      send(Keyword.fetch!(opts, :test_pid), {
+        :llm_invoked,
+        review_input["arm"],
+        review_input["task_id"]
+      })
+
+      {:ok, output(review_input)}
+    end
+
+    defp output(review_input) do
+      %{
+        "schema_version" => Vanta.schema_version(),
+        "verifier_output_id" => "accept_all_#{review_input["review_item_id"]}",
+        "episode_id" => review_input["episode_id"],
+        "step_id" => review_input["step_id"],
+        "evidence_refs" => review_input["evidence_refs"],
+        "decision" => "accept",
+        "verification_scope" => [
+          "preconditions",
+          "postconditions",
+          "evidence_sufficiency",
+          "policy_constraints",
+          "side_effect_safety",
+          "state_consistency"
+        ],
+        "validity_score" => 1.0,
+        "confidence" => 1.0,
+        "calibration_state" => %{"method" => "accept_all_probe"},
+        "disagreement" => %{},
+        "risk_score" => 0.1,
+        "violated_constraints" => [],
+        "required_extra_evidence" => [],
+        "failure_logits" => %{},
+        "credit_hints" => %{}
+      }
+    end
   end
 
   defmodule MockVerifier do

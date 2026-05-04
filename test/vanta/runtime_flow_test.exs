@@ -235,6 +235,96 @@ defmodule Vanta.RuntimeFlowTest do
     assert "simulated_action_mutated" in verifier_output["violated_constraints"]
   end
 
+  test "verifier enforces task action and side-effect allowlists" do
+    {task, workspace} = load_fixture("docops_action_not_allowed_001")
+    state = StateManager.from_task(task)
+
+    step = %{
+      "schema_version" => Vanta.schema_version(),
+      "step_id" => "step_episode_allowlist_gate_simulate_patch",
+      "episode_id" => "episode_allowlist_gate",
+      "parent_step_id" => nil,
+      "action_type" => "simulate_patch",
+      "action_payload" => %{
+        "path" => "inputs/source.md",
+        "find" => "First controlled environment: TBD.",
+        "replace" => "First controlled environment: Document Ops."
+      },
+      "expected_effect" => "Simulate a candidate patch.",
+      "preconditions" => ["fixture_workspace_exists"],
+      "postconditions" => ["source_files_preserved_unless_explicitly_allowed"],
+      "dependency_edges" => [],
+      "verifier_requirements" => ["side_effect_allowed"],
+      "rollback_policy" => "not_applicable",
+      "side_effect_class" => "SIMULATED",
+      "status" => "ready"
+    }
+
+    observation = %{
+      "kind" => "simulate_patch",
+      "path" => "inputs/source.md",
+      "diff" =>
+        "-First controlled environment: TBD.\n+First controlled environment: Document Ops.",
+      "mutated" => false
+    }
+
+    evidence = EvidenceBuilder.build(state, step, observation)
+    verifier_output = VerifierRuntime.verify(step, evidence, %{task: task, workspace: workspace})
+
+    assert verifier_output["decision"] == "reject"
+    assert "action_not_allowed_by_task" in verifier_output["violated_constraints"]
+    assert "side_effect_class_not_allowed_by_task" in verifier_output["violated_constraints"]
+  end
+
+  test "verifier rejects action side-effect class mismatches" do
+    {task, workspace} = load_fixture("docops_simulate_patch_001")
+    state = StateManager.from_task(task)
+    task = Map.put(task, "side_effect_classes", ["READ_ONLY", "SIMULATED"])
+
+    {:ok, step} =
+      ExecutionIRCompiler.compile(task, "episode_side_effect_mismatch", "simulate_patch", %{
+        "path" => "inputs/spec.md",
+        "find" => "First controlled environment: TBD.",
+        "replace" => "First controlled environment: Document Ops."
+      })
+
+    {:ok, observation} = ActionExecutor.execute(workspace, step)
+    mismatched_step = Map.put(step, "side_effect_class", "READ_ONLY")
+    evidence = EvidenceBuilder.build(state, mismatched_step, observation)
+
+    verifier_output =
+      VerifierRuntime.verify(mismatched_step, evidence, %{task: task, workspace: workspace})
+
+    assert verifier_output["decision"] == "reject"
+    assert "action_side_effect_class_mismatch" in verifier_output["violated_constraints"]
+  end
+
+  test "verifier rejects workspace path escapes before LLM review" do
+    {task, workspace} = load_fixture("docops_path_escape_001")
+    state = StateManager.from_task(task)
+
+    {:ok, step} =
+      ExecutionIRCompiler.compile(task, "episode_path_escape_gate", "read_file", %{
+        "path" => "../outside.md"
+      })
+
+    observation = %{
+      "kind" => "read_file",
+      "path" => "../outside.md",
+      "error" => "path escapes fixture workspace: ../outside.md",
+      "mutated" => false
+    }
+
+    evidence = EvidenceBuilder.build(state, step, observation)
+    verifier_output = VerifierRuntime.verify(step, evidence, %{task: task, workspace: workspace})
+
+    assert verifier_output["decision"] == "reject"
+    assert "action_execution_failed" in verifier_output["violated_constraints"]
+    assert "action_path_escapes_workspace" in verifier_output["violated_constraints"]
+    assert "observation_path_escapes_workspace" in verifier_output["violated_constraints"]
+    assert "provenance_path_escapes_workspace" in verifier_output["violated_constraints"]
+  end
+
   test "baseline direct execution records invalid actions without governance artifacts" do
     {task, workspace} = load_fixture("docops_wrong_diff_001")
     {:ok, action_sequence} = FixtureAcceptance.action_sequence(workspace)

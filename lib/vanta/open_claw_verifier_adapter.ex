@@ -396,7 +396,23 @@ defmodule Vanta.OpenClawVerifierAdapter do
           end
 
         unique = System.unique_integer([:positive])
-        "vanta-exp002-#{item_id}-#{unique}"
+
+        hash =
+          :crypto.hash(:sha256, "#{item_id}:#{unique}")
+          |> Base.encode16(case: :lower)
+          |> binary_part(0, 12)
+
+        slug =
+          item_id
+          |> String.replace(~r/[^a-zA-Z0-9]+/, "-")
+          |> String.trim("-")
+          |> String.slice(0, 28)
+          |> case do
+            "" -> "item"
+            value -> value
+          end
+
+        "vexp002-#{slug}-#{hash}"
     end
   end
 
