@@ -12,8 +12,24 @@ defmodule Vanta.EpisodeJournal do
       "task_id" => Map.fetch!(task, "task_id"),
       "runtime_manifest" => %{
         "runtime" => "vanta_phase1",
+        "runtime_version" => "0.1.0",
         "language" => "elixir",
-        "schema_version" => Vanta.schema_version()
+        "language_version" => System.version(),
+        "otp_version" => System.otp_release(),
+        "schema_version" => Vanta.schema_version(),
+        "schema_contracts" => [
+          "execution_step",
+          "evidence_packet",
+          "verifier_output",
+          "episode_journal"
+        ],
+        "tool_environment" => %{
+          "action_executor" => "fixture_local_document_ops_v0",
+          "commit_controller" => "stage1_commit_controller_v0",
+          "replay_runner" => "journal_action_sequence_replay_v0",
+          "verifier_runtime" => "deterministic_rules_v0"
+        },
+        "side_effect_classes_allowed" => Vanta.allowed_side_effect_classes()
       },
       "steps" => [],
       "state_hashes" => [],

@@ -107,19 +107,35 @@ defmodule Vanta.Runtime do
         execute_and_verify(task, workspace, step, acc)
 
       {:error, reason} ->
-        rejected_step = %{
-          "step_id" => "step_#{episode_id}_#{action_type}_rejected",
-          "episode_id" => episode_id,
-          "action_type" => action_type,
-          "action_payload" => payload,
-          "status" => "rejected",
-          "error" => inspect(reason)
+        rejected_step =
+          ExecutionIRCompiler.rejected_step(task, episode_id, action_type, payload, reason)
+
+        failure_observation = %{
+          "kind" => action_type,
+          "error" => inspect(reason),
+          "mutated" => false
         }
+
+        evidence = EvidenceBuilder.build(acc.state, rejected_step, failure_observation)
+
+        verifier_output =
+          VerifierRuntime.verify(rejected_step, evidence, %{
+            task: task,
+            workspace: workspace,
+            compile_error: reason
+          })
 
         %{
           acc
           | steps: acc.steps ++ [rejected_step],
-            journal: EpisodeJournal.record_step(acc.journal, rejected_step),
+            journal:
+              acc.journal
+              |> EpisodeJournal.record_step(rejected_step)
+              |> EpisodeJournal.record_evidence(evidence)
+              |> EpisodeJournal.record_verifier_output(verifier_output),
+            evidence_packets: acc.evidence_packets ++ [evidence],
+            verifier_outputs: acc.verifier_outputs ++ [verifier_output],
+            observations: acc.observations ++ [failure_observation],
             invalid_actions: acc.invalid_actions + 1,
             status: "rejected",
             stop?: true

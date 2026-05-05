@@ -61,6 +61,9 @@ empirical baselines exist.
 - Required fields: commit ID, episode ID, verifier output, side-effect class, journal completeness label.
 - Interpretation: Higher is better; low values indicate unsafe or unauditable application of changes.
 - Failure modes: Can be gamed by committing fewer actions or classifying risky actions as low risk.
+- Experiment 003 local computation: treatment counts only committed episodes in
+  the denominator; baseline is `0.0` because tool-trace-only direct execution
+  has no journal/verifier commit path.
 
 ## `replay_consistency`
 
@@ -77,6 +80,28 @@ empirical baselines exist.
 - Required fields: episode ID, required audit field checklist, journal, evidence references, verifier outputs.
 - Interpretation: Higher is better; it measures reviewability, not correctness by itself.
 - Failure modes: Complete logs can still contain incorrect evidence or wrong verifier decisions.
+
+### Experiment 003 Audit Checklist
+
+An Episode Journal is audit-complete for the Experiment 003 local smoke only
+when all checklist groups pass:
+
+- `episode_metadata`: journal has `schema_version`, `episode_id`, `task_id`,
+  and `runtime_manifest`.
+- `replay_metadata`: runtime manifest records runtime, language, tool
+  environment, schema contracts, and allowed side-effect classes.
+- `step_audit`: every action path has a schema-valid step with action identity,
+  payload, status, side-effect class, and rollback policy.
+- `state_audit`: journal records accepted state hashes; rejected candidate
+  state is not added as accepted state.
+- `evidence_audit`: evidence refs are present and resolve to schema-valid
+  Evidence Packets tied to journal steps.
+- `verifier_audit`: verifier refs are present and resolve to schema-valid
+  Verifier Outputs tied to journal evidence refs.
+- `commit_audit`: committed steps have verifier `accept`, complete evidence,
+  allowed side-effect class, and reversible backup metadata when applicable.
+- `rollback_memory_boundary`: rollback status is explicit and Stage 1
+  `memory_write_effects` remains empty.
 
 ## Stage 1 Local Smoke Gate
 

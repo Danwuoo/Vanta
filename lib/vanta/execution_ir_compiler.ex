@@ -45,6 +45,38 @@ defmodule Vanta.ExecutionIRCompiler do
 
   def action_side_effect_class(action_type), do: Map.fetch(@action_classes, action_type)
 
+  def rejected_step(_task, episode_id, action_type, payload, _reason) do
+    side_effect_class =
+      case Map.fetch(@action_classes, action_type) do
+        {:ok, class} -> class
+        :error -> "IRREVERSIBLE"
+      end
+
+    step = %{
+      "schema_version" => Vanta.schema_version(),
+      "step_id" => step_id(episode_id, action_type),
+      "episode_id" => episode_id,
+      "parent_step_id" => nil,
+      "action_type" => action_type,
+      "action_payload" => payload,
+      "expected_effect" => expected_effect(action_type),
+      "preconditions" => preconditions(action_type),
+      "postconditions" => postconditions(action_type),
+      "dependency_edges" => [],
+      "verifier_requirements" => [
+        "schema_valid",
+        "evidence_complete",
+        "side_effect_allowed",
+        "provenance_present"
+      ],
+      "rollback_policy" => rollback_policy(side_effect_class),
+      "side_effect_class" => side_effect_class,
+      "status" => "rejected"
+    }
+
+    Vanta.Schema.validate!("execution_step", step)
+  end
+
   defp allowed_action?(task, action_type) do
     if action_type in Map.get(task, "allowed_actions", []) do
       :ok
@@ -82,6 +114,8 @@ defmodule Vanta.ExecutionIRCompiler do
 
   defp expected_effect("apply_reversible_patch"),
     do: "Apply a fixture-local edit with backup metadata."
+
+  defp expected_effect(_action_type), do: "Reject unsupported action before execution."
 
   defp preconditions(_action_type), do: ["fixture_workspace_exists", "action_is_allowed"]
 

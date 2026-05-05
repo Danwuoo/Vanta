@@ -153,7 +153,13 @@ defmodule Vanta.RuntimeFlowTest do
     assert journal["verifier_output_refs"] == [verifier_output["verifier_output_id"]]
     assert journal["commit_status"] == "committed"
     assert journal["rollback_status"] == "not_applicable"
-    assert EvaluationHarness.audit_complete?(journal)
+
+    refute EvaluationHarness.audit_complete?(journal)
+
+    assert EvaluationHarness.audit_complete?(journal, %{
+             evidence_packets: [evidence],
+             verifier_outputs: [verifier_output]
+           }) == false
   end
 
   test "runtime runs positive fixtures end-to-end and replay is consistent" do
@@ -208,11 +214,101 @@ defmodule Vanta.RuntimeFlowTest do
         assert result.task_success?
         assert result.invalid_actions >= 1
         assert result.journal["commit_status"] == "rejected"
+        assert length(result.journal["steps"]) == 1
+        assert length(result.evidence_packets) == 1
+        assert length(result.verifier_outputs) == 1
+
+        assert EvaluationHarness.audit_complete?(result.journal, %{
+                 evidence_packets: result.evidence_packets,
+                 verifier_outputs: result.verifier_outputs
+               })
 
         assert {:ok, replay} = ReplayRunner.replay(task, workspace, result.journal, %{})
         assert replay.consistent?
       end
     )
+  end
+
+  test "compile reject path records auditable evidence without accepted state update" do
+    {task, workspace} = load_fixture("docops_action_not_allowed_001")
+    initial_state = StateManager.from_task(task)
+
+    assert {:ok, result} = Runtime.run_task(task, workspace)
+
+    assert result.status == "rejected"
+    assert result.journal["state_hashes"] == [initial_state["state_hash"]]
+
+    [step] = result.journal["steps"]
+    [evidence] = result.evidence_packets
+    [verifier_output] = result.verifier_outputs
+
+    assert step["status"] == "rejected"
+    assert step["action_type"] == "simulate_patch"
+    assert :ok = Schema.validate("execution_step", step)
+
+    assert evidence["step_id"] == step["step_id"]
+    assert evidence["observation"]["error"] =~ "action_not_allowed"
+    assert :ok = Schema.validate("evidence_packet", evidence)
+
+    assert verifier_output["decision"] == "reject"
+    assert "action_not_allowed_by_task" in verifier_output["violated_constraints"]
+    assert :ok = Schema.validate("verifier_output", verifier_output)
+
+    assert EvaluationHarness.audit_complete?(result.journal, %{
+             evidence_packets: result.evidence_packets,
+             verifier_outputs: result.verifier_outputs
+           })
+  end
+
+  test "audit checklist detects missing refs and reversible rollback metadata gaps" do
+    {task, workspace} = load_fixture("docops_reversible_edit_001")
+
+    assert {:ok, result} = Runtime.run_task(task, workspace)
+
+    artifacts = %{
+      evidence_packets: result.evidence_packets,
+      verifier_outputs: result.verifier_outputs
+    }
+
+    assert EvaluationHarness.audit_complete?(result.journal, artifacts)
+
+    missing_manifest =
+      result.journal
+      |> put_in(["runtime_manifest"], %{})
+      |> EvaluationHarness.audit_result(artifacts)
+
+    refute missing_manifest["complete"]
+    assert "replay_metadata" in missing_manifest["missing"]
+
+    missing_evidence_ref =
+      result.journal
+      |> Map.put("evidence_refs", [])
+      |> EvaluationHarness.audit_result(artifacts)
+
+    refute missing_evidence_ref["complete"]
+    assert "evidence_audit" in missing_evidence_ref["missing"]
+
+    missing_verifier_ref =
+      result.journal
+      |> Map.put("verifier_output_refs", [])
+      |> EvaluationHarness.audit_result(artifacts)
+
+    refute missing_verifier_ref["complete"]
+    assert "verifier_audit" in missing_verifier_ref["missing"]
+
+    evidence_without_backup =
+      result.evidence_packets
+      |> List.first()
+      |> update_in(["observation"], &Map.delete(&1, "backup_metadata"))
+
+    missing_rollback_metadata =
+      EvaluationHarness.audit_result(result.journal, %{
+        evidence_packets: [evidence_without_backup],
+        verifier_outputs: result.verifier_outputs
+      })
+
+    refute missing_rollback_metadata["complete"]
+    assert "commit_audit" in missing_rollback_metadata["missing"]
   end
 
   test "verifier rejects simulated observations that mutate source state" do
