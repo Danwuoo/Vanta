@@ -527,7 +527,7 @@ defmodule Vanta.RuntimeFlowTest do
              )
 
     assert run["status"] == "completed"
-    assert run["fixture_count"] == 7
+    assert run["fixture_count"] == fixture_count()
     assert :ok = Schema.validate("experiment_run", run)
     assert File.exists?(Path.join(out_dir, "run.json"))
     assert File.exists?(Path.join(out_dir, "summary.md"))
@@ -547,6 +547,13 @@ defmodule Vanta.RuntimeFlowTest do
     File.rm_rf!(target)
     File.cp_r!(source, target)
     target
+  end
+
+  defp fixture_count do
+    @fixture_root
+    |> Path.join("*/task.json")
+    |> Path.wildcard()
+    |> length()
   end
 
   defmodule AcceptancePlanner do

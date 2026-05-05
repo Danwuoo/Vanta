@@ -39,13 +39,15 @@ Document operations tasks should require multi-step reasoning, source tracking, 
 - Required provenance is missing.
 - The runtime commits an invalid or unsafe action.
 
-## Stage 1 Fixture Set
+## Stage 1 Fixture Sets
 
-The first fixture set is prepared under
+Document Ops fixtures are prepared under
 `docs/04_experiments/fixtures/document_ops/` and mirrored under
 `test/fixtures/document_ops/`.
 
-Initial fixtures:
+### Initial Seven-Fixture Smoke Set
+
+The initial local smoke set contains:
 
 - `docops_read_traceability_001`
 - `docops_detect_terms_001`
@@ -56,12 +58,30 @@ Initial fixtures:
 - `docops_wrong_diff_001`
 
 These fixtures include positive and negative Stage 1 acceptance cases. They are
-now the seven-fixture local smoke set used by Experiments 001, 002, and 003.
-They supported the minimal loop, verifier hardening, and journal/replay local
-smoke closures.
+the historical seven-fixture local smoke set used by Experiments 001, 002, and
+003. They supported the minimal loop, verifier hardening, and journal/replay
+local smoke closures.
 
-These fixtures are not a broad benchmark. They provide a small controlled
-Document Ops spine for local smoke evidence and regression checks only.
+The initial seven-fixture smoke set is not a broad benchmark. It provides a small
+controlled Document Ops spine for local smoke evidence and regression checks
+only.
+
+### Expanded Document Ops Fixture Set
+
+The expanded fixture set begins after the Experiment 001, 002, and 003 local
+smoke closures. Its first purpose is not to increase sample size in isolation,
+but to add failure and recovery-relevant shapes needed before Phase 4 Targeted
+Recovery:
+
+- Multi-step commit cases.
+- Rollback failure cases.
+- Audit gap cases.
+- Compensable action cases.
+
+Expanded fixtures may change current fixture counts, review item counts, and
+invalid action rates. Tests and runners should compute those values from fixture
+directories and acceptance metadata rather than treating the initial seven-item
+smoke set as a fixed constant.
 
 ## Status
 
@@ -71,8 +91,9 @@ Fixture set prepared with deterministic acceptance recipes and exercised by:
 - Experiment 002 verifier hardening local smoke closure on 2026-05-04.
 - Experiment 003 journal/replay local smoke closure on 2026-05-04.
 
-The current status is local smoke support for Stage 1, not broad benchmark
-coverage or statistical validation.
+The current status is local smoke support for Stage 1 plus preflight preparation
+for expanded fixture coverage. This is not broad benchmark coverage or
+statistical validation.
 
 ## Related Documents
 

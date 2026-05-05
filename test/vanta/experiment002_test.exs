@@ -1,7 +1,7 @@
 defmodule Vanta.Experiment002Test do
   use ExUnit.Case
 
-  alias Vanta.{Experiment002, OpenClawVerifierAdapter, Schema}
+  alias Vanta.{Experiment002, FixtureAcceptance, OpenClawVerifierAdapter, Schema}
 
   @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
 
@@ -130,7 +130,7 @@ defmodule Vanta.Experiment002Test do
              )
 
     assert run["status"] == "completed"
-    assert run["fixture_count"] == 7
+    assert run["fixture_count"] == fixture_count()
     assert :ok = Schema.validate("experiment_run", run)
     assert File.exists?(Path.join(out_dir, "run.json"))
     assert File.exists?(Path.join(out_dir, "summary.md"))
@@ -174,13 +174,13 @@ defmodule Vanta.Experiment002Test do
 
     assert calls
            |> Enum.filter(&match?({:llm_invoked, "structured_evidence_packet", _task_id}, &1))
-           |> length() == 4
+           |> length() == length(valid_structured)
   end
 
   test "experiment002 review items cover compile rejects, execution rejects, wrong diffs, and reversible evidence" do
     review_items = Experiment002.build_review_items(@fixture_root)
 
-    assert length(review_items) == 7
+    assert length(review_items) == review_item_count()
 
     action_not_allowed =
       Enum.find(review_items, &(&1["task_id"] == "docops_action_not_allowed_001"))
@@ -257,6 +257,28 @@ defmodule Vanta.Experiment002Test do
       "evidence_sufficiency_label" => 0.0,
       "verifier_input" => %{"summary" => "mock"}
     }
+  end
+
+  defp fixture_count do
+    fixture_workspaces()
+    |> length()
+  end
+
+  defp review_item_count do
+    fixture_workspaces()
+    |> Enum.map(fn workspace ->
+      {:ok, action_sequence} = FixtureAcceptance.action_sequence(workspace)
+      length(action_sequence["actions"])
+    end)
+    |> Enum.sum()
+  end
+
+  defp fixture_workspaces do
+    @fixture_root
+    |> Path.join("*/task.json")
+    |> Path.wildcard()
+    |> Enum.sort()
+    |> Enum.map(&Path.dirname/1)
   end
 
   defmodule AcceptAllProbeVerifier do

@@ -207,8 +207,9 @@ defmodule Vanta.Experiment003 do
     - audit_completeness: #{run["metrics"]["treatment"]["audit_completeness"]}
     - invalid_action_rate: #{run["metrics"]["treatment"]["invalid_action_rate"]}
 
-    Interpretation: this is a seven-fixture local smoke run for journal audit
-    and replay pipeline stability. It must not be described as validation of H5.
+    Interpretation: this is a local smoke run for journal audit and replay
+    pipeline stability over the current fixture set. It must not be described as
+    validation of H5.
     """
   end
 end
