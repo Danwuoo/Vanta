@@ -169,6 +169,7 @@ defmodule Vanta.RuntimeFlowTest do
         docops_detect_terms_001
         docops_simulate_patch_001
         docops_reversible_edit_001
+        docops_multistep_commit_001
       ),
       fn fixture_id ->
         {task, workspace} = load_fixture(fixture_id)
@@ -197,6 +198,45 @@ defmodule Vanta.RuntimeFlowTest do
         assert replay.consistent?
       end
     )
+  end
+
+  test "runtime records every step in the expanded multi-step commit fixture" do
+    {task, workspace} = load_fixture("docops_multistep_commit_001")
+
+    assert {:ok, result} = Runtime.run_task(task, workspace)
+    assert result.status == "committed"
+    assert result.task_success?
+    assert result.total_actions == 3
+    assert result.invalid_actions == 0
+
+    assert Enum.map(result.steps, & &1["action_type"]) == [
+             "list_files",
+             "simulate_patch",
+             "compute_diff"
+           ]
+
+    assert length(result.journal["steps"]) == 3
+    assert length(result.journal["evidence_refs"]) == 3
+    assert length(result.journal["verifier_output_refs"]) == 3
+    assert length(result.journal["state_hashes"]) == 4
+    assert length(result.evidence_packets) == 3
+    assert length(result.verifier_outputs) == 3
+
+    assert Enum.all?(result.journal["steps"], &(&1["status"] == "committed"))
+    assert Enum.all?(result.verifier_outputs, &(&1["decision"] == "accept"))
+
+    assert EvaluationHarness.audit_complete?(result.journal, %{
+             evidence_packets: result.evidence_packets,
+             verifier_outputs: result.verifier_outputs
+           })
+
+    assert {:ok, replay} =
+             ReplayRunner.replay(task, workspace, result.journal, %{
+               evidence_packets: result.evidence_packets,
+               verifier_outputs: result.verifier_outputs
+             })
+
+    assert replay.consistent?
   end
 
   test "runtime rejects negative fixtures and records invalid action paths" do

@@ -83,6 +83,11 @@ invalid action rates. Tests and runners should compute those values from fixture
 directories and acceptance metadata rather than treating the initial seven-item
 smoke set as a fixed constant.
 
+Current expanded fixtures:
+
+- `docops_multistep_commit_001`: three-step read/simulate/diff commit path for
+  journal, evidence, verifier, and replay coverage without source mutation.
+
 ## Status
 
 Fixture set prepared with deterministic acceptance recipes and exercised by:
