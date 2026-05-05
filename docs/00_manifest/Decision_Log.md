@@ -24,6 +24,7 @@ Record documentation and research decisions that materially affect scope, interf
 | 2026-05-03 | Treat OpenClaw `openai-codex/gpt-5.4-mini` as the candidate canonical local LLM baseline for Experiment 001 smoke runs. | The latest measured local OpenClaw run completed the seven-fixture smoke gate, while still remaining an OpenClaw harness baseline rather than a pure model-only or statistically validated canonical baseline. | Accepted |
 | 2026-05-03 | Close Stage 1 and Experiment 001 as `Closed: local smoke completed`. | The measured OpenClaw candidate canonical local baseline run satisfied the Stage 1 local smoke gate; broader baselines, larger samples, false accept / false reject analysis, and audit completeness remain deferred work. | Accepted |
 | 2026-05-04 | Close Phase 2 and Experiment 002 verifier hardening as `Closed: local smoke completed`. | The `20260504_205316` run shows the rules-first structured verifier corrected structured-arm false accept in the seven-fixture local smoke; this is not broad validation of H2. | Accepted |
+| 2026-05-04 | Close Phase 3 and Experiment 003 journal/replay audit as `Closed: local smoke completed`. | The `20260504_215304` run shows treatment `commit_integrity_score`, `replay_consistency`, and `audit_completeness` all at `1.0` on the seven-fixture local smoke; this is not broad validation of H5. | Accepted |
 
 ## Post-Stage-1 Open Decisions
 

@@ -11,14 +11,15 @@ Map how documents relate so readers can navigate from theory to implementation w
 3. [Stage 1 MVP Entry Gate](Stage_1_MVP_Entry_Gate.md)
 4. [Stage 1 Experiment 001 Closure](Stage_1_Experiment_001_Closure.md)
 5. [Stage 1 Experiment 002 Closure](Stage_1_Experiment_002_Closure.md)
-6. [Design Theory](../01_theory/Design_Theory.md)
-7. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-8. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-9. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-10. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-11. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-12. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-13. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+6. [Stage 1 Experiment 003 Closure](Stage_1_Experiment_003_Closure.md)
+7. [Design Theory](../01_theory/Design_Theory.md)
+8. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+9. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+10. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+11. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+12. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+13. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+14. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -52,6 +53,12 @@ for H1 or promote the OpenClaw harness run to a pure model-only baseline.
 Phase 2 verifier hardening local smoke after the measured Experiment 002 run at
 `20260504_205316`. It records a rules-first structured verifier correction, but
 it does not claim broad validation of H2.
+
+[Stage 1 Experiment 003 Closure](Stage_1_Experiment_003_Closure.md) closes the
+Phase 3 journal audit and replay local smoke after the measured Experiment 003
+run at `20260504_215304`. It records audit-complete, replay-consistent treatment
+results on seven Document Ops fixtures, but it does not claim broad validation
+of H5.
 
 ## Translation Sources
 
