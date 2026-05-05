@@ -56,15 +56,28 @@ Initial fixtures:
 - `docops_wrong_diff_001`
 
 These fixtures include positive and negative Stage 1 acceptance cases. They are
-readiness artifacts for Phase 1 runtime testing and Experiment 001 execution.
-They are not Experiment 001 results.
+now the seven-fixture local smoke set used by Experiments 001, 002, and 003.
+They supported the minimal loop, verifier hardening, and journal/replay local
+smoke closures.
+
+These fixtures are not a broad benchmark. They provide a small controlled
+Document Ops spine for local smoke evidence and regression checks only.
 
 ## Status
 
-Fixture set prepared with deterministic acceptance recipes. Experiment not yet
-run with a configured LLM baseline.
+Fixture set prepared with deterministic acceptance recipes and exercised by:
+
+- Experiment 001 minimal loop local smoke closure on 2026-05-03.
+- Experiment 002 verifier hardening local smoke closure on 2026-05-04.
+- Experiment 003 journal/replay local smoke closure on 2026-05-04.
+
+The current status is local smoke support for Stage 1, not broad benchmark
+coverage or statistical validation.
 
 ## Related Documents
 
 - [Benchmark Task Format](Benchmark_Task_Format.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+- [Stage 1 Experiment 001 Closure](../00_manifest/Stage_1_Experiment_001_Closure.md)
+- [Stage 1 Experiment 002 Closure](../00_manifest/Stage_1_Experiment_002_Closure.md)
+- [Stage 1 Experiment 003 Closure](../00_manifest/Stage_1_Experiment_003_Closure.md)
