@@ -58,7 +58,8 @@ replay-consistent treatment results on the seven local Document Ops fixtures.
   broader reviewability measure.
 - Revisit commit integrity thresholds when multi-step and compensable action
   fixtures are added.
-- Defer Phase 4 Targeted Recovery work until the fixture expansion is in place.
+- Phase 4 Targeted Recovery is tracked separately by
+  [Stage 1 Experiment 004 Closure](Stage_1_Experiment_004_Closure.md).
 
 ## Related Documents
 

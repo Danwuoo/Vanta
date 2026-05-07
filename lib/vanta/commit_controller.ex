@@ -20,6 +20,9 @@ defmodule Vanta.CommitController do
           not Map.has_key?(evidence["observation"], "backup_metadata") ->
         {:error, :missing_rollback_metadata}
 
+      step["side_effect_class"] == "COMPENSABLE" ->
+        {:error, :compensation_required}
+
       true ->
         committed_state =
           StateManager.append_event(state, event_from(step, evidence["observation"]))

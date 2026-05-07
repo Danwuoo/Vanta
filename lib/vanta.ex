@@ -4,7 +4,7 @@ defmodule Vanta do
   """
 
   @schema_version "stage1-mvp-v0"
-  @allowed_side_effect_classes ~w(READ_ONLY SIMULATED REVERSIBLE)
+  @allowed_side_effect_classes ~w(READ_ONLY SIMULATED REVERSIBLE COMPENSABLE)
   @action_types ~w(
     read_file
     list_files
@@ -12,6 +12,7 @@ defmodule Vanta do
     simulate_patch
     compute_diff
     apply_reversible_patch
+    record_compensable_action
     validate_artifact
   )
 

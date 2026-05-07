@@ -16,12 +16,25 @@ Define initial labels for runtime failure analysis and targeted recovery experim
 | `F_EVAL` | Evaluation Failure | Verifier, confidence, calibration, or risk judgment is wrong. |
 | `F_EXEC` | Execution Governance Failure | Side effect, commit, rollback, replay, or tool provenance governance fails. |
 
+## Phase 4 `F_EXEC` Sublabels
+
+These labels are Experiment 004 scoring labels under `F_EXEC`; they are not new
+top-level taxonomy classes.
+
+| Code | Parent | Description |
+| --- | --- | --- |
+| `F_EXEC_ROLLBACK_FAILURE` | `F_EXEC` | Reversible action cannot be restored because rollback backup or metadata is missing or unusable. |
+| `F_EXEC_AUDIT_GAP` | `F_EXEC` | Episode Journal or related artifacts omit refs needed for audit completeness. |
+| `F_EXEC_COMPENSATION_REQUIRED` | `F_EXEC` | Action is compensable rather than strictly rollbackable and needs explicit compensation handling. |
+
 ## Labeling Rules
 
 - Use multi-label attribution when multiple causes materially contributed.
 - Prefer direct evidence over narrative plausibility.
 - Mark `unknown` when logs are insufficient.
 - Record whether the proposed recovery targeted the labeled failure class.
+- For Experiment 004, fixture oracle labels are used only for scoring; treatment
+  must use the OpenClaw recovery decision.
 
 ## Open Questions
 

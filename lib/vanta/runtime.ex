@@ -264,10 +264,16 @@ defmodule Vanta.Runtime do
   defp rollback_if_needed(_workspace, %{"side_effect_class" => "REVERSIBLE"}, _observation),
     do: "unavailable"
 
+  defp rollback_if_needed(_workspace, %{"side_effect_class" => "COMPENSABLE"}, _observation),
+    do: "compensation_required"
+
   defp rollback_if_needed(_workspace, _step, _observation), do: "not_applicable"
 
   defp rollback_status_after_commit(%{"side_effect_class" => "REVERSIBLE"}, _status),
     do: "available"
+
+  defp rollback_status_after_commit(%{"side_effect_class" => "COMPENSABLE"}, _status),
+    do: "compensation_required"
 
   defp rollback_status_after_commit(_step, status), do: status
 

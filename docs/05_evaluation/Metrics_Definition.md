@@ -81,6 +81,67 @@ empirical baselines exist.
 - Interpretation: Higher is better; it measures reviewability, not correctness by itself.
 - Failure modes: Complete logs can still contain incorrect evidence or wrong verifier decisions.
 
+## Phase 4 Recovery Metrics
+
+### `recovery_success_rate`
+
+- Definition: Fraction of recovery attempts that satisfy the fixture-specific
+  recovery assertions.
+- Computation rule: `successful_recoveries / recovery_attempts`.
+- Interpretation: Higher is better, but it must be read with compute cost and
+  failure-label accuracy.
+
+### `targeted_recovery_success`
+
+- Definition: Fraction of tasks where the selected recovery policy matches the
+  expected recovery policy and the recovery attempt succeeds.
+- Computation rule: `policy_matched_and_successful / recovery_attempts`.
+- Interpretation: Measures whether recovery repaired the intended failure layer
+  rather than merely rerunning work.
+
+### `failure_label_accuracy`
+
+- Definition: Fraction of tasks where the recovery classifier includes the
+  fixture oracle failure labels.
+- Computation rule: `correct_failure_label_sets / labeled_recovery_tasks`.
+- Interpretation: Scores classification for Experiment 004 only; fixture oracle
+  labels are used for scoring, not treatment input.
+
+### `repeated_failure_rate`
+
+- Definition: Fraction of recovery attempts that leave the original failure
+  unresolved.
+- Computation rule: `unresolved_recovery_attempts / recovery_attempts`.
+- Interpretation: Lower is better and is expected to expose blind-retry limits.
+
+### `recovery_compute_cost`
+
+- Definition: Matched local compute ledger for Experiment 004.
+- Computation rule: report model-call count, prompt chars, response chars,
+  estimated input tokens, estimated output tokens, and action-attempt ceiling.
+- Interpretation: Character-derived token counts are estimates unless the
+  backend exposes exact usage.
+
+### `rollback_recovery_success`
+
+- Definition: Recovery success rate on rollback-failure fixtures.
+- Computation rule: successful rollback recoveries divided by rollback-failure
+  fixture attempts.
+
+### `audit_gap_closure_rate`
+
+- Definition: Fraction of audit-gap fixtures whose repaired audit record passes
+  the audit checklist.
+- Computation rule: audit-gap recoveries with complete repaired audit divided by
+  audit-gap fixture attempts.
+
+### `compensation_policy_accuracy`
+
+- Definition: Fraction of compensable-action fixtures where the system selects
+  and completes compensation treatment rather than claiming rollback.
+- Computation rule: correct compensation policy successes divided by
+  compensable-action fixture attempts.
+
 ### Experiment 003 Audit Checklist
 
 An Episode Journal is audit-complete for the Experiment 003 local smoke only
@@ -102,6 +163,72 @@ when all checklist groups pass:
   allowed side-effect class, and reversible backup metadata when applicable.
 - `rollback_memory_boundary`: rollback status is explicit and Stage 1
   `memory_write_effects` remains empty.
+
+## Phase 5 Working Set Metrics
+
+### `working_set_budget_adherence`
+
+- Definition: Fraction of evaluated context artifacts whose selected context
+  stays within the fixed prompt-character budget.
+- Formula or computation rule: `budget_adherent_contexts / total_contexts`.
+- Required fields: context artifact ID, arm, max context chars, selected context
+  chars, token estimation method, evaluator identity.
+- Interpretation: Higher is better; Phase 5 local smoke requires treatment
+  adherence of `1.0`.
+- Failure modes: Character-derived token estimates are not exact token usage;
+  prompt templates must be fixed before comparing runs.
+
+### `working_set_provenance_completeness`
+
+- Definition: Fraction of selected working-set refs with complete provenance
+  metadata.
+- Formula or computation rule:
+  `selected_refs_with_source_path_hash / selected_refs`.
+- Required fields: working set ID, selected ref IDs, ref kind, source, path,
+  content hash, evaluator identity.
+- Interpretation: Higher is better; missing provenance means the working set is
+  not auditable even if task output succeeds.
+- Failure modes: A ref can have complete provenance and still be irrelevant or
+  insufficient for the task.
+
+### `context_omission_error_rate`
+
+- Definition: Fraction of fixture-required refs omitted from the context
+  artifact used by an arm.
+- Formula or computation rule: `omitted_required_refs / required_refs`.
+- Required fields: task ID, arm, fixture required refs, included refs, omitted
+  refs, evaluator identity.
+- Interpretation: Lower is better; Phase 5 expects treatment to reduce omission
+  relative to bounded raw trace under the same budget.
+- Failure modes: Fixture oracles may under-specify required context, and this
+  metric does not measure whether the model used included context correctly.
+
+### `working_set_relevance_score`
+
+- Definition: Mean relevance of included refs according to fixture relevance
+  metadata.
+- Formula or computation rule:
+  `relevant_included_refs / max(included_refs, 1)`, with required refs counted
+  as relevant.
+- Required fields: task ID, arm, included refs, fixture relevant refs, fixture
+  irrelevant refs, evaluator identity.
+- Interpretation: Higher is better; it measures selection precision, not final
+  correctness.
+- Failure modes: A small but incomplete context can score high if required refs
+  are missing, so it must be read with `context_omission_error_rate`.
+
+### `long_task_stability`
+
+- Definition: Fraction of long-context Document Ops fixtures that complete
+  without task failure, unsupported commits, or memory writes.
+- Formula or computation rule:
+  `stable_long_tasks / total_long_context_tasks`.
+- Required fields: task ID, arm, task success label, unsupported commit count,
+  memory write count, runtime status, evaluator identity.
+- Interpretation: Higher is better; Phase 5 requires treatment stability to be
+  at least baseline stability.
+- Failure modes: Smoke-scale fixture counts do not establish statistical
+  stability and must not be interpreted as broad H3 validation.
 
 ## Stage 1 Local Smoke Gate
 

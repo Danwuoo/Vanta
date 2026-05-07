@@ -35,6 +35,34 @@
         "type": "string"
       }
     },
+    "expected_failure_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "expected_recovery_policy": {
+      "type": "string"
+    },
+    "expected_rollback_status": {
+      "type": "string",
+      "enum": [
+        "not_applicable",
+        "available",
+        "completed",
+        "failed",
+        "unavailable",
+        "compensation_required",
+        "compensation_completed",
+        "irreversible_escalation"
+      ]
+    },
+    "recovery_assertions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "action_sequence": {
       "type": "object"
     }

@@ -3,7 +3,7 @@ defmodule Vanta.ActionExecutor do
   Executes or simulates the fixture-local action set allowed in Stage 1.
   """
 
-  alias Vanta.{Hash, PathGuard}
+  alias Vanta.{EvaluationHarness, Hash, PathGuard, Schema}
 
   def execute(workspace, %{"action_type" => "read_file", "action_payload" => payload}) do
     path = Map.fetch!(payload, "path")
@@ -74,6 +74,23 @@ defmodule Vanta.ActionExecutor do
     patch_result(workspace, payload, true)
   end
 
+  def execute(_workspace, %{
+        "action_type" => "record_compensable_action",
+        "action_payload" => payload
+      }) do
+    {:ok,
+     %{
+       "kind" => "record_compensable_action",
+       "receipt_id" => Map.fetch!(payload, "receipt_id"),
+       "result_summary" =>
+         Map.get(payload, "result_summary", "Fixture-local compensable action receipt."),
+       "compensation_hint" => Map.get(payload, "compensation_hint"),
+       "compensation_required" => true,
+       "rollback_available" => false,
+       "mutated" => false
+     }}
+  end
+
   def execute(workspace, %{"action_type" => "validate_artifact", "action_payload" => payload}) do
     case payload do
       %{"validation" => "traceability_links", "path" => path} ->
@@ -81,6 +98,9 @@ defmodule Vanta.ActionExecutor do
 
       %{"validation" => "terminology_consistency", "paths" => paths} when is_list(paths) ->
         validate_terminology_consistency(workspace, paths)
+
+      %{"validation" => "episode_audit_refs", "path" => path} ->
+        validate_episode_audit_refs(workspace, path, Map.get(payload, "artifacts_path"))
 
       _ ->
         validate_exists(workspace, payload)
@@ -172,6 +192,7 @@ defmodule Vanta.ActionExecutor do
       if write? do
         backup_metadata = write_backup!(workspace, path, original, candidate, diff)
         File.write!(abs_path, candidate)
+        maybe_drop_backup!(workspace, backup_metadata, payload)
 
         {:ok,
          observation
@@ -183,6 +204,36 @@ defmodule Vanta.ActionExecutor do
     else
       {:error, {:find_text_not_found, find}}
     end
+  end
+
+  defp validate_episode_audit_refs(workspace, path, artifacts_path) do
+    journal =
+      workspace
+      |> PathGuard.resolve!(path)
+      |> Schema.load_json!()
+
+    artifacts =
+      if is_binary(artifacts_path) do
+        workspace
+        |> PathGuard.resolve!(artifacts_path)
+        |> Schema.load_json!()
+      else
+        %{}
+      end
+
+    audit = EvaluationHarness.audit_result(journal, artifacts)
+
+    {:ok,
+     %{
+       "kind" => "validate_artifact",
+       "validation" => "episode_audit_refs",
+       "path" => path,
+       "artifacts_path" => artifacts_path,
+       "audit_complete" => audit["complete"],
+       "missing" => audit["missing"],
+       "checklist" => audit["checklist"],
+       "mutated" => false
+     }}
   end
 
   defp write_backup!(workspace, path, original, candidate, diff) do
@@ -206,6 +257,19 @@ defmodule Vanta.ActionExecutor do
     File.write!(metadata_path, Jason.encode!(metadata, pretty: true))
     metadata
   end
+
+  defp maybe_drop_backup!(workspace, metadata, %{"drop_backup_after_write" => true}) do
+    metadata
+    |> Map.take(["backup_path", "metadata_path"])
+    |> Map.values()
+    |> Enum.each(fn path ->
+      workspace
+      |> PathGuard.resolve!(path)
+      |> File.rm()
+    end)
+  end
+
+  defp maybe_drop_backup!(_workspace, _metadata, _payload), do: :ok
 
   defp simple_diff(original, candidate) do
     original_lines = String.split(original, "\n", trim: false)

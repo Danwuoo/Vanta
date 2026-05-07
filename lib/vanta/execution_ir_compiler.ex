@@ -10,7 +10,8 @@ defmodule Vanta.ExecutionIRCompiler do
     "validate_artifact" => "READ_ONLY",
     "simulate_patch" => "SIMULATED",
     "compute_diff" => "SIMULATED",
-    "apply_reversible_patch" => "REVERSIBLE"
+    "apply_reversible_patch" => "REVERSIBLE",
+    "record_compensable_action" => "COMPENSABLE"
   }
 
   def compile(task, episode_id, action_type, payload \\ %{}) do
@@ -115,6 +116,9 @@ defmodule Vanta.ExecutionIRCompiler do
   defp expected_effect("apply_reversible_patch"),
     do: "Apply a fixture-local edit with backup metadata."
 
+  defp expected_effect("record_compensable_action"),
+    do: "Record a fixture-local compensable action receipt without executing an external effect."
+
   defp expected_effect(_action_type), do: "Reject unsupported action before execution."
 
   defp preconditions(_action_type), do: ["fixture_workspace_exists", "action_is_allowed"]
@@ -122,8 +126,12 @@ defmodule Vanta.ExecutionIRCompiler do
   defp postconditions("apply_reversible_patch"),
     do: ["backup_metadata_exists", "change_is_rollbackable"]
 
+  defp postconditions("record_compensable_action"),
+    do: ["compensation_record_required", "rollback_not_claimed"]
+
   defp postconditions(_action_type), do: ["source_files_preserved_unless_explicitly_allowed"]
 
   defp rollback_policy("REVERSIBLE"), do: "fixture_backup_restore"
+  defp rollback_policy("COMPENSABLE"), do: "compensation_record"
   defp rollback_policy(_side_effect_class), do: "not_applicable"
 end

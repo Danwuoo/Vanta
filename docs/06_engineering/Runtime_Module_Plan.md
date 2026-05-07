@@ -21,6 +21,13 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 | Runtime Orchestrator | Run `state -> plan -> action -> evidence -> verify -> commit / abort`. | Implemented as `Vanta.Runtime.run_task/3` |
 | Baseline Runner | Execute LLM action sequences without governance artifacts. | Implemented for Experiment 001 baseline |
 | Replay Runner | Re-run journal steps in a clean fixture workspace. | Implemented for deterministic fixture replay |
+| OpenClaw Recovery Adapter | Classify Phase 4 failures and propose a recovery policy through the OpenClaw local harness. | Implemented and exercised by Experiment 004 local smoke |
+| Recovery Policy | Execute allowlisted fixture-local recovery policies. | Implemented and exercised by rollback reconstruction, audit-ref repair, and compensation record creation fixtures |
+| Recovery Runner | Run failed episodes, request Recovery Decisions, and apply targeted recovery. | Implemented and exercised by Phase 4 fixtures |
+| Blind Retry Runner | Repeat the original action sequence with matched budget and no failure labels or policy hints. | Implemented and exercised by Experiment 004 baseline |
+| Working Set Compiler | Compile schema-valid, reference-backed `WorkingSet` artifacts from explicit candidate refs under a fixed budget. | Planned for Phase 5 / Experiment 005 |
+| Raw Trace Context Builder | Build bounded raw-trace baseline context under the same budget as treatment. | Planned for Phase 5 / Experiment 005 |
+| OpenClaw Context Planner Adapter | Ask OpenClaw for JSON action sequences using embedded baseline or working-set context only. | Planned for Phase 5 / Experiment 005 |
 
 ## Planner Adapter Notes
 
@@ -35,6 +42,9 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 - `Vanta.OpenClawVerifierAdapter` reuses the OpenClaw local harness pattern for
   Experiment 002 verifier judging and normalizes malformed verifier responses to
   `abstain` for parse failures.
+- `Vanta.OpenClawContextPlannerAdapter` reuses the local harness pattern for
+  Experiment 005. It must not allow tool use inside the OpenClaw prompt and must
+  label outputs as OpenClaw harness results, not pure model-only results.
 
 ## Stage 1 Closure Status
 
@@ -48,8 +58,13 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
 - Tool outputs must be normalized before state update.
 - Memory writes are deferred and disallowed in Stage 1.
 - Irreversible actions are out of MVP scope.
-- Stage 1 allows only `READ_ONLY`, `SIMULATED`, and `REVERSIBLE` fixture-local
-  Document Ops actions.
+- Stage 1 smoke used only `READ_ONLY`, `SIMULATED`, and `REVERSIBLE`
+  fixture-local Document Ops actions. Phase 4 adds fixture-local
+  `COMPENSABLE` handling without executing irreversible external actions.
+- Phase 5 `Working Set Compiler v0` is an experiment wrapper artifact producer
+  and must not change the `Vanta.Runtime.run_task/3` commit path.
+- Phase 5 must not introduce memory writes, full memory dumps, or raw tool log
+  dumps as working sets.
 
 ## Post-Stage-1 Open Questions
 

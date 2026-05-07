@@ -35,6 +35,30 @@ defmodule Vanta.FixtureAcceptance do
     |> Map.get("expected_task_success")
   end
 
+  def expected_failure_labels(workspace) do
+    workspace
+    |> load()
+    |> Map.get("expected_failure_labels", [])
+  end
+
+  def expected_recovery_policy(workspace) do
+    workspace
+    |> load()
+    |> Map.get("expected_recovery_policy")
+  end
+
+  def expected_rollback_status(workspace) do
+    workspace
+    |> load()
+    |> Map.get("expected_rollback_status")
+  end
+
+  def recovery_assertions(workspace) do
+    workspace
+    |> load()
+    |> Map.get("recovery_assertions", [])
+  end
+
   def evaluate_task(workspace, runtime_status, invalid_actions, observations) do
     acceptance = load(workspace)
     expected_status = Map.get(acceptance, "expected_runtime_status")
@@ -78,6 +102,10 @@ defmodule Vanta.FixtureAcceptance do
           "inconsistencies",
           "terminology_inconsistencies_mismatch"
         )
+
+      "episode_audit_refs" ->
+        expected_json(workspace, "audit_result.json")
+        |> compare_audit_result(observation)
 
       _other ->
         :not_applicable
@@ -123,6 +151,20 @@ defmodule Vanta.FixtureAcceptance do
   end
 
   defp compare_expected_key(:missing, _observation, _key, _reason), do: :not_applicable
+
+  defp compare_audit_result({:ok, expected}, observation) do
+    expected_missing = Enum.sort(Map.get(expected, "missing", []))
+    actual_missing = observation |> Map.get("missing", []) |> Enum.sort()
+
+    if Map.get(expected, "complete") == Map.get(observation, "audit_complete") and
+         expected_missing == actual_missing do
+      :ok
+    else
+      {:error, "audit_result_mismatch"}
+    end
+  end
+
+  defp compare_audit_result(:missing, _observation), do: :not_applicable
 
   defp trim_newline(value) when is_binary(value), do: String.trim_trailing(value)
 end

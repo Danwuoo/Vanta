@@ -117,6 +117,7 @@ defmodule Vanta.OpenClawPlannerAdapter do
     - simulate_patch: {"path":"inputs/file.md","find":"exact text","replace":"replacement text"}
     - compute_diff: {"path":"inputs/file.md","candidate_content":"complete candidate file content"}
     - apply_reversible_patch: {"path":"inputs/file.md","find":"exact text","replace":"replacement text"}
+    - record_compensable_action: {"receipt_id":"receipt-id","result_summary":"summary","compensation_hint":"how to compensate"}
 
     Rules:
     - Do not use read_file as a substitute when the task asks to simulate a

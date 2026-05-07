@@ -37,13 +37,26 @@ Define a staged engineering path that follows the research priorities and avoids
 
 - Add Failure Taxonomy labels and basic recovery policies.
 - Run compute-matched ablation against blind retry.
-- Status: next phase, not yet started.
-- Entry need: expanded Document Ops fixtures for multi-step commit, rollback
-  failure, audit gap, and compensable action cases.
+- Status: `Closed: local smoke completed` on 2026-05-06.
+- Entry need satisfied for controlled Document Ops recovery fixtures:
+  multi-step commit, rollback failure, audit gap, and compensable action cases.
+- Remaining work: expand beyond the three controlled recovery fixtures, add
+  ambiguous or multi-label failures, add human or secondary labels, and avoid
+  broad H4 validation claims until larger measured ablations exist.
 
 ## Phase 5: Context OS Candidate
 
-- Add working set compiler only after earlier phases produce stable logs and metrics.
+- Implement `Working Set Compiler v0` only, not full Context OS.
+- Compare bounded raw trace against schema-valid, reference-backed
+  `WorkingSet` artifacts on five Document Ops long-context fixtures.
+- Keep model, prompt budget, response budget, latency controls, and OpenClaw
+  local harness interface fixed for Experiment 005 local smoke.
+- Do not add memory writes, full memory dumps, learned retrieval, or raw tool
+  log dumps.
+- Status: `Closed: local smoke completed` on 2026-05-07.
+- Remaining work: expand beyond five controlled Document Ops long-context
+  fixtures, add human or secondary omission/relevance labels, and avoid broad H3
+  or full Context OS validation claims until larger measured ablations exist.
 
 ## Post-Stage-1 Open Questions
 

@@ -23,6 +23,10 @@ Define the minimum fields for benchmark tasks before they are serialized into `b
 - Verifier accept/reject label.
 - Evidence sufficiency score.
 - Audit completeness label.
+- Failure labels and expected recovery policy for recovery fixtures.
+- Recovery assertions for targeted recovery experiments.
+- Required, relevant, irrelevant, and omission-trap refs for working-set
+  fixtures.
 
 ## Open Questions
 

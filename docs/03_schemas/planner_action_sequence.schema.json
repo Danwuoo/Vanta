@@ -32,6 +32,7 @@
               "simulate_patch",
               "compute_diff",
               "apply_reversible_patch",
+              "record_compensable_action",
               "validate_artifact"
             ]
           },

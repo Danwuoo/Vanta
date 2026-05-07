@@ -14,6 +14,7 @@ defmodule Vanta.Schema do
     "experiment_run" => "experiment_run.schema.json",
     "fixture_acceptance" => "fixture_acceptance.schema.json",
     "planner_action_sequence" => "planner_action_sequence.schema.json",
+    "recovery_decision" => "recovery_decision.schema.json",
     "verifier_output" => "verifier_output.schema.json",
     "working_set" => "working_set.schema.json",
     "eval_result" => "eval_result.schema.json"

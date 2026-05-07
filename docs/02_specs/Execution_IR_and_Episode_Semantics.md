@@ -43,12 +43,15 @@ Define how planned actions are represented as executable, auditable, and replay-
 - Execution records and raw tool logs must not be treated as canonical state.
 - Dependency edges should represent causal, evidence, or ordering constraints.
 - Side-effect class determines governance requirements.
+- Phase 4 represents compensable but non-strictly-rollbackable local fixture
+  actions with `COMPENSABLE` and a compensation policy reference.
 
 ## Open Questions
 
 - What is the minimum dependency graph representation for Stage 1?
 - Should rollback policy be inline or referenced by policy ID?
-- How should compensable but non-reversible actions be represented?
+- How should `COMPENSABLE` generalize beyond fixture-local Document Ops without
+  executing irreversible external actions?
 
 ## Related Documents
 

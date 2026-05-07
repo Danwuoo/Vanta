@@ -41,6 +41,8 @@ Define the semantics for committing, aborting, rolling back, reconciling, and re
 - `abort` stops an uncommitted action path.
 - `rollback` applies only to reversible changes.
 - `reconcile` or compensation is required when external effects cannot be strictly rolled back.
+- Phase 4 fixture-local compensable actions must record compensation treatment
+  rather than claiming strict rollback.
 - `replay` requires enough versioned runtime and tool metadata to reconstruct the episode.
 - Episode Journal records audit and replay data; it is not durable memory.
 
@@ -48,7 +50,8 @@ Define the semantics for committing, aborting, rolling back, reconciling, and re
 
 - What side-effect classes are allowed in the first MVP?
 - What state hash granularity is required?
-- How should compensation be represented for non-reversible actions?
+- How should compensation be represented for non-reversible actions beyond the
+  Phase 4 fixture-local compensation record?
 
 ## Related Documents
 

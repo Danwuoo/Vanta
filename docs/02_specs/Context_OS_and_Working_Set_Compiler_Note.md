@@ -10,6 +10,10 @@ contract without pulling full Context OS optimization into Stage 1.
 Stage 0 boundary note. This is not a full Context OS implementation spec and not
 an empirical claim that working-set compilation improves performance.
 
+Phase 5 narrows this note into `Working Set Compiler v0`: deterministic,
+reference-backed selection for local Document Ops smoke only. Phase 5 remains a
+candidate compiler test, not full Context OS.
+
 ## Scope
 
 - Working set artifact boundaries.
@@ -25,6 +29,7 @@ an empirical claim that working-set compilation improves performance.
 - Training on runtime feedback.
 - Treating a larger context window as equivalent to Context OS.
 - Treating raw tool logs or full memory dumps as a working set.
+- Writing memory, appending memory, or treating memory append as learning.
 
 ## Inputs
 
@@ -66,11 +71,36 @@ The minimum data contract is defined by
 uses references and provenance instead of raw context dumps, raw tool logs, or
 full memory dumps.
 
+## Phase 5 v0 Compiler Boundary
+
+`Working Set Compiler v0` takes only explicit candidate refs:
+
+- canonical state refs
+- Evidence Packet refs
+- constraint refs
+- recovery context refs
+
+The compiler may include candidate memory refs only when the fixture provides a
+specific reference. It must not read a memory store, dump memory, or write
+memory.
+
+The v0 policy is deterministic:
+
+- select required refs first
+- select optional refs by fixture metadata and stable kind priority
+- preserve provenance for every selected ref
+- record omitted optional refs in `omitted_context_notes`
+- reject `raw_tool_log`, `full_memory_dump`, and `memory_write` refs
+
+The v0 output is useful only if it is schema-valid, budget-aware, and auditable.
+It is not proof that the selected context is sufficient.
+
 ## Open Questions
 
-- What selection policy is sufficient for the first measured Context OS
-  candidate?
-- What label scale should measure context omission or provenance loss?
+- What selection policy beyond deterministic reference-backed v0 is justified
+  after Experiment 005?
+- What label scale should measure context omission or provenance loss beyond
+  fixture oracles?
 - Which failures should trigger working-set recompilation rather than verifier
   rejection or targeted recovery?
 

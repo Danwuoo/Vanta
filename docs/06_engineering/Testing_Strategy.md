@@ -38,6 +38,15 @@ Define how implementation should be tested once runtime code exists.
 - Experiment 002 tests cover mock OpenClaw verifier output parsing, JSON fence
   parsing, parse-failure-to-abstain normalization, fixture oracle review item
   generation, strict false-reject policy, and compact three-arm metrics.
+- Experiment 004 tests cover OpenClaw recovery output parsing, JSON fence
+  parsing, malformed-output normalization to `no_recovery`, rollback-failure
+  recovery, audit-gap repair, compensation record creation, and matched-budget
+  blind retry metrics.
+- Experiment 005 tests cover schema-valid `WorkingSet` generation, budget
+  overflow notes, provenance completeness, rejection of raw tool log / full
+  memory dump / memory write refs, bounded raw trace truncation, OpenClaw
+  context planner JSON parsing, mock experiment metrics, and fixture mirror
+  synchronization.
 
 ## Open Questions
 

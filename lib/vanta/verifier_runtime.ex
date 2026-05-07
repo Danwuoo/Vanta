@@ -86,6 +86,8 @@ defmodule Vanta.VerifierRuntime do
     |> require_read_only_semantics(step, observation)
     |> require_simulated_semantics(step, observation, workspace)
     |> require_reversible_semantics(step, observation, workspace)
+    |> require_compensable_semantics(step, observation)
+    |> require_audit_validation(observation)
     |> require_fixture_acceptance(observation, workspace)
     |> Enum.uniq()
   end
@@ -220,6 +222,33 @@ defmodule Vanta.VerifierRuntime do
   end
 
   defp require_reversible_semantics(violations, _step, _observation, _workspace), do: violations
+
+  defp require_compensable_semantics(
+         violations,
+         %{"side_effect_class" => "COMPENSABLE"},
+         observation
+       ) do
+    if Map.get(observation, "compensation_required", false) do
+      ["compensation_required" | violations]
+    else
+      violations
+    end
+  end
+
+  defp require_compensable_semantics(violations, _step, _observation), do: violations
+
+  defp require_audit_validation(
+         violations,
+         %{
+           "kind" => "validate_artifact",
+           "validation" => "episode_audit_refs",
+           "audit_complete" => false
+         }
+       ) do
+    ["audit_gap_detected" | violations]
+  end
+
+  defp require_audit_validation(violations, _observation), do: violations
 
   defp require_mutated_false(violations, observation, violation) do
     if Map.get(observation, "mutated", false) do
