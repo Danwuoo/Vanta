@@ -25,9 +25,9 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 | Recovery Policy | Execute allowlisted fixture-local recovery policies. | Implemented and exercised by rollback reconstruction, audit-ref repair, and compensation record creation fixtures |
 | Recovery Runner | Run failed episodes, request Recovery Decisions, and apply targeted recovery. | Implemented and exercised by Phase 4 fixtures |
 | Blind Retry Runner | Repeat the original action sequence with matched budget and no failure labels or policy hints. | Implemented and exercised by Experiment 004 baseline |
-| Working Set Compiler | Compile schema-valid, reference-backed `WorkingSet` artifacts from explicit candidate refs under a fixed budget. | Planned for Phase 5 / Experiment 005 |
-| Raw Trace Context Builder | Build bounded raw-trace baseline context under the same budget as treatment. | Planned for Phase 5 / Experiment 005 |
-| OpenClaw Context Planner Adapter | Ask OpenClaw for JSON action sequences using embedded baseline or working-set context only. | Planned for Phase 5 / Experiment 005 |
+| Working Set Compiler | Compile schema-valid, reference-backed `WorkingSet` artifacts from explicit candidate refs under a fixed budget. | Implemented and exercised by Experiment 005 local smoke |
+| Raw Trace Context Builder | Build bounded raw-trace baseline context under the same budget as treatment. | Implemented and exercised by Experiment 005 baseline local smoke |
+| OpenClaw Context Planner Adapter | Ask OpenClaw for JSON action sequences using embedded baseline or working-set context only. | Implemented and exercised by Experiment 005 local smoke |
 
 ## Planner Adapter Notes
 
@@ -61,10 +61,10 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
 - Stage 1 smoke used only `READ_ONLY`, `SIMULATED`, and `REVERSIBLE`
   fixture-local Document Ops actions. Phase 4 adds fixture-local
   `COMPENSABLE` handling without executing irreversible external actions.
-- Phase 5 `Working Set Compiler v0` is an experiment wrapper artifact producer
-  and must not change the `Vanta.Runtime.run_task/3` commit path.
-- Phase 5 must not introduce memory writes, full memory dumps, or raw tool log
-  dumps as working sets.
+- Phase 5 context modules are experiment wrapper and context-planning path
+  components. They must not change the `Vanta.Runtime.run_task/3` commit path.
+- Phase 5 must not introduce memory writes, full Context OS, learned retrieval,
+  compression, full memory dumps, or raw tool log dumps as working sets.
 
 ## Post-Stage-1 Open Questions
 

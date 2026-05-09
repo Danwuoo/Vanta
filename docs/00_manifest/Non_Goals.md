@@ -28,8 +28,22 @@ This document prevents scope creep while the Vanta documentation system is still
 - Public benchmark publication.
 - Production deployment.
 
+## Post-Stage-1 Non-Goals
+
+The five local smoke closures do not authorize:
+
+- broad validation claims for H1, H2, H3, H4, or H5
+- larger-sample acceptance claims without a fixed metric policy
+- human-in-the-loop runtime approval without a separate spec
+- full Context OS beyond `Working Set Compiler v0`
+- memory writes or memory governance
+- `COMMITTABLE` or `IRREVERSIBLE` external effects
+- relabeling OpenClaw local harness results as pure model-only results
+- production deployment
+
 ## Related Documents
 
 - [Project Manifest](Project_Manifest.md)
+- [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md)
 - [MVP Architecture](../06_engineering/MVP_Architecture.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)

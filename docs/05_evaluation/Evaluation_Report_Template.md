@@ -31,6 +31,32 @@
 | `replay_consistency` | TODO | TODO | TODO |
 | `audit_completeness` | TODO | TODO | TODO |
 
+## Labeling Contract
+
+- Label policy version:
+- Label source: `none | fixture_oracle | automated_structural | human | secondary_review | double_human_adjudicated`
+- Label packet path:
+- Human Labeling Guide version:
+- Blinding policy:
+- Adjudication policy:
+- Inter-annotator agreement:
+- Fixture oracle metadata exposed before label freeze: `yes | no | not_applicable`
+
+For reports that include Phase 5 or later long-context working-set evaluation:
+
+| Working-set label | Baseline | Treatment | Label source | Notes |
+| --- | --- | --- | --- | --- |
+| `working_set_omission_severity` | TODO | TODO | TODO | TODO |
+| `working_set_relevance_quality` | TODO | TODO | TODO | TODO |
+| `working_set_provenance_audit` | TODO | TODO | TODO | TODO |
+
+## Interpretation Boundaries
+
+- Claim level: `local_smoke | exploratory_pilot | labeling_pilot | broader_evaluation_evidence | acceptance_claim`
+- Hypothesis claim allowed:
+- Hypothesis claim prohibited:
+- Boundary notes:
+
 ## Findings
 
 TODO: Report measured findings only. Do not claim validation without evidence.

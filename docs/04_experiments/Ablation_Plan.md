@@ -28,7 +28,7 @@ Traditional ReAct or function-calling agent with tool logs and final-answer judg
 
 ## Status
 
-Local smoke evidence now exists for stages A, B, C, and D, but the full
+Local smoke evidence now exists for stages A, B, C, D, and E, but the full
 statistically powered ablation has not been run.
 
 | Stage | Status | Interpretation |
@@ -37,7 +37,7 @@ statistically powered ablation has not been run.
 | B | Local smoke evidence | Experiment 002 closed the seven-fixture verifier hardening smoke; this is not broad validation of H2. |
 | C | Local smoke evidence | Experiment 003 closed the seven-fixture journal/replay smoke; this is not broad validation of H5. |
 | D | Local smoke evidence | Experiment 004 closed the three-fixture targeted recovery smoke under matched local compute; this is not broad validation of H4. |
-| E | Planned | Experiment 005 limits Phase 5 to `Working Set Compiler v0` against bounded raw trace on five Document Ops long-context fixtures. |
+| E | Local smoke evidence | Experiment 005 closed the five-fixture `Working Set Compiler v0` smoke against bounded raw trace; this is not broad validation of H3 or full Context OS. |
 
 ## Stage D Compute-Matched Protocol
 
@@ -87,4 +87,6 @@ tool log dumps as a working set.
 - [Experiment 004 Targeted Recovery](Experiment_004_Targeted_Recovery.md)
 - [Experiment 004 Local Run Report](../05_evaluation/Experiment_004_Local_Run_Report.md)
 - [Phase 5 Working Set Compiler Gate](../00_manifest/Phase_5_Working_Set_Compiler_Gate.md)
+- [Stage 1 Experiment 005 Closure](../00_manifest/Stage_1_Experiment_005_Closure.md)
 - [Experiment 005 Working Set Compiler](Experiment_005_Working_Set_Compiler.md)
+- [Experiment 005 Local Run Report](../05_evaluation/Experiment_005_Local_Run_Report.md)

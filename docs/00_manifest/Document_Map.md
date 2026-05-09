@@ -15,16 +15,17 @@ Map how documents relate so readers can navigate from theory to implementation w
 7. [Stage 1 Experiment 004 Closure](Stage_1_Experiment_004_Closure.md)
 8. [Phase 5 Working Set Compiler Gate](Phase_5_Working_Set_Compiler_Gate.md)
 9. [Stage 1 Experiment 005 Closure](Stage_1_Experiment_005_Closure.md)
-10. [Design Theory](../01_theory/Design_Theory.md)
-11. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-12. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-13. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-14. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-15. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-16. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-17. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-18. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-19. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+10. [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md)
+11. [Design Theory](../01_theory/Design_Theory.md)
+12. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+13. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+14. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+15. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+16. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+17. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+18. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+19. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+20. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -85,6 +86,15 @@ at `20260507_105950`. It records schema-valid, budget-adherent,
 provenance-complete treatment working sets on five controlled Document Ops
 long-context fixtures, but it does not claim broad validation of H3 or full
 Context OS.
+
+## Post-Stage-1 Gate
+
+[Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md) controls
+what can happen after all five local smoke closures. It defines separate
+conditions for larger controlled samples, human or secondary labeling, and
+broader runtime scope, while keeping full Context OS, memory writes,
+irreversible effects, and production deployment out of scope until separate
+gates exist.
 
 ## Translation Sources
 

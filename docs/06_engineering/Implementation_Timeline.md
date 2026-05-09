@@ -58,7 +58,11 @@ Define a staged engineering path that follows the research priorities and avoids
   fixtures, add human or secondary omission/relevance labels, and avoid broad H3
   or full Context OS validation claims until larger measured ablations exist.
 
-## Post-Stage-1 Open Questions
+## Post-Stage-1 Gate Tracking
 
-- What milestone gates are required before advancing phases?
-- What sample size is feasible for broader experiments?
+Post-Stage-1 advancement is governed by
+[Post-Stage-1 Advancement Gate](../00_manifest/Post_Stage_1_Advancement_Gate.md).
+
+- Milestone gates before advancing phases are tracked by `PS1-G1` through
+  `PS1-G8`.
+- Broader experiment sample size is tracked by `PS1-G1`.

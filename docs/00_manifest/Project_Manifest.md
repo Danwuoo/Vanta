@@ -36,6 +36,11 @@ state -> plan -> action -> evidence -> verify -> commit / abort
 
 Targeted recovery, Context OS, long-term memory governance, and advanced execution governance should be staged after the minimal loop has measurable behavior.
 
+After the five Stage 1 local smoke closures, advancement beyond local smoke is
+controlled by [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md).
+The closures are prerequisites for larger samples, human or secondary labeling,
+and broader runtime scope. They are not validation by themselves.
+
 ## Source Documents
 
 - [Design Theory](../01_theory/Design_Theory.md)

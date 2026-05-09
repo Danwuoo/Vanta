@@ -45,6 +45,22 @@ OpenClaw model, tool interface, prompt ceiling, and response ceiling.
 | `unsupported_commits` | `0` | `0` | No committed invalid action paths. |
 | `memory_writes` | `0` | `0` | Phase 5 memory-write boundary held. |
 
+## Labeling Status
+
+No human or secondary labels were collected for this local smoke run. The
+omission and relevance values are deterministic fixture-oracle scores from
+`expected/working_set_acceptance.json`, and provenance completeness is a
+structural selected-ref metadata check. Under
+[Human Labeling Guide](Human_Labeling_Guide.md), the `run.json` context
+artifacts, fixture packets, and source refs can be used as inputs to a later
+working-set labeling pilot, but this report itself contains no human
+working-set labels.
+
+These measurements may be cited only as local smoke evidence for
+`Working Set Compiler v0` and as artifact inputs for later broader evaluation.
+They must not be described as human-labeled relevance or omission results,
+statistical support for H3, broad H3 validation, or full Context OS validation.
+
 Compute matching was preserved fixture by fixture for the configured budget
 ceilings:
 

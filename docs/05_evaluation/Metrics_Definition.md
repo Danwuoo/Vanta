@@ -230,6 +230,42 @@ when all checklist groups pass:
 - Failure modes: Smoke-scale fixture counts do not establish statistical
   stability and must not be interpreted as broad H3 validation.
 
+## Phase 5 Human Labeling Contract
+
+Human or secondary working-set labels are defined by
+[Human Labeling Guide](Human_Labeling_Guide.md). The Phase 5 metrics above may
+come from different label sources, and reports must name the source explicitly.
+
+For Experiment 005 local smoke:
+
+- `context_omission_error_rate` and `working_set_relevance_score` are computed
+  from deterministic fixture metadata in `expected/working_set_acceptance.json`.
+- `working_set_provenance_completeness` is a structural check over included
+  refs with `ref_id`, `kind`, `source`, `path`, and `content_hash`.
+- These values are local smoke scoring references, not human labels and not H3
+  validation.
+
+For broader evaluation:
+
+- Human omission labels require a redacted candidate-ref inventory, source
+  artifacts, a context artifact, and double annotation or documented secondary
+  review before they can be used as broader evaluation evidence.
+- Human-derived `context_omission_error_rate` uses
+  `human_omitted_task_critical_refs / human_task_critical_candidate_refs` only
+  after adjudication. If the denominator is unresolved, report only the ordinal
+  omission severity from the labeling guide.
+- Human-derived `working_set_relevance_score` treats refs labeled
+  `task_critical` or `supporting` as relevant. It must be reported with the
+  omission label because high precision can still hide missing critical refs.
+- Human provenance audit labels are broader reviewability evidence. They do not
+  replace structural `working_set_provenance_completeness` unless a later metric
+  policy version defines an explicit mapping.
+- A report may describe adjudicated larger-sample labels as broader evaluation
+  evidence for working-set quality or H3 pressure testing. It must not describe
+  local smoke results, labeling pilots, schema validity, budget adherence,
+  provenance completeness, task stability, or absence of unsupported commits as
+  H3 validation.
+
 ## Stage 1 Local Smoke Gate
 
 The first Experiment 001 local smoke run uses OpenClaw
@@ -259,8 +295,13 @@ The 2026-05-03 run at
 `docs/04_experiments/results/experiment_001/20260503_130927/` satisfied this
 gate and closes Stage 1 as `Closed: local smoke completed`.
 
-## Post-Stage-1 Open Questions
+## Post-Stage-1 Gate Tracking
 
-- What label scale should be used for evidence sufficiency?
-- What metric thresholds define MVP acceptance beyond the local smoke gate?
-- Which metrics require double human annotation?
+Post-Stage-1 metric and labeling questions are tracked by
+[Post-Stage-1 Advancement Gate](../00_manifest/Post_Stage_1_Advancement_Gate.md):
+
+- Evidence sufficiency label scale: `PS1-G3`.
+- MVP acceptance thresholds beyond local smoke: `PS1-G2`.
+- Double human annotation or secondary-review requirements: `PS1-G4`.
+- Phase 5 working-set omission, relevance, and provenance labeling contract:
+  [Human Labeling Guide](Human_Labeling_Guide.md).

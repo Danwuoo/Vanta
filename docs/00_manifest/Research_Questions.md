@@ -19,11 +19,17 @@ This document converts the theory and validation review into research questions 
 - Which side-effect classes can be safely handled in the MVP?
 - What data is required before runtime feedback can be used as a training signal?
 
-## Open Questions
+## Gate Tracking
 
-- What is the first vertical benchmark domain: document operations, research assistant tasks, code repair, or another controlled environment?
-- What verifier architecture should be used in the first MVP: rule-based, model-based, human-assisted, or hybrid?
-- What thresholds define acceptable false accept, false reject, and unsafe action rates?
+- First vertical benchmark domain: answered by
+  [Stage 1 MVP Entry Gate](Stage_1_MVP_Entry_Gate.md) as Document Ops.
+- First MVP verifier architecture: answered by
+  [Stage 1 MVP Entry Gate](Stage_1_MVP_Entry_Gate.md) as deterministic
+  rule-based Verifier v0.
+- Thresholds for acceptable false accept, false reject, and unsafe action
+  rates: tracked by
+  [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md) item
+  `PS1-G2`.
 
 ## Related Documents
 

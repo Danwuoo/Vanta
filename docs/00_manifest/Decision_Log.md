@@ -29,13 +29,13 @@ Record documentation and research decisions that materially affect scope, interf
 | 2026-05-06 | Close Phase 4 and Experiment 004 as `Closed: local smoke completed`. | The `20260506_231941` matched-budget OpenClaw local harness run shows targeted recovery succeeded on the three controlled recovery fixtures while blind retry recovered none; this is not broad validation of H4. | Accepted |
 | 2026-05-07 | Gate Phase 5 as `Working Set Compiler v0` only. | H3 requires a bounded raw-trace comparison and Context OS metrics before any broader claim; Phase 5 must produce schema-valid, reference-backed working sets without full Context OS, memory writes, or raw log dumps. | Accepted |
 | 2026-05-07 | Close Phase 5 and Experiment 005 as `Closed: local smoke completed`. | The `20260507_105950` OpenClaw local harness run shows `Working Set Compiler v0` produced schema-valid, budget-adherent, provenance-complete working sets on five controlled Document Ops long-context fixtures and reduced fixture-required context omission compared with bounded raw trace; this is not broad validation of H3 or full Context OS. | Accepted |
+| 2026-05-09 | Accept the post-Stage-1 advancement gate. | The five local smoke closures leave recurring questions about larger samples, human labels, thresholds, baseline identity, and broader scope; these are now tracked as explicit gate items rather than open-ended advancement permission. | Accepted |
 
-## Post-Stage-1 Open Decisions
+## Post-Stage-1 Gate Tracking
 
-- Minimum benchmark size beyond the current seven Document Ops fixtures.
-- Human labeling budget.
-- Metric thresholds for broader MVP acceptance beyond the Stage 1 local smoke
-  gate.
-- Whether the candidate canonical local baseline should be promoted beyond local
-  smoke status, replaced by a direct OpenAI Responses baseline, or kept alongside
-  Responses as a separately labeled harness baseline.
+| Prior open decision | Gate item |
+| --- | --- |
+| Minimum benchmark size beyond the current local Document Ops fixtures. | `PS1-G1` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
+| Human labeling budget and annotation rules. | `PS1-G3` and `PS1-G4` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
+| Metric thresholds for broader MVP acceptance beyond the Stage 1 local smoke gate. | `PS1-G2` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
+| Whether the candidate canonical local baseline should be promoted, replaced, or kept alongside Responses. | `PS1-G5` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
