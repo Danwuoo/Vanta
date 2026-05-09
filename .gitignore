@@ -12,3 +12,4 @@ docs/01_theory/Theory_Index.md
 /.elixir_ls/
 docs/04_experiments/results/experiment_001/*/raw/
 docs/04_experiments/results/*/*/*.json
+/chatgpt_docs

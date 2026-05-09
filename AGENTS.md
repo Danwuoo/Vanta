@@ -143,6 +143,11 @@ a Context OS / Working Set Compiler note. If either is missing, answer that Stag
   `Validation_and_Refutation_Report.md`.
 - When adding a new document, update the relevant index and traceability documents
   if the new document changes navigation or source-of-truth relationships.
+- Keep `chatgpt_docs/` synchronized as the ChatGPT Project Knowledge export. When
+  development or documentation changes affect current progress, governance,
+  research direction, active gates, or any source file already mirrored there,
+  update the corresponding copied file in `chatgpt_docs/` in the same turn. Keep
+  the export at 25 files or fewer unless the user explicitly changes the limit.
 - Preserve the difference between `Open Questions`, `Non-goals`, `Scope`, and
   normative requirements.
 - Do not fill every document evenly. Advance the research spine:
@@ -161,4 +166,3 @@ a Context OS / Working Set Compiler note. If either is missing, answer that Stag
 - Side-effectful actions require evidence and verifier treatment before commit.
 - Irreversible or external actions require escalation, compensation, or explicit
   non-goal treatment.
-
