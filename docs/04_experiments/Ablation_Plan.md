@@ -76,6 +76,24 @@ Treatment produces schema-valid `WorkingSet` artifacts. Baseline produces a
 bounded raw-trace artifact. Neither arm may write memory or use full memory/raw
 tool log dumps as a working set.
 
+## Post-Stage-1 Lane A Protocol
+
+Lane A larger controlled samples are governed by:
+
+- [Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md) for
+  the accepted `PS1-G1` 48-fixture Document Ops sample frame.
+- [Baseline Identity Plan](Baseline_Identity_Plan.md) for the accepted
+  `PS1-G5` baseline arm naming and harness identity rules.
+
+The OpenClaw local harness baseline is supplemented, not promoted or replaced.
+OpenClaw arms must remain labeled as harness runs. Direct Responses or other
+pure model-only baselines require separately named arms.
+
+Lane A acceptance claims remain blocked until `PS1-G2` defines metric
+thresholds, no-regression checks, and report labels. Runs before `PS1-G2` may
+only be reported as exploratory scaled local runs or controlled data collection
+without acceptance claims.
+
 ## Related Documents
 
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
@@ -90,3 +108,5 @@ tool log dumps as a working set.
 - [Stage 1 Experiment 005 Closure](../00_manifest/Stage_1_Experiment_005_Closure.md)
 - [Experiment 005 Working Set Compiler](Experiment_005_Working_Set_Compiler.md)
 - [Experiment 005 Local Run Report](../05_evaluation/Experiment_005_Local_Run_Report.md)
+- [Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md)
+- [Baseline Identity Plan](Baseline_Identity_Plan.md)

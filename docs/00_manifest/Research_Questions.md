@@ -30,6 +30,12 @@ This document converts the theory and validation review into research questions 
   rates: tracked by
   [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md) item
   `PS1-G2`.
+- Larger controlled Document Ops sample frame: answered by
+  [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+  as the accepted `PS1-G1` artifact.
+- Post-Stage-1 baseline identity: answered by
+  [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) as the
+  accepted `PS1-G5` artifact.
 
 ## Related Documents
 
@@ -37,3 +43,5 @@ This document converts the theory and validation review into research questions 
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+- [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+- [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)

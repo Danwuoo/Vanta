@@ -43,6 +43,11 @@ candidate canonical local LLM baseline. This designation is limited to local
 Experiment 001 smoke comparisons and does not make the OpenClaw harness result a
 pure model-only baseline or a statistically validated canonical benchmark.
 
+Post-Stage-1 baseline identity is governed by
+[Baseline Identity Plan](Baseline_Identity_Plan.md). That plan keeps OpenClaw as
+a local harness baseline and supplements it with separately named direct API
+arms when available.
+
 ## Local smoke configuration
 
 - Backbone model: `gpt-5.4-mini`. For OpenAI Responses runs this is provided
@@ -124,8 +129,8 @@ provide `OPENAI_API_KEY`.
 - Larger benchmark size beyond the current seven Document Ops fixtures.
 - `verifier_false_accept_rate`, `verifier_false_reject_rate`, and
   `audit_completeness` measurement in later experiments.
-- Decision on whether this OpenClaw harness baseline remains local-only or is
-  paired with a direct Responses baseline for broader comparison.
+- Post-Stage-1 direct Responses comparison under the separately named arm rules
+  in [Baseline Identity Plan](Baseline_Identity_Plan.md).
 
 ## Future Rerun Reference
 

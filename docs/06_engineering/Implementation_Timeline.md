@@ -65,4 +65,9 @@ Post-Stage-1 advancement is governed by
 
 - Milestone gates before advancing phases are tracked by `PS1-G1` through
   `PS1-G8`.
-- Broader experiment sample size is tracked by `PS1-G1`.
+- Broader experiment sample size is accepted by `PS1-G1` in
+  [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md).
+- Baseline identity is accepted by `PS1-G5` in
+  [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md).
+- Larger-sample acceptance claims remain blocked until `PS1-G2` defines metric
+  thresholds, no-regression checks, and report labels.

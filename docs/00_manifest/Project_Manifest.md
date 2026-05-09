@@ -41,6 +41,11 @@ controlled by [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md).
 The closures are prerequisites for larger samples, human or secondary labeling,
 and broader runtime scope. They are not validation by themselves.
 
+Lane A planning has accepted `PS1-G1` and `PS1-G5`: the first larger controlled
+Document Ops frame is 48 fixtures, and OpenClaw remains a local harness baseline
+supplemented by separately named direct API arms when available. `PS1-G2`
+thresholds still block larger-sample acceptance claims.
+
 ## Source Documents
 
 - [Design Theory](../01_theory/Design_Theory.md)

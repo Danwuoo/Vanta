@@ -107,6 +107,27 @@ against `WorkingSet` artifacts under fixed OpenClaw local smoke controls:
   budget pressure.
 - `docops_ws_recovery_context_001`: recovery context must be included.
 
+### Post-Stage-1 Larger Controlled Sample Frame
+
+[Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md) defines
+the accepted `PS1-G1` sample frame for the first Lane A larger controlled
+Document Ops sample.
+
+The planned sample contains 48 fixtures across eight strata:
+
+- traceability extraction
+- terminology consistency
+- simulated patch and diff
+- reversible edit and commit
+- invalid action and path guard
+- evidence and verifier challenge
+- journal, replay, and recovery
+- working-set long context
+
+This frame supports fixture construction and controlled data-collection
+planning. It is not a completed run, not broad benchmark coverage, and not an
+MVP acceptance claim while `PS1-G2` remains open.
+
 ## Status
 
 Fixture set prepared with deterministic acceptance recipes and exercised by:
@@ -120,7 +141,9 @@ Fixture set prepared with deterministic acceptance recipes and exercised by:
 The current status is local smoke support for Stage 1 plus measured Phase 4
 targeted recovery smoke coverage on three controlled recovery fixtures and
 measured Phase 5 working-set smoke coverage on five controlled long-context
-fixtures. This is not broad benchmark coverage or statistical validation.
+fixtures. The post-Stage-1 larger-sample frame is accepted for planning, but it
+has not been run. This is not broad benchmark coverage or statistical
+validation.
 
 ## Related Documents
 
@@ -133,3 +156,5 @@ fixtures. This is not broad benchmark coverage or statistical validation.
 - [Experiment 004 Targeted Recovery](Experiment_004_Targeted_Recovery.md)
 - [Experiment 005 Working Set Compiler](Experiment_005_Working_Set_Compiler.md)
 - [Stage 1 Experiment 005 Closure](../00_manifest/Stage_1_Experiment_005_Closure.md)
+- [Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md)
+- [Baseline Identity Plan](Baseline_Identity_Plan.md)

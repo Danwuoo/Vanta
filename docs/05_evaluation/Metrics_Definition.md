@@ -300,6 +300,10 @@ gate and closes Stage 1 as `Closed: local smoke completed`.
 Post-Stage-1 metric and labeling questions are tracked by
 [Post-Stage-1 Advancement Gate](../00_manifest/Post_Stage_1_Advancement_Gate.md):
 
+- Larger-sample frame: `PS1-G1`, accepted by
+  [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md).
+- Baseline identity: `PS1-G5`, accepted by
+  [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md).
 - Evidence sufficiency label scale: `PS1-G3`.
 - MVP acceptance thresholds beyond local smoke: `PS1-G2`.
 - Double human annotation or secondary-review requirements: `PS1-G4`.

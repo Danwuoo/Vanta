@@ -130,18 +130,32 @@ Scope escalation is not bundled. Each of the following requires its own gate:
 | Gate ID | Open question absorbed | Required artifact | Blocks |
 | --- | --- | --- | --- |
 | `PS1-G0` | Have all five local smoke closures been recorded without broad validation claims? | Closure docs 001 through 005 and linked run reports | Any post-Stage-1 advancement |
-| `PS1-G1` | What sample size is feasible for broader experiments? | Versioned larger-sample experiment plan with sample frame and strata | Larger controlled samples |
+| `PS1-G1` | What sample size is feasible for broader experiments? | [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md) | Larger controlled samples |
 | `PS1-G2` | What metric thresholds define MVP acceptance beyond local smoke? | Metric policy with thresholds, no-regression checks, and report labels | Larger controlled samples and acceptance claims |
 | `PS1-G3` | What label scale should be used for evidence sufficiency? | Updated labeling guide or metric note with fixed scale | Human or secondary labeling |
 | `PS1-G4` | Which metrics require double human annotation? | Labeling scope matrix and adjudication policy | Human or secondary labeling |
-| `PS1-G5` | Should the OpenClaw candidate baseline be promoted, replaced, or supplemented? | Baseline identity plan with separately named arms | Larger controlled samples |
+| `PS1-G5` | Should the OpenClaw candidate baseline be promoted, replaced, or supplemented? | [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) | Larger controlled samples |
 | `PS1-G6` | Which runtime capability may expand next? | Scope proposal plus upstream spec and schema updates | Broader runtime scope |
 | `PS1-G7` | When can Context OS expand beyond Working Set Compiler v0? | Separate Context OS gate with metrics and labels beyond Experiment 005 smoke | Full Context OS work |
 | `PS1-G8` | When can side-effect classes expand beyond Stage 1 allowances? | Side-effect escalation gate with evidence, verifier, rollback, compensation, and approval policy | `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` work |
 
-`PS1-G0` is met by the current closure set. All other gate items remain open
+`PS1-G0` is met by the current closure set. `PS1-G1` is accepted by the
+larger-sample plan and `PS1-G5` is accepted by the baseline identity plan.
+`PS1-G2`, `PS1-G3`, `PS1-G4`, `PS1-G6`, `PS1-G7`, and `PS1-G8` remain open
 until their required artifacts are added and linked from this document or a
 successor manifest gate.
+
+Lane A is not fully open for acceptance claims because `PS1-G2` remains open.
+The accepted `PS1-G1` and `PS1-G5` artifacts support sample construction,
+baseline naming, and controlled data-collection planning only.
+
+## Gate Inventory Boundary
+
+[Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md) tracks artifact
+status, proposed artifact paths, dependencies, and routing for `PS1-G1` through
+`PS1-G8`. This document remains the normative source for post-Stage-1 gate
+conditions. The inventory cannot replace any required artifact and cannot
+accept a gate item by itself.
 
 ## Non-goals
 
@@ -182,6 +196,9 @@ claim`.
 - [Project Manifest](Project_Manifest.md)
 - [Stage 1 MVP Entry Gate](Stage_1_MVP_Entry_Gate.md)
 - [Stage 1 Experiment 005 Closure](Stage_1_Experiment_005_Closure.md)
+- [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
+- [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+- [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)
 - [Implementation Timeline](../06_engineering/Implementation_Timeline.md)

@@ -16,16 +16,19 @@ Map how documents relate so readers can navigate from theory to implementation w
 8. [Phase 5 Working Set Compiler Gate](Phase_5_Working_Set_Compiler_Gate.md)
 9. [Stage 1 Experiment 005 Closure](Stage_1_Experiment_005_Closure.md)
 10. [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md)
-11. [Design Theory](../01_theory/Design_Theory.md)
-12. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-13. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-14. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-15. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-16. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-17. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-18. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-19. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-20. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+11. [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
+12. [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+13. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
+14. [Design Theory](../01_theory/Design_Theory.md)
+15. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+16. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+17. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+18. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+19. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+20. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+21. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+22. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+23. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -95,6 +98,21 @@ conditions for larger controlled samples, human or secondary labeling, and
 broader runtime scope, while keeping full Context OS, memory writes,
 irreversible effects, and production deployment out of scope until separate
 gates exist.
+
+[Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md) is the tracking
+index for `PS1-G1` through `PS1-G8`. It records artifact status, proposed
+artifact paths, dependencies, and routing, but it does not replace the
+advancement gate or satisfy any required artifact by itself.
+
+[Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+is the accepted `PS1-G1` sample-frame artifact. It fixes a 48-fixture Document
+Ops sample frame and strata for Lane A planning, but it does not set acceptance
+thresholds or report results.
+
+[Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) is the
+accepted `PS1-G5` baseline-identity artifact. It keeps OpenClaw results labeled
+as local harness runs and supplements them with separately named direct API
+arms when available.
 
 ## Translation Sources
 

@@ -30,12 +30,15 @@ Record documentation and research decisions that materially affect scope, interf
 | 2026-05-07 | Gate Phase 5 as `Working Set Compiler v0` only. | H3 requires a bounded raw-trace comparison and Context OS metrics before any broader claim; Phase 5 must produce schema-valid, reference-backed working sets without full Context OS, memory writes, or raw log dumps. | Accepted |
 | 2026-05-07 | Close Phase 5 and Experiment 005 as `Closed: local smoke completed`. | The `20260507_105950` OpenClaw local harness run shows `Working Set Compiler v0` produced schema-valid, budget-adherent, provenance-complete working sets on five controlled Document Ops long-context fixtures and reduced fixture-required context omission compared with bounded raw trace; this is not broad validation of H3 or full Context OS. | Accepted |
 | 2026-05-09 | Accept the post-Stage-1 advancement gate. | The five local smoke closures leave recurring questions about larger samples, human labels, thresholds, baseline identity, and broader scope; these are now tracked as explicit gate items rather than open-ended advancement permission. | Accepted |
+| 2026-05-09 | Use Post-Stage-1 Gate Inventory as the `PS1-G1` through `PS1-G8` tracking layer. | The advancement gate remains normative; the inventory records artifact status, proposed paths, dependencies, and routing without claiming any gate item is resolved. | Accepted |
+| 2026-05-10 | Accept the `PS1-G1` larger-sample frame as 48 controlled Document Ops fixtures. | The first post-smoke sample needs a concrete, stratified frame before metric thresholds or execution; 48 fixtures cover minimal loop, verifier, journal/replay, recovery, and working-set cases without leaving the Document Ops boundary. | Accepted |
+| 2026-05-10 | Accept the `PS1-G5` baseline identity rule: supplement OpenClaw, do not promote or replace it. | OpenClaw local harness results preserve continuity with Stage 1 smoke, but direct Responses or other pure model-only baselines must be separately named arms rather than relabeling harness runs. | Accepted |
 
 ## Post-Stage-1 Gate Tracking
 
 | Prior open decision | Gate item |
 | --- | --- |
-| Minimum benchmark size beyond the current local Document Ops fixtures. | `PS1-G1` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
+| Minimum benchmark size beyond the current local Document Ops fixtures. | Resolved by `PS1-G1` in [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md): 48 controlled Document Ops fixtures. |
 | Human labeling budget and annotation rules. | `PS1-G3` and `PS1-G4` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
 | Metric thresholds for broader MVP acceptance beyond the Stage 1 local smoke gate. | `PS1-G2` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
-| Whether the candidate canonical local baseline should be promoted, replaced, or kept alongside Responses. | `PS1-G5` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
+| Whether the candidate canonical local baseline should be promoted, replaced, or kept alongside Responses. | Resolved by `PS1-G5` in [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md): supplement OpenClaw with separately named arms. |
