@@ -27,9 +27,9 @@ This document converts the theory and validation review into research questions 
   [Stage 1 MVP Entry Gate](Stage_1_MVP_Entry_Gate.md) as deterministic
   rule-based Verifier v0.
 - Thresholds for acceptable false accept, false reject, and unsafe action
-  rates: tracked by
-  [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md) item
-  `PS1-G2`.
+  rates: answered by
+  [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+  as the accepted `PS1-G2` artifact.
 - Larger controlled Document Ops sample frame: answered by
   [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
   as the accepted `PS1-G1` artifact.
@@ -43,5 +43,6 @@ This document converts the theory and validation review into research questions 
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+- [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)

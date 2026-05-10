@@ -19,16 +19,17 @@ Map how documents relate so readers can navigate from theory to implementation w
 11. [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
 12. [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 13. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
-14. [Design Theory](../01_theory/Design_Theory.md)
-15. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-16. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-17. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-18. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-19. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-20. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-21. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-22. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-23. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+14. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+15. [Design Theory](../01_theory/Design_Theory.md)
+16. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+17. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+18. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+19. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+20. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+21. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+22. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+23. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+24. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -113,6 +114,11 @@ thresholds or report results.
 accepted `PS1-G5` baseline-identity artifact. It keeps OpenClaw results labeled
 as local harness runs and supplements them with separately named direct API
 arms when available.
+
+[Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+is the accepted `PS1-G2` metric-policy artifact. It fixes conservative
+thresholds, no-regression checks, hard gates, and report labels for the first
+48-fixture Lane A larger controlled sample.
 
 ## Translation Sources
 

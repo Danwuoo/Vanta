@@ -89,10 +89,11 @@ The OpenClaw local harness baseline is supplemented, not promoted or replaced.
 OpenClaw arms must remain labeled as harness runs. Direct Responses or other
 pure model-only baselines require separately named arms.
 
-Lane A acceptance claims remain blocked until `PS1-G2` defines metric
-thresholds, no-regression checks, and report labels. Runs before `PS1-G2` may
-only be reported as exploratory scaled local runs or controlled data collection
-without acceptance claims.
+Lane A acceptance claims are governed by
+[Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md),
+the accepted `PS1-G2` artifact. A measured larger controlled run may be reported
+as a threshold-governed acceptance candidate only when it passes that policy and
+keeps baseline identity labels intact.
 
 ## Related Documents
 
@@ -110,3 +111,4 @@ without acceptance claims.
 - [Experiment 005 Local Run Report](../05_evaluation/Experiment_005_Local_Run_Report.md)
 - [Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md)
 - [Baseline Identity Plan](Baseline_Identity_Plan.md)
+- [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)

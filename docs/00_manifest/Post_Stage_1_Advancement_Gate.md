@@ -131,7 +131,7 @@ Scope escalation is not bundled. Each of the following requires its own gate:
 | --- | --- | --- | --- |
 | `PS1-G0` | Have all five local smoke closures been recorded without broad validation claims? | Closure docs 001 through 005 and linked run reports | Any post-Stage-1 advancement |
 | `PS1-G1` | What sample size is feasible for broader experiments? | [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md) | Larger controlled samples |
-| `PS1-G2` | What metric thresholds define MVP acceptance beyond local smoke? | Metric policy with thresholds, no-regression checks, and report labels | Larger controlled samples and acceptance claims |
+| `PS1-G2` | What metric thresholds define MVP acceptance beyond local smoke? | [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md) | Larger controlled samples and acceptance claims |
 | `PS1-G3` | What label scale should be used for evidence sufficiency? | Updated labeling guide or metric note with fixed scale | Human or secondary labeling |
 | `PS1-G4` | Which metrics require double human annotation? | Labeling scope matrix and adjudication policy | Human or secondary labeling |
 | `PS1-G5` | Should the OpenClaw candidate baseline be promoted, replaced, or supplemented? | [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) | Larger controlled samples |
@@ -140,14 +140,15 @@ Scope escalation is not bundled. Each of the following requires its own gate:
 | `PS1-G8` | When can side-effect classes expand beyond Stage 1 allowances? | Side-effect escalation gate with evidence, verifier, rollback, compensation, and approval policy | `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` work |
 
 `PS1-G0` is met by the current closure set. `PS1-G1` is accepted by the
-larger-sample plan and `PS1-G5` is accepted by the baseline identity plan.
-`PS1-G2`, `PS1-G3`, `PS1-G4`, `PS1-G6`, `PS1-G7`, and `PS1-G8` remain open
-until their required artifacts are added and linked from this document or a
-successor manifest gate.
+larger-sample plan, `PS1-G2` is accepted by the metric policy, and `PS1-G5` is
+accepted by the baseline identity plan. `PS1-G3`, `PS1-G4`, `PS1-G6`,
+`PS1-G7`, and `PS1-G8` remain open until their required artifacts are added and
+linked from this document or a successor manifest gate.
 
-Lane A is not fully open for acceptance claims because `PS1-G2` remains open.
-The accepted `PS1-G1` and `PS1-G5` artifacts support sample construction,
-baseline naming, and controlled data-collection planning only.
+Lane A is open for threshold-governed larger-sample acceptance candidates after
+the 48-fixture sample is run under the accepted sample, metric, and baseline
+identity policies. A future manifest closure must still accept measured results
+before a report may use `accepted_by_closure`.
 
 ## Gate Inventory Boundary
 
@@ -160,7 +161,9 @@ accept a gate item by itself.
 ## Non-goals
 
 - The five local smoke closures are not broad validation.
-- This gate does not define final MVP acceptance thresholds by itself.
+- This gate does not define final MVP acceptance thresholds by itself; `PS1-G2`
+  thresholds are defined by
+  [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md).
 - This gate does not authorize full Context OS, learned retrieval, compression,
   or memory governance.
 - This gate does not authorize memory writes, training, or learning from runtime
@@ -200,5 +203,6 @@ claim`.
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+- [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)
 - [Implementation Timeline](../06_engineering/Implementation_Timeline.md)

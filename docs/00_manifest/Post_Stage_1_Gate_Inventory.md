@@ -38,8 +38,8 @@ successor manifest gate that explicitly supersedes it.
 | Gate ID | Lane | Current status | Required artifact | Proposed artifact path | Upstream dependencies | Downstream unlocks | Must not claim |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `PS1-G0` | All lanes prerequisite | `Accepted` | Closure docs 001 through 005 and linked run reports | Existing closure docs and run reports | Stage 1 closure docs 001 through 005 | Post-Stage-1 planning can be routed through `PS1-G1` through `PS1-G8` | The five local smoke closures are not broad validation. |
-| `PS1-G1` | Larger Controlled Samples | `Accepted` | [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md) | `docs/04_experiments/Post_Stage_1_Larger_Sample_Plan.md` | `PS1-G0`; Document Ops benchmark; closure reports 001 through 005 | Larger controlled sample planning; input to `PS1-G2` | Acceptance claims are not authorized while `PS1-G2` remains open. |
-| `PS1-G2` | Larger Controlled Samples | `Open` | Metric policy with thresholds, no-regression checks, and report labels | `docs/05_evaluation/Post_Stage_1_Metric_Policy.md` | `PS1-G1`; `PS1-G5`; metrics definition; closure reports 001 through 005 | Acceptance claims for larger controlled samples | MVP acceptance thresholds are not set; broader validation is not claimed. |
+| `PS1-G1` | Larger Controlled Samples | `Accepted` | [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md) | `docs/04_experiments/Post_Stage_1_Larger_Sample_Plan.md` | `PS1-G0`; Document Ops benchmark; closure reports 001 through 005 | Larger controlled sample planning; input to `PS1-G2` | Acceptance claims require the accepted metric policy and measured results. |
+| `PS1-G2` | Larger Controlled Samples | `Accepted` | [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md) | `docs/05_evaluation/Post_Stage_1_Metric_Policy.md` | `PS1-G1`; `PS1-G5`; metrics definition; closure reports 001 through 005 | Threshold-governed acceptance candidates for larger controlled samples | Passing thresholds is not broad validation and still requires measured run reports plus closure acceptance. |
 | `PS1-G3` | Human or Secondary Labeling | `Open` | Updated labeling guide or metric note with fixed evidence sufficiency scale | `docs/05_evaluation/Post_Stage_1_Evidence_Sufficiency_Label_Scale.md` | `PS1-G0`; Evidence Packet spec; Metrics Definition; labeling guides | Evidence sufficiency labeling can begin under a fixed scale | Evidence sufficiency labels are not authorized; no scale is fixed. |
 | `PS1-G4` | Human or Secondary Labeling | `Open` | Labeling scope matrix and adjudication policy | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; `PS1-G3` where evidence sufficiency is included; labeling guides | Broader subjective label claims with review requirements | Subjective metrics cannot support broad claims without accepted review policy. |
 | `PS1-G5` | Larger Controlled Samples | `Accepted` | [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) | `docs/04_experiments/Baseline_Identity_Plan.md` | `PS1-G0`; OpenClaw local harness closure notes; Experiment 001 baseline records | Baseline arm naming for larger controlled samples; input to `PS1-G2` | OpenClaw harness results are not promoted to pure model-only baseline results. |
@@ -49,7 +49,8 @@ successor manifest gate that explicitly supersedes it.
 
 ## Dependency Order
 
-- `PS1-G1` and `PS1-G5` are accepted and provide the inputs for `PS1-G2`.
+- `PS1-G1`, `PS1-G2`, and `PS1-G5` are accepted and provide the Lane A sample,
+  metric, and baseline identity policies.
 - `PS1-G3` must be accepted before evidence sufficiency labeling begins.
 - `PS1-G4` must be accepted before broader subjective label claims.
 - `PS1-G6` must be accepted before broader runtime scope implementation.

@@ -8,6 +8,8 @@
 - Evaluator:
 - Dataset or benchmark:
 - Status: `Not yet run`
+- Metric policy version:
+- Threshold status: `not_applicable | blocked_missing_metric | failed_no_acceptance | pass_acceptance_candidate | accepted_by_closure`
 
 ## Setup
 
@@ -53,6 +55,7 @@ For reports that include Phase 5 or later long-context working-set evaluation:
 ## Interpretation Boundaries
 
 - Claim level: `local_smoke | exploratory_pilot | labeling_pilot | broader_evaluation_evidence | acceptance_claim`
+- Acceptance claim rule: requires threshold pass plus manifest or closure acceptance.
 - Hypothesis claim allowed:
 - Hypothesis claim prohibited:
 - Boundary notes:

@@ -21,9 +21,10 @@ Status: `Accepted as PS1-G1 sample-frame artifact` on 2026-05-10.
 Run status: `Not yet run`.
 
 This plan may support fixture construction and controlled data collection after
-the required run controls are fixed. Acceptance claims remain blocked by
-`PS1-G2` until a metric policy with thresholds, no-regression checks, and report
-labels is accepted.
+the required run controls are fixed. Acceptance claims are governed by
+[Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md),
+the accepted `PS1-G2` artifact, and still require measured results plus closure
+acceptance.
 
 Baseline arm identity is governed separately by
 [Baseline Identity Plan](Baseline_Identity_Plan.md), the required artifact for
@@ -166,9 +167,11 @@ The run summary must report the Lane A metric set required by
 - recovery metrics when recovery fixtures are included
 - working-set metrics when long-context fixtures are included
 
-Metric thresholds remain governed by `PS1-G2`. Until `PS1-G2` is accepted, this
-plan can support controlled data collection or exploratory scaled local runs,
-but not MVP acceptance claims.
+Metric thresholds are governed by
+[Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md).
+This plan can support controlled data collection, exploratory scaled local
+runs, or threshold-governed acceptance candidates when the measured run satisfies
+the accepted policy.
 
 ## Execution Readiness Checklist
 
@@ -176,7 +179,8 @@ but not MVP acceptance claims.
 - [x] `PS1-G1` sample frame is defined by this document.
 - [x] `PS1-G5` baseline identity is defined by
       [Baseline Identity Plan](Baseline_Identity_Plan.md).
-- [ ] `PS1-G2` metric policy is accepted before acceptance claims.
+- [x] `PS1-G2` metric policy is accepted by
+      [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md).
 - [ ] `PS1-G3` evidence sufficiency scale is accepted before human evidence
       sufficiency labeling.
 - [ ] `PS1-G4` labeling scope and adjudication policy is accepted before
@@ -204,3 +208,4 @@ but not MVP acceptance claims.
 - [Document Ops Benchmark](Document_Ops_Benchmark.md)
 - [Ablation Plan](Ablation_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+- [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)

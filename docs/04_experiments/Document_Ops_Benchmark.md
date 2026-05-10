@@ -124,9 +124,10 @@ The planned sample contains 48 fixtures across eight strata:
 - journal, replay, and recovery
 - working-set long context
 
-This frame supports fixture construction and controlled data-collection
-planning. It is not a completed run, not broad benchmark coverage, and not an
-MVP acceptance claim while `PS1-G2` remains open.
+This frame supports fixture construction, controlled data-collection planning,
+and future threshold-governed acceptance candidates under the accepted `PS1-G2`
+metric policy. It is not a completed run, broad benchmark coverage, or MVP
+acceptance claim by itself.
 
 ## Status
 
@@ -158,3 +159,4 @@ validation.
 - [Stage 1 Experiment 005 Closure](../00_manifest/Stage_1_Experiment_005_Closure.md)
 - [Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md)
 - [Baseline Identity Plan](Baseline_Identity_Plan.md)
+- [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)

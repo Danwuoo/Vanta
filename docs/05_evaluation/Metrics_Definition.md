@@ -3,8 +3,8 @@
 ## Purpose
 
 Define MVP metrics for Vanta evaluation. Stage 1 local smoke thresholds are
-locked below; broader MVP acceptance thresholds remain open until larger
-empirical baselines exist.
+locked below. Post-Stage-1 Lane A acceptance thresholds are governed by
+[Post-Stage-1 Metric Policy](Post_Stage_1_Metric_Policy.md).
 
 ## `task_success_rate`
 
@@ -305,7 +305,8 @@ Post-Stage-1 metric and labeling questions are tracked by
 - Baseline identity: `PS1-G5`, accepted by
   [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md).
 - Evidence sufficiency label scale: `PS1-G3`.
-- MVP acceptance thresholds beyond local smoke: `PS1-G2`.
+- MVP acceptance thresholds beyond local smoke: `PS1-G2`, accepted by
+  [Post-Stage-1 Metric Policy](Post_Stage_1_Metric_Policy.md).
 - Double human annotation or secondary-review requirements: `PS1-G4`.
 - Phase 5 working-set omission, relevance, and provenance labeling contract:
   [Human Labeling Guide](Human_Labeling_Guide.md).

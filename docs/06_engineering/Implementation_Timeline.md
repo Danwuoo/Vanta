@@ -69,5 +69,7 @@ Post-Stage-1 advancement is governed by
   [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md).
 - Baseline identity is accepted by `PS1-G5` in
   [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md).
-- Larger-sample acceptance claims remain blocked until `PS1-G2` defines metric
-  thresholds, no-regression checks, and report labels.
+- Larger-sample acceptance thresholds are accepted by `PS1-G2` in
+  [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md).
+  Acceptance still requires a measured run, threshold pass, and manifest or
+  closure acceptance.

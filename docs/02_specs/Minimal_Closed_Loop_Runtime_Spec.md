@@ -62,14 +62,16 @@ Define the MVP runtime loop that turns state into action, action into evidence, 
 - Disallowed side-effect classes: `COMMITTABLE`, `IRREVERSIBLE`, and
   `MEMORY_WRITE` for the first Stage 1 runtime.
 
-## Post-Stage-1 Deferred Questions
+## Post-Stage-1 Locked Answers
 
-- What metric thresholds define broader MVP acceptance beyond the Stage 1 local
-  smoke gate?
-- What sample size is required before Experiment 001 can support broader
-  comparison?
-- Should the OpenClaw harness baseline remain local-only, be replaced by direct
-  OpenAI Responses, or be reported alongside direct Responses?
+- Broader MVP acceptance thresholds for the first Lane A larger controlled
+  sample are governed by
+  [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md).
+- The first larger controlled Document Ops sample is 48 fixtures as defined by
+  [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md).
+- The OpenClaw harness baseline remains local-harness labeled and may be
+  supplemented by separately named direct Responses arms according to
+  [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md).
 
 ## Related Documents
 

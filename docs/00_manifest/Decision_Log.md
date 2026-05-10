@@ -33,6 +33,7 @@ Record documentation and research decisions that materially affect scope, interf
 | 2026-05-09 | Use Post-Stage-1 Gate Inventory as the `PS1-G1` through `PS1-G8` tracking layer. | The advancement gate remains normative; the inventory records artifact status, proposed paths, dependencies, and routing without claiming any gate item is resolved. | Accepted |
 | 2026-05-10 | Accept the `PS1-G1` larger-sample frame as 48 controlled Document Ops fixtures. | The first post-smoke sample needs a concrete, stratified frame before metric thresholds or execution; 48 fixtures cover minimal loop, verifier, journal/replay, recovery, and working-set cases without leaving the Document Ops boundary. | Accepted |
 | 2026-05-10 | Accept the `PS1-G5` baseline identity rule: supplement OpenClaw, do not promote or replace it. | OpenClaw local harness results preserve continuity with Stage 1 smoke, but direct Responses or other pure model-only baselines must be separately named arms rather than relabeling harness runs. | Accepted |
+| 2026-05-10 | Accept the `PS1-G2` metric policy with conservative hard gates and thresholds. | Larger controlled samples need fixed thresholds, no-regression checks, and report labels before acceptance claims; strict process-integrity floors prevent local smoke results from becoming broad validation claims. | Accepted |
 
 ## Post-Stage-1 Gate Tracking
 
@@ -40,5 +41,5 @@ Record documentation and research decisions that materially affect scope, interf
 | --- | --- |
 | Minimum benchmark size beyond the current local Document Ops fixtures. | Resolved by `PS1-G1` in [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md): 48 controlled Document Ops fixtures. |
 | Human labeling budget and annotation rules. | `PS1-G3` and `PS1-G4` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
-| Metric thresholds for broader MVP acceptance beyond the Stage 1 local smoke gate. | `PS1-G2` in [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). |
+| Metric thresholds for broader MVP acceptance beyond the Stage 1 local smoke gate. | Resolved by `PS1-G2` in [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md). |
 | Whether the candidate canonical local baseline should be promoted, replaced, or kept alongside Responses. | Resolved by `PS1-G5` in [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md): supplement OpenClaw with separately named arms. |

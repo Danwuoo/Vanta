@@ -43,8 +43,10 @@ and broader runtime scope. They are not validation by themselves.
 
 Lane A planning has accepted `PS1-G1` and `PS1-G5`: the first larger controlled
 Document Ops frame is 48 fixtures, and OpenClaw remains a local harness baseline
-supplemented by separately named direct API arms when available. `PS1-G2`
-thresholds still block larger-sample acceptance claims.
+supplemented by separately named direct API arms when available. Lane A metric
+thresholds are accepted by `PS1-G2`, so larger-sample runs can become
+threshold-governed acceptance candidates after measured results and closure
+acceptance.
 
 ## Source Documents
 
