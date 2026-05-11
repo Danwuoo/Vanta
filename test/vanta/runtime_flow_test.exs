@@ -239,6 +239,31 @@ defmodule Vanta.RuntimeFlowTest do
     assert replay.consistent?
   end
 
+  test "multistep compute_diff accepts LF candidate content against CRLF source files" do
+    workspace = copy_fixture("docops_multistep_commit_001")
+    target = Path.join(workspace, "inputs/workflow.md")
+
+    target
+    |> File.read!()
+    |> String.replace("\r\n", "\n")
+    |> String.replace("\n", "\r\n")
+    |> then(&File.write!(target, &1))
+
+    task = Schema.load_json!(Path.join(workspace, "task.json"))
+
+    assert {:ok, result} = Runtime.run_task(task, workspace)
+    assert result.status == "committed"
+    assert result.task_success?
+
+    observation =
+      result.evidence_packets
+      |> Enum.map(& &1["observation"])
+      |> Enum.find(&(&1["kind"] == "compute_diff"))
+
+    assert observation["diff"] ==
+             "-Verifier gate: TODO.\n+Verifier gate: Evidence Packet reviewed before commit."
+  end
+
   test "runtime rejects negative fixtures and records invalid action paths" do
     Enum.each(
       ~w(

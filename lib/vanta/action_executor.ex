@@ -272,8 +272,8 @@ defmodule Vanta.ActionExecutor do
   defp maybe_drop_backup!(_workspace, _metadata, _payload), do: :ok
 
   defp simple_diff(original, candidate) do
-    original_lines = String.split(original, "\n", trim: false)
-    candidate_lines = String.split(candidate, "\n", trim: false)
+    original_lines = original |> normalize_newlines() |> String.split("\n", trim: false)
+    candidate_lines = candidate |> normalize_newlines() |> String.split("\n", trim: false)
 
     original_lines
     |> Enum.zip(candidate_lines)
@@ -299,6 +299,12 @@ defmodule Vanta.ActionExecutor do
       true ->
         []
     end
+  end
+
+  defp normalize_newlines(value) when is_binary(value) do
+    value
+    |> String.replace("\r\n", "\n")
+    |> String.replace("\r", "\n")
   end
 
   defp markdown_links(content) do

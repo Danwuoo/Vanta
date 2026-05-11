@@ -12,5 +12,6 @@ docs/01_theory/Theory_Index.md
 /.elixir_ls/
 docs/04_experiments/results/experiment_001/*/raw/
 docs/04_experiments/results/*/*/*.json
+!docs/04_experiments/results/experiment_004/20260506_231941/run.json
+!docs/04_experiments/results/experiment_005/20260507_105950/run.json
 /chatgpt_docs
-docs/00_manifest/Obsidian_Graph_Status.md

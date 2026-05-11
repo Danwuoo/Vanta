@@ -117,8 +117,8 @@ defmodule Vanta.FixtureAcceptance do
     diff_path = Path.join(workspace, "expected/diff.txt")
 
     if File.exists?(diff_path) do
-      expected = diff_path |> File.read!() |> trim_newline()
-      actual = observation |> Map.get("diff", "") |> trim_newline()
+      expected = diff_path |> File.read!() |> normalize_diff_text()
+      actual = observation |> Map.get("diff", "") |> normalize_diff_text()
 
       if expected == actual do
         :ok
@@ -166,5 +166,10 @@ defmodule Vanta.FixtureAcceptance do
 
   defp compare_audit_result(:missing, _observation), do: :not_applicable
 
-  defp trim_newline(value) when is_binary(value), do: String.trim_trailing(value)
+  defp normalize_diff_text(value) when is_binary(value) do
+    value
+    |> String.replace("\r\n", "\n")
+    |> String.replace("\r", "\n")
+    |> String.trim_trailing()
+  end
 end
