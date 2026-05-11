@@ -48,6 +48,34 @@ thresholds are accepted by `PS1-G2`, so larger-sample runs can become
 threshold-governed acceptance candidates after measured results and closure
 acceptance.
 
+Lane B labeling policy has accepted `PS1-G3` and `PS1-G4`: evidence
+sufficiency labels use the `PS1-LB-LABEL-001` five-level scale, and subjective
+or oracle-sensitive labels require the documented review and adjudication path.
+No post-Stage-1 human or secondary labels have been collected yet.
+
+Lane C has accepted `PS1-G6` for implementation planning only:
+[Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+names `Document Ops Structured Edit Action Surface v0` as the next runtime
+capability. It stays inside fixture-local Document Ops and does not implement
+new actions, update runtime schema enums, approve full Context OS, or expand
+side-effect classes.
+
+Lane C has accepted `PS1-G7` for Context OS specification and evaluation
+planning only:
+[Context OS Expansion Gate](Context_OS_Expansion_Gate.md) defines the
+conditions for moving beyond deterministic `Working Set Compiler v0`. It does
+not implement full Context OS, change schemas, authorize learned retrieval or
+compression, approve memory governance, collect labels, run experiments, or
+validate H3.
+
+Lane C has accepted `PS1-G8` for side-effect specification and evaluation
+planning only:
+[Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) defines the
+conditions for planning beyond Stage 1 side-effect allowances. It does not
+authorize runtime execution of `COMMITTABLE`, `IRREVERSIBLE`, or
+`MEMORY_WRITE` actions, change schemas, collect labels, run experiments,
+approve production deployment, or validate H5.
+
 ## Source Documents
 
 - [Design Theory](../01_theory/Design_Theory.md)

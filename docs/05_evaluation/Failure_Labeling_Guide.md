@@ -36,7 +36,23 @@ top-level taxonomy classes.
 - For Experiment 004, fixture oracle labels are used only for scoring; treatment
   must use the OpenClaw recovery decision.
 
+## Post-Stage-1 Review Requirements
+
+Post-Stage-1 failure labels used for broader evaluation evidence must follow
+[Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+with `label_policy_version: PS1-LB-LABEL-001`.
+
+`failure_label_accuracy` requires double human annotation or documented
+secondary review before broader label claims. `targeted_recovery_success`
+requires double annotation or secondary review when the recovery policy choice
+is not fixture-trivial.
+
+Adjudication is required when reviewers disagree on a top-level taxonomy label,
+omit a material multi-label cause, disagree on recovery policy match, or mark
+the packet as `needs_review`.
+
 ## Open Questions
 
 - Should credit vectors be normalized probabilities?
-- What minimum evidence is required to label `F_EXEC`?
+- What minimum evidence is required to label `F_EXEC` outside the current
+  Document Ops recovery fixtures?

@@ -17,19 +17,24 @@ Map how documents relate so readers can navigate from theory to implementation w
 9. [Stage 1 Experiment 005 Closure](Stage_1_Experiment_005_Closure.md)
 10. [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md)
 11. [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
-12. [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
-13. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
-14. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
-15. [Design Theory](../01_theory/Design_Theory.md)
-16. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-17. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-18. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-19. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-20. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-21. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-22. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-23. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-24. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+12. [Obsidian Graph Status](Obsidian_Graph_Status.md)
+13. [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+14. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
+15. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+16. [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+17. [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+18. [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
+19. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
+20. [Design Theory](../01_theory/Design_Theory.md)
+21. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+22. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+23. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+24. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+25. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+26. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+27. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+28. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+29. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -119,6 +124,38 @@ arms when available.
 is the accepted `PS1-G2` metric-policy artifact. It fixes conservative
 thresholds, no-regression checks, hard gates, and report labels for the first
 48-fixture Lane A larger controlled sample.
+
+[Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+is the accepted `PS1-G3` and `PS1-G4` labeling-policy artifact. It fixes the
+evidence sufficiency scale, label scope matrix, double-review requirements, and
+adjudication rules for Lane B human or secondary labeling.
+
+[Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+is the accepted `PS1-G6` implementation-planning artifact. It names `Document
+Ops Structured Edit Action Surface v0` as the next runtime capability, while
+leaving runtime implementation, schema enum updates, fixtures, full Context OS,
+and side-effect escalation for separate later gates or batches.
+
+[Context OS Expansion Gate](Context_OS_Expansion_Gate.md) is the accepted
+`PS1-G7` gate-definition artifact. It unlocks Context OS specification and
+evaluation planning only; full Context OS implementation, learned retrieval,
+compression, memory governance, memory writes, and H3 validation remain blocked
+until later accepted specs, schemas, experiments, labels, and implementation
+batches exist.
+
+[Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) is the accepted
+`PS1-G8` gate-definition artifact. It unlocks side-effect specification, schema
+impact review, evaluation planning, and implementation planning only; runtime
+execution of `COMMITTABLE`, `IRREVERSIBLE`, and `MEMORY_WRITE` actions remains
+blocked until later accepted specs, schemas, experiments, labels, and
+implementation batches exist.
+
+## Obsidian Graph
+
+[Obsidian Graph Status](Obsidian_Graph_Status.md) defines the current graph
+filter, layer hub spine, post-Stage-1 workbench, and cleanup rules for the
+Obsidian vault. It is navigation support only and does not replace the manifest,
+document map, or traceability matrix.
 
 ## Translation Sources
 

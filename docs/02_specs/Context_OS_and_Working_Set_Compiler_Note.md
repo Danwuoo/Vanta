@@ -14,6 +14,12 @@ Phase 5 narrows this note into `Working Set Compiler v0`: deterministic,
 reference-backed selection for local Document Ops smoke only. Phase 5 remains a
 candidate compiler test, not full Context OS.
 
+`PS1-G7` is accepted by
+[Context OS Expansion Gate](../00_manifest/Context_OS_Expansion_Gate.md) for
+Context OS specification and evaluation planning only. It does not authorize
+runtime implementation, schema changes, learned retrieval, ranking,
+compression, memory governance, memory writes, or H3 validation claims.
+
 ## Scope
 
 - Working set artifact boundaries.
@@ -95,12 +101,28 @@ The v0 policy is deterministic:
 The v0 output is useful only if it is schema-valid, budget-aware, and auditable.
 It is not proof that the selected context is sufficient.
 
+## Post-Stage-1 Expansion Boundary
+
+Any work beyond deterministic `Working Set Compiler v0` must route through
+`PS1-G7` and keep these boundaries:
+
+- Full Context OS requires a later spec and implementation batch; this note is
+  not that spec.
+- Learned retrieval, learned ranking, learned compression, and memory
+  governance require explicit future contracts before implementation.
+- `MEMORY_WRITE`, `COMMITTABLE`, and `IRREVERSIBLE` effects remain blocked by
+  [Side-Effect Escalation Gate](../00_manifest/Side_Effect_Escalation_Gate.md)
+  and successor implementation gates, not by this note.
+- Larger controlled evidence, policy-compliant omission/relevance/provenance
+  labels, fixed baseline identity, and process-integrity floors are required
+  before broader Context OS claims can be considered.
+
 ## Open Questions
 
 - What selection policy beyond deterministic reference-backed v0 is justified
-  after Experiment 005?
-- What label scale should measure context omission or provenance loss beyond
-  fixture oracles?
+  after larger controlled evidence and policy-compliant labels exist?
+- What additional label scale, if any, is needed beyond `PS1-LB-LABEL-001` for
+  future Context OS quality claims?
 - Which failures should trigger working-set recompilation rather than verifier
   rejection or targeted recovery?
 
@@ -108,6 +130,8 @@ It is not proof that the selected context is sufficient.
 
 - [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Project Manifest](../00_manifest/Project_Manifest.md)
+- [Context OS Expansion Gate](../00_manifest/Context_OS_Expansion_Gate.md)
+- [Side-Effect Escalation Gate](../00_manifest/Side_Effect_Escalation_Gate.md)
 - [Research Questions](../00_manifest/Research_Questions.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)

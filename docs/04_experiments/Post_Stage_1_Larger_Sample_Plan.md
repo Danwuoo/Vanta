@@ -95,7 +95,8 @@ Every fixture in this sample must satisfy all of these rules:
 - Required logs include the runtime artifacts needed for the target stratum.
 - Human or secondary labels are optional only when the metric is structural or
   fixture-oracle based.
-- Any subjective or oracle-sensitive label must wait for `PS1-G3` and `PS1-G4`.
+- Any subjective or oracle-sensitive label must follow
+  [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
 - The fixture exists under both `docs/04_experiments/fixtures/document_ops/`
   and `test/fixtures/document_ops/`.
 
@@ -181,10 +182,10 @@ the accepted policy.
       [Baseline Identity Plan](Baseline_Identity_Plan.md).
 - [x] `PS1-G2` metric policy is accepted by
       [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md).
-- [ ] `PS1-G3` evidence sufficiency scale is accepted before human evidence
-      sufficiency labeling.
-- [ ] `PS1-G4` labeling scope and adjudication policy is accepted before
-      broader subjective label claims.
+- [x] `PS1-G3` evidence sufficiency scale is accepted by
+      [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
+- [x] `PS1-G4` labeling scope and adjudication policy is accepted by
+      [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
 - [ ] All new fixtures validate against schemas.
 - [ ] Fixture mirrors under `docs/` and `test/` are synchronized.
 - [ ] The run command, model identity, harness identity, and budgets are fixed
@@ -209,3 +210,4 @@ the accepted policy.
 - [Ablation Plan](Ablation_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+- [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)

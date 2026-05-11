@@ -45,6 +45,11 @@ locked below. Post-Stage-1 Lane A acceptance thresholds are governed by
 - Required fields: evidence packet ID, sufficiency label, label scale, evaluator identity.
 - Interpretation: Higher means evidence is more complete, grounded, and auditable.
 - Failure modes: Scores may be inflated if labels reward fluent explanations rather than provenance-backed evidence.
+- Post-Stage-1 human or secondary computation: use
+  [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+  with `label_policy_version: PS1-LB-LABEL-001`.
+  The raw evidence sufficiency label is `0-4`, the normalized score is
+  `label_value / 4`, and `needs_review` receives no score until adjudicated.
 
 ## `verifier_brier_score`
 
@@ -304,9 +309,11 @@ Post-Stage-1 metric and labeling questions are tracked by
   [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md).
 - Baseline identity: `PS1-G5`, accepted by
   [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md).
-- Evidence sufficiency label scale: `PS1-G3`.
+- Evidence sufficiency label scale: `PS1-G3`, accepted by
+  [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
 - MVP acceptance thresholds beyond local smoke: `PS1-G2`, accepted by
   [Post-Stage-1 Metric Policy](Post_Stage_1_Metric_Policy.md).
-- Double human annotation or secondary-review requirements: `PS1-G4`.
+- Double human annotation or secondary-review requirements: `PS1-G4`, accepted by
+  [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
 - Phase 5 working-set omission, relevance, and provenance labeling contract:
   [Human Labeling Guide](Human_Labeling_Guide.md).

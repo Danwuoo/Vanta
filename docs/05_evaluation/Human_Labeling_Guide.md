@@ -32,6 +32,9 @@ outputs, or proof that a hypothesis has been validated.
 - Do not expose fixture oracle fields such as `required_refs`,
   `relevant_refs`, `irrelevant_refs`, or `omission_trap_refs` to primary human
   labelers. Those fields may be compared only after labels are frozen.
+- For post-Stage-1 Lane B labels, use
+  [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+  as the scope, scale, review, and adjudication authority.
 
 ## Required Outputs
 
@@ -43,6 +46,34 @@ outputs, or proof that a hypothesis has been validated.
   reference.
 - Reviewer identity or anonymized reviewer ID.
 - Label guide version or criteria version.
+
+## Post-Stage-1 Evidence Sufficiency Labels
+
+Evidence sufficiency labels for `PS1-G3` use policy version
+`PS1-LB-LABEL-001`.
+
+The label unit is one Evidence Packet or linked set of Evidence Packets
+supporting a verifier decision or commit decision. Labelers must judge whether
+the packet contains provenance-backed observations, state references,
+constraints, and postconditions sufficient for the decision under review. They
+must not reward fluent explanations that lack resolvable evidence.
+
+| Value | Label | Rule |
+| --- | --- | --- |
+| `4` | `sufficient` | Evidence is provenance-backed, resolves the relevant action or commit, covers required preconditions and postconditions, and supports the decision without material ambiguity. |
+| `3` | `mostly_sufficient` | Evidence supports the decision with only minor or redundant defects and no task-critical gap. |
+| `2` | `partial` | Evidence is materially incomplete or ambiguous; it may support conservative rejection or `request_evidence`, but not acceptance of a commit. |
+| `1` | `minimal` | Evidence is thin, mostly narrative, or cannot resolve the relevant state transition. |
+| `0` | `absent_or_misleading` | Evidence is missing, fabricated, stale, contradictory, explanation-only, or provenance-invalid. |
+| `needs_review` | `needs_review` | The packet or task boundary is too ambiguous to label. |
+
+For metric computation, `evidence_sufficiency_score` uses
+`label_value / 4` over adjudicated labels only. Reports must include raw labels,
+normalized scores, reviewer identity or anonymized ID, confidence, rationale,
+artifact refs, and unresolved `needs_review` counts.
+
+Double human annotation or documented secondary review is required before these
+labels may be reported as broader evaluation evidence.
 
 ## Phase 5 Working-Set Labeling Contract
 
@@ -204,7 +235,6 @@ mapping.
 
 ## Open Questions
 
-- What evidence sufficiency label scale should be used beyond local smoke?
 - What minimum larger-sample size is required before agreement statistics are
   meaningful?
 - Which future Context OS labels are needed if the program expands beyond

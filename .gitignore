@@ -13,3 +13,4 @@ docs/01_theory/Theory_Index.md
 docs/04_experiments/results/experiment_001/*/raw/
 docs/04_experiments/results/*/*/*.json
 /chatgpt_docs
+docs/00_manifest/Obsidian_Graph_Status.md

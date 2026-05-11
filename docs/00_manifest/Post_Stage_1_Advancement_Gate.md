@@ -6,8 +6,8 @@ Define the advancement conditions after Experiments 001 through 005 have all
 closed as local smoke runs.
 
 This gate converts post-Stage-1 open questions into trackable gate items. It
-does not validate the architecture, approve broader runtime scope, or replace
-future experiment and evaluation reports.
+does not validate the architecture, approve runtime implementation by itself, or
+replace future experiment and evaluation reports.
 
 ## Status
 
@@ -112,7 +112,10 @@ conditions below are met.
 | Evaluation plan | A benchmark, metric policy, and label plan exist before broader-scope results are reported as advancement evidence. |
 | Process-integrity floor | Unsupported commits remain `0`; ungoverned memory writes remain `0`; side-effect classes stay within their accepted gate. |
 
-Scope escalation is not bundled. Each of the following requires its own gate:
+Scope escalation is not bundled. Each of the following requires its own accepted
+gate or explicitly named successor policy. `PS1-G8` covers side-effect
+specification and evaluation planning for the listed high-risk side-effect
+classes, but it does not authorize runtime execution:
 
 - full Context OS beyond `Working Set Compiler v0`
 - learned retrieval, ranking, or compression
@@ -132,23 +135,59 @@ Scope escalation is not bundled. Each of the following requires its own gate:
 | `PS1-G0` | Have all five local smoke closures been recorded without broad validation claims? | Closure docs 001 through 005 and linked run reports | Any post-Stage-1 advancement |
 | `PS1-G1` | What sample size is feasible for broader experiments? | [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md) | Larger controlled samples |
 | `PS1-G2` | What metric thresholds define MVP acceptance beyond local smoke? | [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md) | Larger controlled samples and acceptance claims |
-| `PS1-G3` | What label scale should be used for evidence sufficiency? | Updated labeling guide or metric note with fixed scale | Human or secondary labeling |
-| `PS1-G4` | Which metrics require double human annotation? | Labeling scope matrix and adjudication policy | Human or secondary labeling |
+| `PS1-G3` | What label scale should be used for evidence sufficiency? | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | Human or secondary labeling |
+| `PS1-G4` | Which metrics require double human annotation? | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | Human or secondary labeling |
 | `PS1-G5` | Should the OpenClaw candidate baseline be promoted, replaced, or supplemented? | [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) | Larger controlled samples |
-| `PS1-G6` | Which runtime capability may expand next? | Scope proposal plus upstream spec and schema updates | Broader runtime scope |
-| `PS1-G7` | When can Context OS expand beyond Working Set Compiler v0? | Separate Context OS gate with metrics and labels beyond Experiment 005 smoke | Full Context OS work |
-| `PS1-G8` | When can side-effect classes expand beyond Stage 1 allowances? | Side-effect escalation gate with evidence, verifier, rollback, compensation, and approval policy | `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` work |
+| `PS1-G6` | Which runtime capability may expand next? | [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md) | Broader runtime scope implementation planning |
+| `PS1-G7` | When can Context OS expand beyond Working Set Compiler v0? | [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) | Context OS specification and evaluation planning |
+| `PS1-G8` | When can side-effect classes expand beyond Stage 1 allowances? | [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) | `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` planning |
 
 `PS1-G0` is met by the current closure set. `PS1-G1` is accepted by the
-larger-sample plan, `PS1-G2` is accepted by the metric policy, and `PS1-G5` is
-accepted by the baseline identity plan. `PS1-G3`, `PS1-G4`, `PS1-G6`,
-`PS1-G7`, and `PS1-G8` remain open until their required artifacts are added and
-linked from this document or a successor manifest gate.
+larger-sample plan, `PS1-G2` is accepted by the metric policy, `PS1-G3` and
+`PS1-G4` are accepted by the labeling scope and adjudication policy, and
+`PS1-G5` is accepted by the baseline identity plan. `PS1-G6` is accepted by
+[Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+for implementation planning of `Document Ops Structured Edit Action Surface v0`.
+It does not implement the action surface, update runtime schema enums, add
+fixtures, or authorize broader runtime validation claims. `PS1-G7` is accepted
+by [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) for Context OS
+specification and evaluation planning only. It does not implement full Context
+OS, change schemas, authorize learned retrieval or compression, approve memory
+governance, collect labels, run experiments, or validate H3. `PS1-G8` is
+accepted by [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) for
+side-effect specification, schema impact review, evaluation planning, and
+implementation planning only. It does not authorize runtime execution of
+`COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` actions, change schemas,
+collect labels, run experiments, approve production deployment, or validate H5.
 
 Lane A is open for threshold-governed larger-sample acceptance candidates after
 the 48-fixture sample is run under the accepted sample, metric, and baseline
 identity policies. A future manifest closure must still accept measured results
 before a report may use `accepted_by_closure`.
+
+Lane B is open for human or secondary labeling after labels are collected under
+[Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
+No post-Stage-1 human or secondary labels have been collected yet, and a future
+report must still include packet, blinding, review, adjudication, agreement,
+and interpretation-boundary metadata before using broader label claims.
+
+Lane C is open for implementation planning of `Document Ops Structured Edit
+Action Surface v0` under
+[Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md).
+The accepted scope remains fixture-local Document Ops and only uses
+`READ_ONLY`, `SIMULATED`, and `REVERSIBLE` candidate actions. Runtime
+implementation still requires a later schema, code, fixture, and test batch.
+
+Lane C is also open for Context OS specification and evaluation planning under
+[Context OS Expansion Gate](Context_OS_Expansion_Gate.md). The accepted
+`PS1-G7` scope remains planning-only and keeps `Working Set Compiler v0` as the
+current implemented context capability.
+
+Lane C is also open for side-effect specification and evaluation planning under
+[Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md). The accepted
+`PS1-G8` scope remains planning-only. `COMMITTABLE`, `IRREVERSIBLE`, and
+`MEMORY_WRITE` execution still requires later accepted specs, schemas,
+fixtures, runtime code, tests, and evaluation artifacts.
 
 ## Gate Inventory Boundary
 
@@ -164,8 +203,9 @@ accept a gate item by itself.
 - This gate does not define final MVP acceptance thresholds by itself; `PS1-G2`
   thresholds are defined by
   [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md).
-- This gate does not authorize full Context OS, learned retrieval, compression,
-  or memory governance.
+- This gate does not authorize full Context OS implementation or validation,
+  learned retrieval implementation, compression implementation, or memory
+  governance.
 - This gate does not authorize memory writes, training, or learning from runtime
   feedback.
 - This gate does not authorize irreversible external actions.
@@ -200,9 +240,13 @@ claim`.
 - [Stage 1 MVP Entry Gate](Stage_1_MVP_Entry_Gate.md)
 - [Stage 1 Experiment 005 Closure](Stage_1_Experiment_005_Closure.md)
 - [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
+- [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+- [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
+- [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+- [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)
 - [Implementation Timeline](../06_engineering/Implementation_Timeline.md)

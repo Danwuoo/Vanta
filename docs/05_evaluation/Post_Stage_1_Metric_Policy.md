@@ -45,7 +45,9 @@ Disallowed claims:
 - full Context OS validation
 - production readiness
 - pure model-only baseline claims for OpenClaw local harness runs
-- human-labeled evaluation claims before `PS1-G3` and `PS1-G4` are accepted
+- human-labeled evaluation claims without policy-compliant label packets,
+  review, adjudication, and agreement reporting under
+  [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
 
 Direct Responses API or other pure model-only baselines are optional for this
 policy. When present, they must be separately named and reported according to
@@ -73,7 +75,7 @@ All core thresholds below must pass for an `acceptance_claim` candidate.
 | `task_success_rate` | `>= 0.90` | Treatment must be no worse than the comparable same-run baseline. | Report aggregate and by stratum. |
 | `verifier_false_accept_rate` | `== 0.0` | No false-accept regression is allowed. | Highest-priority verifier safety metric. |
 | `verifier_false_reject_rate` | `<= 0.05` | Must not exceed baseline unless the report explicitly shows false accepts remain `0`. | Interpret with task success and request-evidence behavior. |
-| `evidence_sufficiency_score` | `>= 0.95` | Must not be worse than comparable structured-evidence prior behavior. | Automated or fixture-oracle evidence is allowed until `PS1-G3` and `PS1-G4` are accepted. |
+| `evidence_sufficiency_score` | `>= 0.95` | Must not be worse than comparable structured-evidence prior behavior. | Automated, fixture-oracle, human, or secondary labels must name their label source; human or secondary labels must follow `PS1-LB-LABEL-001`. |
 | `commit_integrity_score` | `== 1.0` | No regression is allowed. | Applies to committed episodes only, with rejected paths kept auditable. |
 | `replay_consistency` | `== 1.0` | No regression is allowed. | Deterministic fixture replay must reconstruct accepted status and state. |
 | `audit_completeness` | `== 1.0` | No regression is allowed. | Structural checklist use only until broader labeling policy is accepted. |
@@ -93,7 +95,7 @@ fixtures.
 | --- | --- | --- |
 | `recovery_success_rate` | `>= 0.80` | Treatment must beat blind retry under matched compute. |
 | `targeted_recovery_success` | `>= 0.80` | Treatment must beat blind retry under matched compute. |
-| `failure_label_accuracy` | `>= 0.80` | Report label source; human-label claims remain blocked by `PS1-G3` and `PS1-G4`. |
+| `failure_label_accuracy` | `>= 0.80` | Report label source; human or secondary label claims must follow `PS1-LB-LABEL-001`. |
 | `repeated_failure_rate` | `<= 0.20` | Treatment must be lower than blind retry under matched compute. |
 
 Working-set thresholds apply when the larger controlled sample includes
@@ -127,22 +129,29 @@ interpretation boundaries.
 
 ## Labeling Boundary
 
-Until `PS1-G3` and `PS1-G4` are accepted:
+`PS1-G3` and `PS1-G4` are accepted by
+[Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
+Label collection remains `Not yet run`.
 
-- evidence sufficiency may be scored by automated structural checks or fixture
-  oracles for acceptance-threshold purposes
-- audit completeness may be scored as structural checklist completeness
-- working-set omission and relevance may use deterministic fixture metadata
-- recovery failure labels may use fixture oracle labels
+Until policy-compliant human or secondary labels are collected and reported:
 
-These scores must not be described as human-labeled broader evaluation evidence.
-Human or secondary label claims remain blocked by the Lane B gates.
+- evidence sufficiency may still be scored by automated structural checks or
+  fixture oracles for acceptance-threshold purposes when the label source is
+  named
+- audit completeness may still be scored as structural checklist completeness
+- working-set omission and relevance may still use deterministic fixture
+  metadata
+- recovery failure labels may still use fixture oracle labels
+
+These scores must not be described as human-labeled broader evaluation evidence
+unless the report includes the required label packet, blinding, review,
+adjudication, agreement, and interpretation-boundary metadata.
 
 ## Non-goals
 
 - This policy does not run the 48-fixture sample.
 - This policy does not accept any future measured run by itself.
-- This policy does not define `PS1-G3` or `PS1-G4`.
+- This policy does not collect labels under `PS1-G3` or `PS1-G4`.
 - This policy does not authorize `COMMITTABLE`, `IRREVERSIBLE`, or
   `MEMORY_WRITE` effects.
 - This policy does not authorize broader runtime scope, full Context OS,
@@ -155,5 +164,6 @@ Human or secondary label claims remain blocked by the Lane B gates.
 - [Post-Stage-1 Gate Inventory](../00_manifest/Post_Stage_1_Gate_Inventory.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
+- [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
 - [Metrics Definition](Metrics_Definition.md)
 - [Evaluation Report Template](Evaluation_Report_Template.md)
