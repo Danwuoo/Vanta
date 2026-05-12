@@ -3,7 +3,7 @@ defmodule Vanta.ActionExecutor do
   Executes or simulates the fixture-local action set allowed in Stage 1.
   """
 
-  alias Vanta.{EvaluationHarness, Hash, PathGuard, Schema}
+  alias Vanta.{EvaluationHarness, Hash, PathGuard, Schema, StructuredEdit}
 
   def execute(workspace, %{"action_type" => "read_file", "action_payload" => payload}) do
     path = Map.fetch!(payload, "path")
@@ -47,6 +47,34 @@ defmodule Vanta.ActionExecutor do
        "file_hash" => Hash.file_hash(abs_path),
        "mutated" => false
      }}
+  end
+
+  def execute(workspace, %{
+        "action_type" => "inspect_document_structure",
+        "action_payload" => payload
+      }) do
+    StructuredEdit.inspect_document_structure(workspace, payload)
+  end
+
+  def execute(workspace, %{
+        "action_type" => "validate_document_contract",
+        "action_payload" => payload
+      }) do
+    StructuredEdit.validate_document_contract(workspace, payload)
+  end
+
+  def execute(workspace, %{
+        "action_type" => "simulate_structured_edit",
+        "action_payload" => payload
+      }) do
+    StructuredEdit.simulate_structured_edit(workspace, payload)
+  end
+
+  def execute(workspace, %{
+        "action_type" => "apply_reversible_structured_edit",
+        "action_payload" => payload
+      }) do
+    StructuredEdit.apply_reversible_structured_edit(workspace, payload)
   end
 
   def execute(workspace, %{"action_type" => "simulate_patch", "action_payload" => payload}) do

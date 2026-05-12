@@ -46,18 +46,21 @@ Define the semantics for committing, aborting, rolling back, reconciling, and re
 - `replay` requires enough versioned runtime and tool metadata to reconstruct the episode.
 - Episode Journal records audit and replay data; it is not durable memory.
 
-## PS1-G6 Proposal-Only Commit And Replay Contract
+## PS1-G6 Structured Edit Commit And Replay Contract
 
-[Post-Stage-1 Runtime Scope Proposal](../00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md)
-accepts `Document Ops Structured Edit Action Surface v0` for implementation
-planning only. Future implementation must preserve the existing commit,
-rollback, and replay boundaries.
+`PS1-G6` preserves the existing Stage 1 commit, rollback, and replay
+boundaries while adding fixture-local structured Document Ops actions.
 
-| Candidate action class | Commit behavior | Abort or reject behavior | Replay requirement |
+| Action class | Commit behavior | Abort or reject behavior | Replay requirement |
 | --- | --- | --- | --- |
 | `READ_ONLY` structured inspection and contract validation | May update accepted runtime state only with verified observation summaries and audit refs; source files remain unchanged. | Reject or request evidence when source, contract, parse, or provenance evidence is missing. | Replay must reproduce the same fixture-local read or validation observation from versioned source and contract refs. |
 | `SIMULATED` structured edit | May commit only the verified simulated observation, candidate content reference, diff, and state event; source files remain unchanged. | Reject if simulation mutates source, lacks diff/candidate content, or has ambiguous selector resolution. | Replay must reproduce the candidate content, diff, before/after hashes, and unchanged source hash. |
 | `REVERSIBLE` structured edit | May commit only after verifier `accept`, required Evidence Packet fields, fixture-local write, and backup metadata are present. | Abort or reject when backup metadata, hash agreement, fixture-local path safety, or verifier accept is missing. | Replay must reconstruct the edit path and confirm backup metadata is sufficient for fixture-local restore. |
+
+Replay compares commit status, step count, state hash, and observation
+signatures when artifacts are available. The observation signature covers
+action kind, path, selector resolution status, diff, before/after hashes, and
+contract pass/failure result.
 
 `PS1-G6` does not expand `COMPENSABLE`, `COMMITTABLE`, `IRREVERSIBLE`, or
 `MEMORY_WRITE` behavior. Rollback must be recorded only for reversible
@@ -86,8 +89,8 @@ append is not learning.
 - What state hash granularity is required?
 - How should compensation be represented for non-reversible actions beyond the
   Phase 4 fixture-local compensation record?
-- What replay fidelity threshold is required before `PS1-G6` structured-edit
-  actions can be used in measured runs?
+- What additional replay fields should be compared before using structured
+  edits in larger measured runs?
 
 ## Related Documents
 

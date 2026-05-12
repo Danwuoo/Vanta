@@ -78,8 +78,8 @@ For `PS1-G1` through `PS1-G8`, use:
 | --- | --- | --- |
 | L0 manifest | [[docs/00_manifest/Manifest_Index|Manifest Index]] | Active governance and post-Stage-1 routing source. |
 | L1 theory | [[docs/01_theory/Theory_Index|Theory Index]] | Source theory and validation review; not implementation authority. |
-| L2 specs | [[docs/02_specs/Specs_Index|Specs Index]] | MVP contracts plus proposal-only PS1-G6/G8 boundaries. |
-| L3 schemas | [[docs/03_schemas/Schemas_Index|Schemas Index]] | Existing data contracts; no PS1-G6 schema enum promotion yet. |
+| L2 specs | [[docs/02_specs/Specs_Index|Specs Index]] | MVP contracts plus implemented PS1-G6 structured edit and planning-only PS1-G8 boundaries. |
+| L3 schemas | [[docs/03_schemas/Schemas_Index|Schemas Index]] | Existing data contracts plus PS1-G6 structured edit action payload contracts. |
 | L4 experiments | [[docs/04_experiments/Experiments_Index|Experiments Index]] | Stage 1 local smoke complete; larger PS1 sample not yet run. |
 | L5 evaluation | [[docs/05_evaluation/Evaluation_Index|Evaluation Index]] | Metric and labeling policies accepted; labels not yet collected. |
 | L6 engineering | [[docs/06_engineering/Engineering_Index|Engineering Index]] | Implementation planning remains downstream of accepted specs and schemas. |

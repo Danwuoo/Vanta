@@ -43,7 +43,7 @@ successor manifest gate that explicitly supersedes it.
 | `PS1-G3` | Human or Secondary Labeling | `Accepted` | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; Evidence Packet spec; Metrics Definition; labeling guides | Evidence sufficiency labeling can begin under the fixed `PS1-LB-LABEL-001` scale | Evidence sufficiency labels have not been collected; no broad label claim exists yet. |
 | `PS1-G4` | Human or Secondary Labeling | `Accepted` | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; `PS1-G3`; labeling guides | Broader subjective label claims can use the accepted review and adjudication policy after labels are collected | Subjective metrics cannot support broad claims without policy-compliant packets, review, and adjudication records. |
 | `PS1-G5` | Larger Controlled Samples | `Accepted` | [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) | `docs/04_experiments/Baseline_Identity_Plan.md` | `PS1-G0`; OpenClaw local harness closure notes; Experiment 001 baseline records | Baseline arm naming for larger controlled samples; input to `PS1-G2` | OpenClaw harness results are not promoted to pure model-only baseline results. |
-| `PS1-G6` | Broader Runtime Scope | `Accepted` | [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md) | `docs/00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md` | `PS1-G0`; Stage 1 scope boundaries; Execution IR, Evidence Packet, Commit/Abort/Replay specs | Implementation planning for `Document Ops Structured Edit Action Surface v0` | Runtime implementation is not complete; schemas, code, fixtures, and tests still require a later batch. |
+| `PS1-G6` | Broader Runtime Scope | `Accepted` | [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md) | `docs/00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md` | `PS1-G0`; Stage 1 scope boundaries; Execution IR, Evidence Packet, Commit/Abort/Replay specs | Local schema-backed implementation of `Document Ops Structured Edit Action Surface v0` | Local implementation and tests do not validate H1-H5 or authorize broader side-effect classes. |
 | `PS1-G7` | Broader Runtime Scope | `Accepted` | [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) | `docs/00_manifest/Context_OS_Expansion_Gate.md` | `PS1-G0`; Phase 5 gate; Experiment 005 closure; Working Set Compiler note; `PS1-G1` through `PS1-G5` policies | Context OS specification and evaluation planning only | Runtime implementation, schema changes, full Context OS validation, learned retrieval, compression, memory governance, and H3 validation are not authorized. |
 | `PS1-G8` | Broader Runtime Scope | `Accepted` | [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) | `docs/00_manifest/Side_Effect_Escalation_Gate.md` | `PS1-G0`; Stage 1 side-effect allowances; Commit Abort Replay Semantics; Evidence Packet and Verifier Runtime | Side-effect specification, schema impact review, evaluation planning, and implementation planning | Runtime execution of `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` actions is not authorized; rollback must not be assumed. |
 
@@ -54,9 +54,10 @@ successor manifest gate that explicitly supersedes it.
 - `PS1-G3` and `PS1-G4` are accepted by
   [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
   Label collection remains `Not yet run`.
-- `PS1-G6` is accepted for implementation planning of
-  `Document Ops Structured Edit Action Surface v0`. It does not update runtime
-  schema enums or implement the action surface.
+- `PS1-G6` has a local schema-backed implementation of
+  `Document Ops Structured Edit Action Surface v0`, including runtime code,
+  schemas, fixtures, and tests. It remains fixture-local and does not create a
+  measured validation claim.
 - `PS1-G7` is accepted by
   [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) for Context OS
   specification and evaluation planning only. It is separate from `PS1-G6`, and

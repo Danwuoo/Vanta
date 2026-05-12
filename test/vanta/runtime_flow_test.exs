@@ -170,6 +170,14 @@ defmodule Vanta.RuntimeFlowTest do
         docops_simulate_patch_001
         docops_reversible_edit_001
         docops_multistep_commit_001
+        docops_struct_inspect_001
+        docops_struct_contract_pass_001
+        docops_struct_contract_fail_001
+        docops_struct_simulate_md_001
+        docops_struct_simulate_json_001
+        docops_struct_apply_reversible_001
+        docops_struct_insert_before_001
+        docops_struct_insert_after_001
       ),
       fn fixture_id ->
         {task, workspace} = load_fixture(fixture_id)
@@ -270,6 +278,12 @@ defmodule Vanta.RuntimeFlowTest do
         docops_action_not_allowed_001
         docops_path_escape_001
         docops_wrong_diff_001
+        docops_struct_selector_missing_001
+        docops_struct_selector_ambiguous_001
+        docops_struct_path_escape_001
+        docops_struct_simulation_mutation_001
+        docops_struct_missing_backup_metadata_001
+        docops_struct_wrong_diff_001
       ),
       fn fixture_id ->
         {task, workspace} = load_fixture(fixture_id)

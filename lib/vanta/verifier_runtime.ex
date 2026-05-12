@@ -84,8 +84,11 @@ defmodule Vanta.VerifierRuntime do
     |> require_workspace_paths(workspace, step, evidence, observation)
     |> require_observation_kind(step, observation)
     |> require_read_only_semantics(step, observation)
+    |> require_structured_read_semantics(step, observation)
     |> require_simulated_semantics(step, observation, workspace)
+    |> require_structured_simulated_semantics(step, observation)
     |> require_reversible_semantics(step, observation, workspace)
+    |> require_structured_reversible_semantics(step, observation, workspace)
     |> require_compensable_semantics(step, observation)
     |> require_audit_validation(observation)
     |> require_fixture_acceptance(observation, workspace)
@@ -152,7 +155,7 @@ defmodule Vanta.VerifierRuntime do
   defp action_paths(step) do
     payload = Map.get(step, "action_payload", %{})
 
-    [payload["path"], payload["paths"]]
+    [payload["path"], payload["paths"], payload["contract_ref"]]
     |> path_list()
   end
 
@@ -196,6 +199,31 @@ defmodule Vanta.VerifierRuntime do
 
   defp require_read_only_semantics(violations, _step, _observation), do: violations
 
+  defp require_structured_read_semantics(
+         violations,
+         %{"action_type" => "inspect_document_structure"},
+         observation
+       ) do
+    violations
+    |> require_present(observation, "file_hash", "file_hash_missing")
+    |> require_map(observation, "structure", "structure_summary_missing")
+    |> require_list(observation, "parse_diagnostics", "parse_diagnostics_missing")
+  end
+
+  defp require_structured_read_semantics(
+         violations,
+         %{"action_type" => "validate_document_contract"},
+         observation
+       ) do
+    violations
+    |> require_present(observation, "file_hash", "file_hash_missing")
+    |> require_present(observation, "contract_hash", "contract_hash_missing")
+    |> require_boolean(observation, "passed", "contract_result_missing")
+    |> require_list(observation, "failures", "contract_failures_missing")
+  end
+
+  defp require_structured_read_semantics(violations, _step, _observation), do: violations
+
   defp require_simulated_semantics(
          violations,
          %{"side_effect_class" => "SIMULATED"},
@@ -210,6 +238,26 @@ defmodule Vanta.VerifierRuntime do
 
   defp require_simulated_semantics(violations, _step, _observation, _workspace), do: violations
 
+  defp require_structured_simulated_semantics(
+         violations,
+         %{"action_type" => "simulate_structured_edit"},
+         observation
+       ) do
+    violations
+    |> require_selector_resolved(observation)
+    |> require_present(observation, "candidate_content", "candidate_content_missing")
+    |> require_present(observation, "before_hash", "before_hash_missing")
+    |> require_present(observation, "after_hash", "after_hash_missing")
+    |> require_present(
+      observation,
+      "source_hash_after_simulation",
+      "source_hash_after_simulation_missing"
+    )
+    |> require_source_hash_after_simulation(observation)
+  end
+
+  defp require_structured_simulated_semantics(violations, _step, _observation), do: violations
+
   defp require_reversible_semantics(
          violations,
          %{"side_effect_class" => "REVERSIBLE"},
@@ -222,6 +270,23 @@ defmodule Vanta.VerifierRuntime do
   end
 
   defp require_reversible_semantics(violations, _step, _observation, _workspace), do: violations
+
+  defp require_structured_reversible_semantics(
+         violations,
+         %{"action_type" => "apply_reversible_structured_edit"},
+         observation,
+         workspace
+       ) do
+    violations
+    |> require_selector_resolved(observation)
+    |> require_present(observation, "before_hash", "before_hash_missing")
+    |> require_present(observation, "after_hash", "after_hash_missing")
+    |> require_present(observation, "source_hash_after_write", "source_hash_after_write_missing")
+    |> require_structured_backup_metadata(observation, workspace)
+  end
+
+  defp require_structured_reversible_semantics(violations, _step, _observation, _workspace),
+    do: violations
 
   defp require_compensable_semantics(
          violations,
@@ -304,6 +369,66 @@ defmodule Vanta.VerifierRuntime do
     end
   end
 
+  defp require_structured_backup_metadata(violations, observation, workspace) do
+    metadata = observation["backup_metadata"]
+
+    cond do
+      not is_map(metadata) ->
+        violations
+
+      metadata["backup_policy"] != "fixture_backup_restore" ->
+        ["backup_policy_invalid" | violations]
+
+      is_nil(workspace) ->
+        violations
+
+      true ->
+        violations
+        |> require_backup_hash(metadata, workspace)
+        |> require_source_hash_after_write(observation, workspace)
+        |> require_metadata_diff_hash(metadata, observation)
+    end
+  end
+
+  defp require_backup_hash(violations, metadata, workspace) do
+    with backup_path when is_binary(backup_path) <- metadata["backup_path"],
+         {:ok, abs_path} <- PathGuard.safe_resolve(workspace, backup_path),
+         true <- File.exists?(abs_path),
+         backup_hash <- Hash.file_hash(abs_path),
+         true <- backup_hash == metadata["backup_hash"],
+         true <- backup_hash == metadata["before_hash"] do
+      violations
+    else
+      _other -> ["backup_hash_mismatch" | violations]
+    end
+  end
+
+  defp require_source_hash_after_write(violations, observation, workspace) do
+    with path when is_binary(path) <- observation["path"],
+         after_hash when is_binary(after_hash) <- observation["after_hash"],
+         source_hash_after_write when is_binary(source_hash_after_write) <-
+           observation["source_hash_after_write"],
+         true <- source_hash_after_write == after_hash,
+         {:ok, abs_path} <- PathGuard.safe_resolve(workspace, path),
+         true <- File.exists?(abs_path),
+         current_hash <- Hash.file_hash(abs_path),
+         true <- current_hash == after_hash do
+      violations
+    else
+      _other -> ["source_hash_after_write_mismatch" | violations]
+    end
+  end
+
+  defp require_metadata_diff_hash(violations, metadata, observation) do
+    with diff when is_binary(diff) <- observation["diff"],
+         diff_hash when is_binary(diff_hash) <- metadata["diff_hash"],
+         true <- Hash.sha256(diff) == diff_hash do
+      violations
+    else
+      _other -> ["backup_diff_hash_mismatch" | violations]
+    end
+  end
+
   defp require_metadata_path(violations, metadata, workspace, key, violation) do
     with path when is_binary(path) <- metadata[key],
          {:ok, abs_path} <- PathGuard.safe_resolve(workspace, path),
@@ -325,6 +450,39 @@ defmodule Vanta.VerifierRuntime do
       true ->
         violations
     end
+  end
+
+  defp require_selector_resolved(violations, observation) do
+    case get_in(observation, ["selector_resolution", "status"]) do
+      "resolved" -> violations
+      "missing" -> ["structured_selector_missing" | violations]
+      "ambiguous" -> ["structured_selector_ambiguous" | violations]
+      _other -> ["structured_selector_resolution_missing" | violations]
+    end
+  end
+
+  defp require_source_hash_after_simulation(violations, observation) do
+    if observation["source_hash_after_simulation"] == observation["before_hash"] do
+      violations
+    else
+      ["source_hash_after_simulation_mismatch" | violations]
+    end
+  end
+
+  defp require_present(violations, observation, key, violation) do
+    if present?(observation[key]), do: violations, else: [violation | violations]
+  end
+
+  defp require_map(violations, observation, key, violation) do
+    if is_map(observation[key]), do: violations, else: [violation | violations]
+  end
+
+  defp require_list(violations, observation, key, violation) do
+    if is_list(observation[key]), do: violations, else: [violation | violations]
+  end
+
+  defp require_boolean(violations, observation, key, violation) do
+    if is_boolean(observation[key]), do: violations, else: [violation | violations]
   end
 
   defp require_fixture_acceptance(violations, _observation, nil), do: violations

@@ -44,24 +44,28 @@ Define the structured evidence and verifier outputs needed to reduce invalid com
 - False accept is more dangerous than false reject for side-effectful actions.
 - Verifier Runtime must not be reduced to final-answer-only judging.
 
-## PS1-G6 Proposal-Only Evidence And Verifier Contract
+## PS1-G6 Structured Edit Evidence And Verifier Contract
 
-[Post-Stage-1 Runtime Scope Proposal](../00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md)
-accepts `Document Ops Structured Edit Action Surface v0` for implementation
-planning only. Future implementation must define action-specific Evidence
-Packet requirements and deterministic verifier checks before the action names
-enter runtime schemas.
+`PS1-G6` defines action-specific Evidence Packet observations and deterministic
+Verifier Runtime checks for fixture-local structured Document Ops actions. A
+contract validation that reports `passed: false` is a valid observation when it
+includes the source hash, contract provenance, and failure list; the verifier
+rejects missing or inconsistent evidence, not the mere presence of a documented
+contract failure.
 
-| Candidate action | Required evidence | Required verifier checks |
+| Action | Required evidence | Required verifier checks |
 | --- | --- | --- |
 | `inspect_document_structure` | file hash, parsed structure summary, parse diagnostics, selected structure refs, source provenance | fixture-local path, no mutation, reproducible structure summary, diagnostics recorded |
 | `validate_document_contract` | file hash, contract hash or contract ref, validation result, failure list, source and contract provenance | fixture-local source and contract refs, pass/fail result present, failures tied to source and contract versions, no mutation |
-| `simulate_structured_edit` | before hash, after hash, candidate content, diff, operation summary, selector resolution, source provenance | source hash unchanged, diff or result summary present, selector resolution explicit, no source mutation |
-| `apply_reversible_structured_edit` | before hash, after hash, diff, backup metadata, source hash after write, operation summary, selector resolution, source provenance | backup artifact exists, backup metadata exists, before/after hashes match evidence, write stays fixture-local, rollback metadata supports restore |
+| `simulate_structured_edit` | before hash, after hash, candidate content, diff, operation summary, selector resolution, `source_hash_after_simulation`, source provenance | selector resolves exactly once, source hash remains unchanged, candidate content and diff are present, no source mutation occurs |
+| `apply_reversible_structured_edit` | before hash, after hash, diff, backup metadata, source hash after write, operation summary, selector resolution, source provenance | selector resolves exactly once, backup artifact exists, backup metadata exists, backup policy is `fixture_backup_restore`, before/after/source hashes match evidence, write stays fixture-local, rollback metadata supports restore |
 
 Ambiguous selectors, missing structured targets, absent contract provenance, or
-source mutation during simulation must cause verifier rejection or an explicit
-request for additional evidence before any commit path.
+source mutation during simulation cause verifier rejection or an explicit
+request for additional evidence before any commit path. Fixture-local negative
+tests may use explicit structured-edit `fault_injection` payloads to prove the
+verifier rejects mutation, missing backup metadata, and missing backup files;
+these fault injections are test fixtures, not expanded production actions.
 
 ## PS1-G8 Side-Effect Evidence Boundary
 
@@ -84,8 +88,8 @@ or retraction path, verifier `accept`, and journal audit.
 - Which evidence fields are mandatory for Stage 1?
 - What calibration method should be used for verifier confidence?
 - How should verifier disagreement be represented?
-- What minimum structured selector representation should be required before
-  `PS1-G6` candidate actions become schema-backed runtime interfaces?
+- Which evidence fields should become first-class schema properties rather than
+  remaining action-specific observation fields after G6 local testing?
 
 ## Related Documents
 

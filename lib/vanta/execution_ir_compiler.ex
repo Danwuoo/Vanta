@@ -8,6 +8,10 @@ defmodule Vanta.ExecutionIRCompiler do
     "list_files" => "READ_ONLY",
     "compute_hash" => "READ_ONLY",
     "validate_artifact" => "READ_ONLY",
+    "inspect_document_structure" => "READ_ONLY",
+    "validate_document_contract" => "READ_ONLY",
+    "simulate_structured_edit" => "SIMULATED",
+    "apply_reversible_structured_edit" => "REVERSIBLE",
     "simulate_patch" => "SIMULATED",
     "compute_diff" => "SIMULATED",
     "apply_reversible_patch" => "REVERSIBLE",
@@ -110,6 +114,20 @@ defmodule Vanta.ExecutionIRCompiler do
   defp expected_effect("list_files"), do: "List fixture-local files without mutation."
   defp expected_effect("compute_hash"), do: "Compute fixture-local file hash without mutation."
   defp expected_effect("validate_artifact"), do: "Validate an artifact without mutation."
+
+  defp expected_effect("inspect_document_structure"),
+    do: "Parse fixture-local document structure without mutation."
+
+  defp expected_effect("validate_document_contract"),
+    do:
+      "Validate a fixture-local document against an inline or fixture-local contract without mutation."
+
+  defp expected_effect("simulate_structured_edit"),
+    do: "Compute a selector-based candidate structured edit without writing source files."
+
+  defp expected_effect("apply_reversible_structured_edit"),
+    do: "Apply a selector-based fixture-local edit with backup metadata."
+
   defp expected_effect("simulate_patch"), do: "Compute a candidate patch without writing it."
   defp expected_effect("compute_diff"), do: "Compute a diff without writing source files."
 
@@ -125,6 +143,18 @@ defmodule Vanta.ExecutionIRCompiler do
 
   defp postconditions("apply_reversible_patch"),
     do: ["backup_metadata_exists", "change_is_rollbackable"]
+
+  defp postconditions("apply_reversible_structured_edit"),
+    do: ["selector_resolved", "backup_metadata_exists", "change_is_rollbackable"]
+
+  defp postconditions("simulate_structured_edit"),
+    do: ["selector_resolved", "source_files_preserved_unless_explicitly_allowed"]
+
+  defp postconditions("inspect_document_structure"),
+    do: ["structure_summary_recorded", "source_files_preserved_unless_explicitly_allowed"]
+
+  defp postconditions("validate_document_contract"),
+    do: ["contract_result_recorded", "source_files_preserved_unless_explicitly_allowed"]
 
   defp postconditions("record_compensable_action"),
     do: ["compensation_record_required", "rollback_not_claimed"]

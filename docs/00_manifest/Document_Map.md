@@ -131,10 +131,11 @@ evidence sufficiency scale, label scope matrix, double-review requirements, and
 adjudication rules for Lane B human or secondary labeling.
 
 [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
-is the accepted `PS1-G6` implementation-planning artifact. It names `Document
-Ops Structured Edit Action Surface v0` as the next runtime capability, while
-leaving runtime implementation, schema enum updates, fixtures, full Context OS,
-and side-effect escalation for separate later gates or batches.
+is the accepted `PS1-G6` artifact and now records the local schema-backed
+implementation of `Document Ops Structured Edit Action Surface v0`. The
+implementation stays fixture-local, uses only `READ_ONLY`, `SIMULATED`, and
+`REVERSIBLE`, and does not authorize full Context OS, side-effect escalation,
+or validation claims.
 
 [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) is the accepted
 `PS1-G7` gate-definition artifact. It unlocks Context OS specification and

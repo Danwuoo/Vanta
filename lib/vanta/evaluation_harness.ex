@@ -198,6 +198,26 @@ defmodule Vanta.EvaluationHarness do
       Map.get(journal, "memory_write_effects") == []
   end
 
+  defp reversible_commit_auditable?(
+         %{
+           "action_type" => "apply_reversible_structured_edit",
+           "side_effect_class" => "REVERSIBLE"
+         },
+         evidence
+       ) do
+    metadata = get_in(evidence, ["observation", "backup_metadata"])
+
+    is_map(metadata) and
+      metadata["backup_policy"] == "fixture_backup_restore" and
+      present?(metadata["path"]) and
+      present?(metadata["backup_path"]) and
+      present?(metadata["metadata_path"]) and
+      present?(metadata["before_hash"]) and
+      present?(metadata["after_hash"]) and
+      present?(metadata["backup_hash"]) and
+      present?(metadata["diff_hash"])
+  end
+
   defp reversible_commit_auditable?(%{"side_effect_class" => "REVERSIBLE"}, evidence) do
     evidence
     |> get_in(["observation", "backup_metadata"])

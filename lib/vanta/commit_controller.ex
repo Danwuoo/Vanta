@@ -20,6 +20,11 @@ defmodule Vanta.CommitController do
           not Map.has_key?(evidence["observation"], "backup_metadata") ->
         {:error, :missing_rollback_metadata}
 
+      step["action_type"] == "apply_reversible_structured_edit" and
+          get_in(evidence, ["observation", "backup_metadata", "backup_policy"]) !=
+            "fixture_backup_restore" ->
+        {:error, :invalid_rollback_policy}
+
       step["side_effect_class"] == "COMPENSABLE" ->
         {:error, :compensation_required}
 

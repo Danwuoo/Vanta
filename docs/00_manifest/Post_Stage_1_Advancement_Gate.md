@@ -138,7 +138,7 @@ classes, but it does not authorize runtime execution:
 | `PS1-G3` | What label scale should be used for evidence sufficiency? | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | Human or secondary labeling |
 | `PS1-G4` | Which metrics require double human annotation? | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | Human or secondary labeling |
 | `PS1-G5` | Should the OpenClaw candidate baseline be promoted, replaced, or supplemented? | [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) | Larger controlled samples |
-| `PS1-G6` | Which runtime capability may expand next? | [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md) | Broader runtime scope implementation planning |
+| `PS1-G6` | Which runtime capability may expand next? | [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md) | Local structured edit runtime implementation |
 | `PS1-G7` | When can Context OS expand beyond Working Set Compiler v0? | [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) | Context OS specification and evaluation planning |
 | `PS1-G8` | When can side-effect classes expand beyond Stage 1 allowances? | [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) | `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` planning |
 
@@ -147,9 +147,9 @@ larger-sample plan, `PS1-G2` is accepted by the metric policy, `PS1-G3` and
 `PS1-G4` are accepted by the labeling scope and adjudication policy, and
 `PS1-G5` is accepted by the baseline identity plan. `PS1-G6` is accepted by
 [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
-for implementation planning of `Document Ops Structured Edit Action Surface v0`.
-It does not implement the action surface, update runtime schema enums, add
-fixtures, or authorize broader runtime validation claims. `PS1-G7` is accepted
+and has a local schema-backed implementation of `Document Ops Structured Edit
+Action Surface v0`. It adds runtime code, schemas, fixtures, and tests, but it
+does not authorize broader runtime validation claims. `PS1-G7` is accepted
 by [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) for Context OS
 specification and evaluation planning only. It does not implement full Context
 OS, change schemas, authorize learned retrieval or compression, approve memory
@@ -171,12 +171,12 @@ No post-Stage-1 human or secondary labels have been collected yet, and a future
 report must still include packet, blinding, review, adjudication, agreement,
 and interpretation-boundary metadata before using broader label claims.
 
-Lane C is open for implementation planning of `Document Ops Structured Edit
-Action Surface v0` under
+Lane C has a local implementation of `Document Ops Structured Edit Action
+Surface v0` under
 [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md).
 The accepted scope remains fixture-local Document Ops and only uses
-`READ_ONLY`, `SIMULATED`, and `REVERSIBLE` candidate actions. Runtime
-implementation still requires a later schema, code, fixture, and test batch.
+`READ_ONLY`, `SIMULATED`, and `REVERSIBLE` structured actions. Larger measured
+claims still require future experiment and evaluation artifacts.
 
 Lane C is also open for Context OS specification and evaluation planning under
 [Context OS Expansion Gate](Context_OS_Expansion_Gate.md). The accepted

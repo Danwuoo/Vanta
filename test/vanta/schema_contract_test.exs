@@ -84,6 +84,69 @@ defmodule Vanta.SchemaContractTest do
     assert :ok = Schema.validate("episode_journal", journal)
   end
 
+  test "structured edit planner payload contracts are schema-enforced" do
+    valid_sequence = %{
+      "actions" => [
+        %{
+          "action_type" => "simulate_structured_edit",
+          "action_payload" => %{
+            "path" => "inputs/source.md",
+            "selector" => %{"type" => "line_range", "start_line" => 1, "end_line" => 1},
+            "operation" => "replace",
+            "replacement" => "replacement"
+          }
+        },
+        %{
+          "action_type" => "apply_reversible_structured_edit",
+          "action_payload" => %{
+            "path" => "inputs/source.md",
+            "selector" => %{"type" => "heading", "text" => "Title", "level" => 1},
+            "operation" => "insert_after",
+            "replacement" => "inserted",
+            "backup_policy" => "fixture_backup_restore"
+          }
+        },
+        %{
+          "action_type" => "validate_document_contract",
+          "action_payload" => %{
+            "path" => "inputs/source.md",
+            "inline_contract" => %{"required_text" => ["source"]}
+          }
+        }
+      ]
+    }
+
+    assert {:ok, _sequence} = PlannerAdapter.validate_action_sequence(valid_sequence)
+
+    missing_selector =
+      put_in(valid_sequence, ["actions", Access.at(0), "action_payload"], %{
+        "path" => "inputs/source.md",
+        "operation" => "replace",
+        "replacement" => "replacement"
+      })
+
+    missing_replacement =
+      update_in(valid_sequence, ["actions", Access.at(0), "action_payload"], fn payload ->
+        Map.delete(payload, "replacement")
+      end)
+
+    both_contract_sources =
+      put_in(valid_sequence, ["actions", Access.at(2), "action_payload"], %{
+        "path" => "inputs/source.md",
+        "contract_ref" => "inputs/contract.json",
+        "inline_contract" => %{}
+      })
+
+    assert {:error, {:invalid_action_sequence, _errors}} =
+             PlannerAdapter.validate_action_sequence(missing_selector)
+
+    assert {:error, {:invalid_action_sequence, _errors}} =
+             PlannerAdapter.validate_action_sequence(missing_replacement)
+
+    assert {:error, {:invalid_action_sequence, _errors}} =
+             PlannerAdapter.validate_action_sequence(both_contract_sources)
+  end
+
   test "experiment run schema accepts compact measured run records" do
     run = %{
       "schema_version" => Vanta.schema_version(),

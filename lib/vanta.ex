@@ -9,6 +9,10 @@ defmodule Vanta do
     read_file
     list_files
     compute_hash
+    inspect_document_structure
+    validate_document_contract
+    simulate_structured_edit
+    apply_reversible_structured_edit
     simulate_patch
     compute_diff
     apply_reversible_patch

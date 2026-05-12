@@ -50,7 +50,17 @@ defmodule Vanta.EvidenceBuilder do
     %{
       "source" => "fixture_workspace",
       "action_type" => step["action_type"],
-      "paths" => Enum.reject([observation["path"]], &is_nil/1)
+      "paths" =>
+        [
+          observation["path"],
+          observation["paths"],
+          observation["contract_ref"],
+          get_in(observation, ["backup_metadata", "backup_path"]),
+          get_in(observation, ["backup_metadata", "metadata_path"])
+        ]
+        |> List.flatten()
+        |> Enum.reject(&is_nil/1)
+        |> Enum.uniq()
     }
   end
 

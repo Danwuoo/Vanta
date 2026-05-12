@@ -112,21 +112,39 @@ defmodule Vanta.FixtureAcceptance do
     end
   end
 
+  def evaluate_observation(workspace, %{"kind" => "inspect_document_structure"} = observation) do
+    expected_json(workspace, "structure.json")
+    |> compare_expected_subset(
+      %{
+        "structure" => observation["structure"],
+        "selector_results" => observation["selector_results"]
+      },
+      "structure_mismatch"
+    )
+  end
+
+  def evaluate_observation(workspace, %{"kind" => "validate_document_contract"} = observation) do
+    expected_json(workspace, "contract_result.json")
+    |> compare_expected_subset(
+      %{"passed" => observation["passed"], "failures" => observation["failures"]},
+      "contract_result_mismatch"
+    )
+  end
+
   def evaluate_observation(workspace, %{"kind" => kind} = observation)
-      when kind in ["simulate_patch", "compute_diff", "apply_reversible_patch"] do
-    diff_path = Path.join(workspace, "expected/diff.txt")
-
-    if File.exists?(diff_path) do
-      expected = diff_path |> File.read!() |> normalize_diff_text()
-      actual = observation |> Map.get("diff", "") |> normalize_diff_text()
-
-      if expected == actual do
-        :ok
-      else
-        {:error, "diff_mismatch"}
-      end
+      when kind in [
+             "simulate_patch",
+             "compute_diff",
+             "apply_reversible_patch",
+             "simulate_structured_edit",
+             "apply_reversible_structured_edit"
+           ] do
+    with :ok <- compare_expected_diff(workspace, observation),
+         :ok <- compare_expected_selector_resolution(workspace, observation) do
+      :ok
     else
-      :not_applicable
+      :not_applicable -> :not_applicable
+      {:error, reason} -> {:error, reason}
     end
   end
 
@@ -152,6 +170,12 @@ defmodule Vanta.FixtureAcceptance do
 
   defp compare_expected_key(:missing, _observation, _key, _reason), do: :not_applicable
 
+  defp compare_expected_subset({:ok, expected}, actual, reason) do
+    if subset?(expected, actual), do: :ok, else: {:error, reason}
+  end
+
+  defp compare_expected_subset(:missing, _actual, _reason), do: :not_applicable
+
   defp compare_audit_result({:ok, expected}, observation) do
     expected_missing = Enum.sort(Map.get(expected, "missing", []))
     actual_missing = observation |> Map.get("missing", []) |> Enum.sort()
@@ -172,4 +196,47 @@ defmodule Vanta.FixtureAcceptance do
     |> String.replace("\r", "\n")
     |> String.trim_trailing()
   end
+
+  defp compare_expected_diff(workspace, observation) do
+    diff_path = Path.join(workspace, "expected/diff.txt")
+
+    if File.exists?(diff_path) do
+      expected = diff_path |> File.read!() |> normalize_diff_text()
+      actual = observation |> Map.get("diff", "") |> normalize_diff_text()
+
+      if expected == actual do
+        :ok
+      else
+        {:error, "diff_mismatch"}
+      end
+    else
+      :ok
+    end
+  end
+
+  defp compare_expected_selector_resolution(workspace, observation) do
+    expected_json(workspace, "selector_resolution.json")
+    |> compare_expected_subset(
+      observation["selector_resolution"] || %{},
+      "selector_resolution_mismatch"
+    )
+    |> case do
+      :not_applicable -> :ok
+      result -> result
+    end
+  end
+
+  defp subset?(expected, actual) when is_map(expected) and is_map(actual) do
+    Enum.all?(expected, fn {key, expected_value} ->
+      Map.has_key?(actual, key) and subset?(expected_value, actual[key])
+    end)
+  end
+
+  defp subset?(expected, actual) when is_list(expected) and is_list(actual) do
+    Enum.zip(expected, actual)
+    |> Enum.all?(fn {expected_item, actual_item} -> subset?(expected_item, actual_item) end) and
+      length(expected) <= length(actual)
+  end
+
+  defp subset?(expected, actual), do: expected == actual
 end

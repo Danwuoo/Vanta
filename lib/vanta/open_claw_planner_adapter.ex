@@ -114,6 +114,11 @@ defmodule Vanta.OpenClawPlannerAdapter do
     - validate_artifact: {"path":"inputs/file.md"} or
       {"validation":"traceability_links","path":"inputs/file.md"} or
       {"validation":"terminology_consistency","paths":["inputs/a.md","inputs/b.md"]}
+    - inspect_document_structure: {"path":"inputs/file.md","selectors":[{"type":"heading","text":"Title","level":1}]}
+    - validate_document_contract: {"path":"inputs/file.md","contract_ref":"inputs/contract.json"} or
+      {"path":"inputs/file.md","inline_contract":{"required_text":["text"]}}
+    - simulate_structured_edit: {"path":"inputs/file.md","selector":{"type":"line_range","start_line":1,"end_line":1},"operation":"replace","replacement":"replacement text"}
+    - apply_reversible_structured_edit: {"path":"inputs/file.md","selector":{"type":"line_range","start_line":1,"end_line":1},"operation":"replace","replacement":"replacement text","backup_policy":"fixture_backup_restore"}
     - simulate_patch: {"path":"inputs/file.md","find":"exact text","replace":"replacement text"}
     - compute_diff: {"path":"inputs/file.md","candidate_content":"complete candidate file content"}
     - apply_reversible_patch: {"path":"inputs/file.md","find":"exact text","replace":"replacement text"}

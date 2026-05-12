@@ -46,25 +46,41 @@ Define how planned actions are represented as executable, auditable, and replay-
 - Phase 4 represents compensable but non-strictly-rollbackable local fixture
   actions with `COMPENSABLE` and a compensation policy reference.
 
-## PS1-G6 Proposal-Only Action Surface
+## PS1-G6 Structured Edit Action Surface
 
-[Post-Stage-1 Runtime Scope Proposal](../00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md)
-accepts `Document Ops Structured Edit Action Surface v0` for implementation
-planning only. The proposed candidate actions are not schema-backed runtime
-interfaces until a later implementation batch updates schemas, code, fixtures,
-and tests together.
+`PS1-G6` implements `Document Ops Structured Edit Action Surface v0` as a
+fixture-local runtime interface. The action names are schema-backed in
+`execution_step.schema.json`, `planner_action_sequence.schema.json`, and
+`benchmark_task.schema.json`, and the runtime executes them through the same
+task action allowlists, side-effect allowlists, workspace path guards, Evidence
+Packet construction, Verifier Runtime checks, Commit Controller handling, and
+Episode Journal audit records as the existing Stage 1 actions.
 
-| Candidate action | Side-effect class | Execution IR requirement |
+| Action | Side-effect class | Execution IR requirement |
 | --- | --- | --- |
 | `inspect_document_structure` | `READ_ONLY` | Must target a fixture-local document path and record a parsed structure summary without mutation. |
 | `validate_document_contract` | `READ_ONLY` | Must target a fixture-local document path plus a fixture-local or inline contract and record pass/fail details without mutation. |
 | `simulate_structured_edit` | `SIMULATED` | Must identify a structured target, produce candidate content, diff, before/after hashes, and keep the source hash unchanged. |
 | `apply_reversible_structured_edit` | `REVERSIBLE` | Must identify a structured target, write only inside the fixture workspace, use `fixture_backup_restore`, and include backup metadata. |
 
-The candidate action surface must continue to use task action allowlists,
-side-effect allowlists, workspace path guards, verifier requirements, and
-Episode Journal references. `COMPENSABLE` remains limited to the existing Phase
-4 fixture-local receipt treatment and is not expanded by `PS1-G6`.
+The structured selector contract supports:
+
+- `heading`: `type`, `text`, optional `level`, optional `occurrence`
+- `section`: `type`, `heading`, optional `level`, optional `occurrence`
+- `line_range`: `type`, `start_line`, `end_line`
+- `json_path`: `type`, `path`, optional `occurrence`
+
+Structured edit operations are `replace`, `insert_before`, and `insert_after`.
+`simulate_structured_edit` uses `rollback_policy: not_applicable`.
+`apply_reversible_structured_edit` must use
+`rollback_policy: fixture_backup_restore` and payload
+`backup_policy: fixture_backup_restore`.
+
+Selectors must resolve to exactly one target unless an explicit valid
+`occurrence` selects one target from multiple matches. Missing or ambiguous
+selectors are rejected before commit. `COMPENSABLE` remains limited to the
+existing Phase 4 fixture-local receipt treatment and is not expanded by
+`PS1-G6`.
 
 ## PS1-G8 Side-Effect Escalation Boundary
 
@@ -85,8 +101,8 @@ successor gate explicitly accepts the target domain and escalation policy.
 - Should rollback policy be inline or referenced by policy ID?
 - How should `COMPENSABLE` generalize beyond fixture-local Document Ops without
   executing irreversible external actions?
-- Which `PS1-G6` candidate actions should be promoted into schema-backed
-  runtime interfaces in the later implementation batch?
+- What additional structured target types are needed after the G6 local
+  interface is exercised beyond local tests?
 
 ## Related Documents
 

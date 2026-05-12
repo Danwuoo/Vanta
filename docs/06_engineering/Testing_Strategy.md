@@ -47,6 +47,11 @@ Define how implementation should be tested once runtime code exists.
   memory dump / memory write refs, bounded raw trace truncation, OpenClaw
   context planner JSON parsing, mock experiment metrics, and fixture mirror
   synchronization.
+- PS1-G6 tests cover structured selectors (`heading`, `section`, `line_range`,
+  `json_path`), contract pass/fail observations, simulated source hash
+  preservation, reversible backup metadata and rollback, selector rejection,
+  path escape rejection, wrong diff rejection, replay consistency, and fixture
+  mirror synchronization.
 
 ## Open Questions
 

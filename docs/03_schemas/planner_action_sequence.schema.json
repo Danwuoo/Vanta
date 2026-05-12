@@ -17,32 +17,407 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "type": "object",
-        "required": [
-          "action_type",
-          "action_payload"
-        ],
-        "properties": {
-          "action_type": {
-            "type": "string",
-            "enum": [
-              "read_file",
-              "list_files",
-              "compute_hash",
-              "simulate_patch",
-              "compute_diff",
-              "apply_reversible_patch",
-              "record_compensable_action",
-              "validate_artifact"
-            ]
-          },
-          "action_payload": {
-            "type": "object"
-          }
-        },
-        "additionalProperties": false
+        "$ref": "#/definitions/actionProposal"
       }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "actionProposal": {
+      "type": "object",
+      "required": [
+        "action_type",
+        "action_payload"
+      ],
+      "properties": {
+        "action_type": {
+          "$ref": "#/definitions/actionType"
+        },
+        "action_payload": {
+          "type": "object"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/actionPayloadContract"
+        }
+      ],
+      "additionalProperties": false
+    },
+    "actionType": {
+      "type": "string",
+      "enum": [
+        "read_file",
+        "list_files",
+        "compute_hash",
+        "inspect_document_structure",
+        "validate_document_contract",
+        "simulate_structured_edit",
+        "apply_reversible_structured_edit",
+        "simulate_patch",
+        "compute_diff",
+        "apply_reversible_patch",
+        "record_compensable_action",
+        "validate_artifact"
+      ]
+    },
+    "legacyActionType": {
+      "type": "string",
+      "enum": [
+        "read_file",
+        "list_files",
+        "compute_hash",
+        "simulate_patch",
+        "compute_diff",
+        "apply_reversible_patch",
+        "record_compensable_action",
+        "validate_artifact"
+      ]
+    },
+    "actionPayloadContract": {
+      "oneOf": [
+        {
+          "properties": {
+            "action_type": {
+              "$ref": "#/definitions/legacyActionType"
+            },
+            "action_payload": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "properties": {
+            "action_type": {
+              "enum": [
+                "inspect_document_structure"
+              ]
+            },
+            "action_payload": {
+              "$ref": "#/definitions/inspectDocumentStructurePayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "action_type": {
+              "enum": [
+                "validate_document_contract"
+              ]
+            },
+            "action_payload": {
+              "$ref": "#/definitions/validateDocumentContractPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "action_type": {
+              "enum": [
+                "simulate_structured_edit"
+              ]
+            },
+            "action_payload": {
+              "$ref": "#/definitions/simulateStructuredEditPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "action_type": {
+              "enum": [
+                "apply_reversible_structured_edit"
+              ]
+            },
+            "action_payload": {
+              "$ref": "#/definitions/applyReversibleStructuredEditPayload"
+            }
+          }
+        }
+      ]
+    },
+    "inspectDocumentStructurePayload": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "json"
+          ]
+        },
+        "selectors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/selector"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "validateDocumentContractPayload": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "contract_ref"
+          ]
+        },
+        {
+          "required": [
+            "inline_contract"
+          ]
+        }
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "json"
+          ]
+        },
+        "contract_ref": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "inline_contract": {
+          "type": "object"
+        },
+        "selectors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/selector"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "simulateStructuredEditPayload": {
+      "type": "object",
+      "required": [
+        "path",
+        "selector",
+        "operation",
+        "replacement"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "json"
+          ]
+        },
+        "selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "operation": {
+          "$ref": "#/definitions/operation"
+        },
+        "replacement": {},
+        "inline_contract": {
+          "type": "object"
+        },
+        "contract_ref": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "fault_injection": {
+          "$ref": "#/definitions/structuredEditFaultInjection"
+        }
+      },
+      "additionalProperties": false
+    },
+    "applyReversibleStructuredEditPayload": {
+      "type": "object",
+      "required": [
+        "path",
+        "selector",
+        "operation",
+        "replacement",
+        "backup_policy"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "json"
+          ]
+        },
+        "selector": {
+          "$ref": "#/definitions/selector"
+        },
+        "operation": {
+          "$ref": "#/definitions/operation"
+        },
+        "replacement": {},
+        "backup_policy": {
+          "enum": [
+            "fixture_backup_restore"
+          ]
+        },
+        "inline_contract": {
+          "type": "object"
+        },
+        "contract_ref": {
+          "$ref": "#/definitions/relativePath"
+        },
+        "fault_injection": {
+          "$ref": "#/definitions/structuredEditFaultInjection"
+        }
+      },
+      "additionalProperties": false
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "replace",
+        "insert_before",
+        "insert_after"
+      ]
+    },
+    "structuredEditFaultInjection": {
+      "type": "string",
+      "enum": [
+        "mutate_source_after_simulation",
+        "omit_backup_metadata",
+        "drop_backup_files"
+      ]
+    },
+    "selector": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/headingSelector"
+        },
+        {
+          "$ref": "#/definitions/sectionSelector"
+        },
+        {
+          "$ref": "#/definitions/lineRangeSelector"
+        },
+        {
+          "$ref": "#/definitions/jsonPathSelector"
+        }
+      ]
+    },
+    "headingSelector": {
+      "type": "object",
+      "required": [
+        "type",
+        "text"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "heading"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "occurrence": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "sectionSelector": {
+      "type": "object",
+      "required": [
+        "type",
+        "heading"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "section"
+          ]
+        },
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "occurrence": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "lineRangeSelector": {
+      "type": "object",
+      "required": [
+        "type",
+        "start_line",
+        "end_line"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "line_range"
+          ]
+        },
+        "start_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "end_line": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "jsonPathSelector": {
+      "type": "object",
+      "required": [
+        "type",
+        "path"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "json_path"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^\\$"
+        },
+        "occurrence": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }
