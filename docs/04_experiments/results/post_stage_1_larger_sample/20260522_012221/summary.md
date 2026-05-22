@@ -59,6 +59,16 @@ Treatment: vanta_runtime/openclaw_agent_local/openai-codex/gpt-5.4-mini_lane_a_g
 - docops_ps1_recovery_audit_gap_complete_refs_001: missing runtime governance artifacts after planner_error {:planner_adapter, {:openclaw_context_overflow, "Context overflow: prompt too large for the model. Try /reset (or /new) to start a fresh session, or use a larger-context model."}}
 - docops_ps1_replay_multistep_structured_commit_001: missing runtime governance artifacts after planner_error {:planner_adapter, {:openclaw_context_overflow, "Context overflow: prompt too large for the model. Try /reset (or /new) to start a fresh session, or use a larger-context model."}}
 
+## Post-run PS1-LA-FIX-005 Local Follow-up
+
+This note was added after the measured `20260522_012221` run and is not part of
+that run's metrics. A compact long-fixture prompt path, fixture-aware action
+hints, and bounded OpenClaw session IDs were implemented for the two overflow
+fixtures. Targeted tests and full `mix test` passed, and a short local OpenClaw
+smoke produced JSON-only schema-valid action sequences plus treatment
+governance artifacts for both fixtures. The run remains `failed_no_acceptance`
+until a fresh Lane A rerun updates measured metrics and hard gates.
+
 
 ## Interpretation Boundaries
 

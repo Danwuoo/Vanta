@@ -21,6 +21,13 @@ defmodule Vanta.RuntimeFlowTest do
   }
 
   @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @ps1_fix_007_expected_rejected_fixtures ~w(
+    docops_ps1_invalid_reversible_in_readonly_001
+    docops_struct_simulation_mutation_001
+    docops_ps1_struct_backup_files_dropped_001
+    docops_rollback_failure_001
+    docops_ps1_recovery_structured_rollback_001
+  )
 
   test "verifier requests extra evidence when required evidence is missing" do
     {task, workspace} = load_fixture("docops_simulate_patch_001")
@@ -590,6 +597,7 @@ defmodule Vanta.RuntimeFlowTest do
       assert String.contains?(prompt, "non-interactive Vanta Experiment 001 planner")
       assert env.model == "openai-codex/gpt-5.4-mini"
       assert String.starts_with?(env.session_id, "vanta-exp001-docops_read_traceability_001-")
+      assert String.length(env.session_id) <= 64
 
       {:ok,
        %{
@@ -620,6 +628,176 @@ defmodule Vanta.RuntimeFlowTest do
              )
 
     assert [%{"action_type" => "validate_artifact"}] = action_sequence["actions"]
+  end
+
+  test "openclaw planner adapter uses compact prompts for Lane A overflow fixtures" do
+    Enum.each(
+      ~w(
+        docops_ps1_recovery_audit_gap_complete_refs_001
+        docops_ps1_replay_multistep_structured_commit_001
+      ),
+      fn fixture_id ->
+        {task, workspace} = load_fixture(fixture_id)
+        {:ok, expected_sequence} = FixtureAcceptance.action_sequence(workspace)
+
+        runner = fn prompt, env ->
+          assert env.model == "openai-codex/gpt-5.4-mini"
+          assert String.length(env.session_id) <= 64
+          assert String.contains?(prompt, "Vanta Lane A compact planner")
+          assert String.contains?(prompt, fixture_id)
+          assert String.contains?(prompt, "action_hint")
+          assert String.contains?(prompt, "recommended_actions")
+          assert String.length(prompt) < 5_000
+          refute String.contains?(prompt, "Input artifact previews:")
+          refute String.contains?(prompt, "\"runtime_manifest\"")
+
+          Enum.each(task["allowed_actions"], fn action_type ->
+            assert String.contains?(prompt, action_type)
+          end)
+
+          {:ok, %{"payloads" => [%{"text" => Jason.encode!(expected_sequence)}]}}
+        end
+
+        assert {:ok, action_sequence} =
+                 OpenClawPlannerAdapter.propose_actions(task, workspace,
+                   wsl_executable: "wsl.exe",
+                   model: "gpt-5.4-mini",
+                   runner: runner
+                 )
+
+        assert action_sequence == expected_sequence
+      end
+    )
+  end
+
+  test "Lane A overflow fixture action sequences produce governance artifacts" do
+    Enum.each(
+      ~w(
+        docops_ps1_recovery_audit_gap_complete_refs_001
+        docops_ps1_replay_multistep_structured_commit_001
+      ),
+      fn fixture_id ->
+        {task, workspace} = load_fixture(fixture_id)
+        {:ok, action_sequence} = FixtureAcceptance.action_sequence(workspace)
+
+        assert {:ok, result} =
+                 Runtime.run_task(task, workspace, action_sequence: action_sequence)
+
+        artifacts = %{
+          evidence_packets: result.evidence_packets,
+          verifier_outputs: result.verifier_outputs
+        }
+
+        audit = EvaluationHarness.audit_result(result.journal, artifacts)
+
+        assert result.task_success?,
+               "#{fixture_id}: status=#{result.status}, invalid_actions=#{result.invalid_actions}, observations=#{inspect(result.observations)}"
+
+        assert result.evidence_packets != []
+        assert result.verifier_outputs != []
+        assert audit["complete"]
+
+        assert {:ok, replay} =
+                 ReplayRunner.replay(task, workspace, result.journal, artifacts)
+
+        assert replay.consistent?
+      end
+    )
+  end
+
+  test "openclaw planner adapter uses compact rejection prompts for PS1-LA-FIX-007 fixtures" do
+    Enum.each(@ps1_fix_007_expected_rejected_fixtures, fn fixture_id ->
+      {task, workspace} = load_fixture(fixture_id)
+      {:ok, expected_sequence} = FixtureAcceptance.action_sequence(workspace)
+      expected_action = expected_sequence["actions"] |> List.first()
+
+      runner = fn prompt, env ->
+        assert env.model == "openai-codex/gpt-5.4-mini"
+        assert String.length(env.session_id) <= 64
+        assert String.contains?(prompt, "Vanta Lane A compact planner")
+        assert String.contains?(prompt, fixture_id)
+        assert String.contains?(prompt, "rejection_expected")
+        assert String.contains?(prompt, "Return action_hint.recommended_actions exactly")
+        assert String.contains?(prompt, "do not substitute read_file")
+        assert String.contains?(prompt, expected_action["action_type"])
+
+        unless expected_action["action_type"] in task["allowed_actions"] do
+          assert String.contains?(prompt, "action type is absent")
+          assert String.contains?(prompt, "task_summary.allowed_actions")
+        end
+
+        assert String.length(prompt) < 5_000
+        refute String.contains?(prompt, "Input artifact previews:")
+
+        {:ok, %{"payloads" => [%{"text" => Jason.encode!(expected_sequence)}]}}
+      end
+
+      assert {:ok, action_sequence} =
+               OpenClawPlannerAdapter.propose_actions(task, workspace,
+                 wsl_executable: "wsl.exe",
+                 model: "gpt-5.4-mini",
+                 runner: runner
+               )
+
+      assert action_sequence == expected_sequence
+    end)
+  end
+
+  test "PS1-LA-FIX-007 expected-rejected fixtures produce complete governance artifacts" do
+    Enum.each(@ps1_fix_007_expected_rejected_fixtures, fn fixture_id ->
+      {task, workspace} = load_fixture(fixture_id)
+      {:ok, action_sequence} = FixtureAcceptance.action_sequence(workspace)
+
+      assert {:ok, action_sequence} =
+               Vanta.PlannerAdapter.validate_action_sequence(action_sequence)
+
+      assert {:ok, result} =
+               Runtime.run_task(task, workspace, action_sequence: action_sequence)
+
+      artifacts = %{
+        evidence_packets: result.evidence_packets,
+        verifier_outputs: result.verifier_outputs
+      }
+
+      expected_rollback_status = FixtureAcceptance.expected_rollback_status(workspace)
+
+      assert result.status == "rejected"
+      assert result.task_success?
+      assert result.invalid_actions >= 1
+      assert result.journal["commit_status"] == "rejected"
+
+      if expected_rollback_status do
+        assert result.rollback_status == expected_rollback_status
+        assert result.journal["rollback_status"] == expected_rollback_status
+      end
+
+      assert length(result.steps) == length(action_sequence["actions"])
+      assert length(result.evidence_packets) == length(result.steps)
+      assert length(result.verifier_outputs) == length(result.steps)
+
+      Enum.each(result.steps, fn step ->
+        assert step["status"] == "rejected"
+        assert :ok = Schema.validate("execution_step", step)
+      end)
+
+      Enum.each(result.evidence_packets, fn evidence ->
+        assert :ok = Schema.validate("evidence_packet", evidence)
+      end)
+
+      Enum.each(result.verifier_outputs, fn verifier_output ->
+        assert verifier_output["decision"] == "reject"
+        assert verifier_output["violated_constraints"] != []
+        assert :ok = Schema.validate("verifier_output", verifier_output)
+      end)
+
+      assert :ok = Schema.validate("episode_journal", result.journal)
+
+      assert EvaluationHarness.audit_complete?(result.journal, artifacts),
+             "#{fixture_id}: audit=#{inspect(EvaluationHarness.audit_result(result.journal, artifacts))}"
+
+      assert {:ok, replay} = ReplayRunner.replay(task, workspace, result.journal, artifacts)
+      assert replay.consistent?
+    end)
   end
 
   test "openclaw planner adapter rejects prompt budget overflow before runner call" do

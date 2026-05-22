@@ -84,6 +84,10 @@ defmodule Vanta.PostStage1LargerSampleTest do
     assert run["metric_policy_version"] == "PS1-LA-METRIC-001"
     assert run["threshold_status"] == "pass_acceptance_candidate"
     assert run["fixture_count"] == 48
+
+    assert get_in(run, ["run_controls", "prompt_template_version"]) ==
+             "post_stage_1_larger_sample_openclaw_v2_compact_long_and_rejection_fixtures"
+
     assert :ok = Schema.validate("experiment_run", run)
 
     assert File.exists?(Path.join(out_dir, "run.json"))

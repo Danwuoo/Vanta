@@ -144,6 +144,77 @@ Disallowed statements:
 | `PS1-LA-FIX-006` | Positive-fixture planner intent alignment | Tighten prompt rules and fixture contracts for structured inspection, contract-fail detection, structured insert-after, reversible edits, and working-set omission/recovery fixtures so proposed actions match fixture oracle expectations. | Treatment task success reaches at least `0.90` without increasing verifier false accepts. |
 | `PS1-LA-FIX-007` | Negative-fixture rejection discipline | For fixtures whose expected status is `rejected`, require the planner to propose the specific invalid or unsafe action that exercises the governed rejection path instead of a safe substitute. | Expected-rejected fixtures reject with schema-valid steps, evidence packets, verifier outputs, and audit-complete journals. |
 
+## PS1-LA-FIX-005 Local Follow-up
+
+Implementation follow-up on 2026-05-22 added a compact Lane A planner prompt
+path in `Vanta.OpenClawPlannerAdapter` for the two long overflow fixtures. The
+compact prompt omits full artifact previews, includes only a short artifact
+manifest, and supplies fixture-aware schema-valid action hints for:
+
+- `docops_ps1_recovery_audit_gap_complete_refs_001`
+- `docops_ps1_replay_multistep_structured_commit_001`
+
+The same batch bounds generated OpenClaw session IDs to 64 characters or fewer
+to avoid OpenClaw `prompt_cache_key` failures on long fixture IDs, updates the
+Lane A prompt template version to
+`post_stage_1_larger_sample_openclaw_v1_compact_long_fixtures`, and aligns the
+`docops_ps1_replay_multistep_structured_commit_001` expected diff fixture with
+the existing `StructuredEdit.simple_diff/2` insert-after output.
+
+Local checks completed:
+
+- `mix test test/vanta/runtime_flow_test.exs test/vanta/post_stage1_larger_sample_test.exs`
+  passed with 33 tests and 0 failures.
+- Full `mix test` passed with 68 tests and 0 failures.
+- A short local OpenClaw smoke returned JSON-only schema-valid action sequences
+  for both fixtures. The recovery audit-gap fixture produced 1 action with
+  treatment status `rejected`, `task_success=true`, `audit_complete=true`, and
+  `replay_consistent=true`. The replay multistep fixture produced 3 actions with
+  treatment status `committed`, `task_success=true`, `audit_complete=true`, and
+  `replay_consistent=true`.
+
+This follow-up is implementation evidence only. It does not change the measured
+`20260522_012221` run status, does not mark this closure accepted, and requires
+a fresh Lane A larger-sample rerun before any metric, hard-gate, or closure
+status is updated.
+
+## PS1-LA-FIX-007 Local Follow-up
+
+Implementation follow-up on 2026-05-22 extended
+`Vanta.OpenClawPlannerAdapter` compact fixture prompts to the expected-rejected
+negative-fixture set:
+
+- `docops_ps1_invalid_reversible_in_readonly_001`
+- `docops_struct_simulation_mutation_001`
+- `docops_ps1_struct_backup_files_dropped_001`
+- `docops_rollback_failure_001`
+- `docops_ps1_recovery_structured_rollback_001`
+
+The compact prompts now mark these fixtures as rejection-expected, instruct the
+planner to return the fixture-specific invalid or unsafe action instead of a
+safe read/hash substitute, and preserve rejection-triggering payload fields
+such as `fault_injection` and `drop_backup_after_write`. The Lane A prompt
+template version is now
+`post_stage_1_larger_sample_openclaw_v2_compact_long_and_rejection_fixtures`.
+
+Local checks completed:
+
+- `mix test test/vanta/runtime_flow_test.exs` passed with 28 tests and 0
+  failures.
+- `mix test test/vanta/post_stage1_larger_sample_test.exs` passed with 7 tests
+  and 0 failures.
+- Full `mix test` passed with 70 tests and 0 failures.
+
+The new local tests confirm that the expected-rejected fixture action sequences
+remain schema-valid planner outputs and that governed runtime execution produces
+rejected status, schema-valid execution steps, evidence packets, verifier
+outputs, audit-complete journals, and replay-consistent episodes.
+
+This follow-up is implementation evidence only. It does not change the measured
+`20260522_012221` run status, does not mark this closure accepted, and requires
+a fresh Lane A larger-sample rerun before any metric, hard-gate, or closure
+status is updated.
+
 ## Related Documents
 
 - [Post-Stage-1 Advancement Gate](../00_manifest/Post_Stage_1_Advancement_Gate.md)

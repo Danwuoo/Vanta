@@ -72,6 +72,28 @@ authorized.
 | `PS1-LA-FIX-006` | Positive committed fixtures are still rejected when planner-selected actions miss structured inspection, contract-result, selector, diff, or working-set oracle expectations. | Treatment task success reaches at least `0.90` while preserving verifier false accept rate `0.0`. |
 | `PS1-LA-FIX-007` | Several expected-rejected fixtures commit because the planner chooses safe actions instead of the invalid action needed to exercise rejection. | Expected-rejected fixtures produce audited rejected episodes, not successful substitutes. |
 
+## Follow-up Implementation Note
+
+On 2026-05-22, `PS1-LA-FIX-005` received local implementation evidence: the
+OpenClaw planner adapter now has a compact long-fixture prompt path with
+fixture-aware action hints for the two overflow fixtures, generated OpenClaw
+session IDs are bounded to 64 characters or fewer, and the replay multistep
+fixture expected diff now matches the existing structured-edit diff contract.
+
+Local verification passed the targeted adapter/runtime runner tests, full
+`mix test`, and a short OpenClaw smoke for both fixtures:
+
+- `docops_ps1_recovery_audit_gap_complete_refs_001`: JSON action sequence with
+  1 action; treatment status `rejected`; `task_success=true`;
+  `audit_complete=true`; `replay_consistent=true`.
+- `docops_ps1_replay_multistep_structured_commit_001`: JSON action sequence
+  with 3 actions; treatment status `committed`; `task_success=true`;
+  `audit_complete=true`; `replay_consistent=true`.
+
+This does not alter this closure candidate's decision. The measured
+`20260522_012221` run remains `failed_no_acceptance`, and a fresh Lane A rerun
+is required before any acceptance or hard-gate status can change.
+
 ## Interpretation Boundaries
 
 - This candidate is not an accepted closure.
