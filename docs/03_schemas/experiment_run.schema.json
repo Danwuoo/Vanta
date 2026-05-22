@@ -20,6 +20,22 @@
     "experiment_id": {
       "type": "string"
     },
+    "sample_frame_id": {
+      "type": "string"
+    },
+    "metric_policy_version": {
+      "type": "string"
+    },
+    "threshold_status": {
+      "type": "string",
+      "enum": [
+        "not_applicable",
+        "blocked_missing_metric",
+        "failed_no_acceptance",
+        "pass_acceptance_candidate",
+        "accepted_by_closure"
+      ]
+    },
     "status": {
       "type": "string",
       "enum": [
@@ -37,6 +53,15 @@
     "fixture_count": {
       "type": "integer",
       "minimum": 0
+    },
+    "run_controls": {
+      "type": "object"
+    },
+    "fixture_inventory_ref": {
+      "type": "string"
+    },
+    "arm_metadata": {
+      "type": "object"
     },
     "tasks": {
       "type": "array",

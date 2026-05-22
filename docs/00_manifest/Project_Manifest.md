@@ -61,6 +61,32 @@ structured edit actions, fixtures, and local tests. It does not approve full
 Context OS, expand side-effect classes, collect measured experiment results, or
 validate H1-H5.
 
+Lane A has a G6-aware execution successor frame:
+[Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+defines `PS1-LA-SAMPLE-002` as the 48-fixture, 8-stratum execution frame for
+larger controlled sample runs after structured edit implementation. The local
+runner `Vanta.PostStage1LargerSample` can produce `run.json`, `summary.md`, and
+`fixture_inventory.md` under
+`docs/04_experiments/results/post_stage_1_larger_sample/<timestamp>/` and can
+only report `blocked_missing_metric`, `failed_no_acceptance`, or
+`pass_acceptance_candidate` before manifest closure. No measured Lane A
+acceptance closure has been accepted yet. The first measured `PS1-LA-SAMPLE-002`
+run completed at
+`docs/04_experiments/results/post_stage_1_larger_sample/20260519_232854/` with
+threshold status `failed_no_acceptance`; the corresponding
+[Post-Stage-1 Lane A 20260519_232854 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260519_232854_Run_Report.md)
+and
+[closure candidate](Post_Stage_1_Lane_A_20260519_232854_Closure_Candidate.md)
+record required-artifact, replay, and audit blockers. It is not
+`accepted_by_closure`. A repair-batch rerun completed at
+`docs/04_experiments/results/post_stage_1_larger_sample/20260522_012221/` with
+threshold status `failed_no_acceptance`; the corresponding
+[Post-Stage-1 Lane A 20260522_012221 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260522_012221_Run_Report.md)
+and
+[closure candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
+record remaining task-success, required-artifact, replay, and audit blockers.
+It is also not `accepted_by_closure`.
+
 Lane C has accepted `PS1-G7` for Context OS specification and evaluation
 planning only:
 [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) defines the

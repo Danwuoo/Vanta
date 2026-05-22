@@ -38,7 +38,7 @@ successor manifest gate that explicitly supersedes it.
 | Gate ID | Lane | Current status | Required artifact | Proposed artifact path | Upstream dependencies | Downstream unlocks | Must not claim |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `PS1-G0` | All lanes prerequisite | `Accepted` | Closure docs 001 through 005 and linked run reports | Existing closure docs and run reports | Stage 1 closure docs 001 through 005 | Post-Stage-1 planning can be routed through `PS1-G1` through `PS1-G8` | The five local smoke closures are not broad validation. |
-| `PS1-G1` | Larger Controlled Samples | `Accepted` | [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md) | `docs/04_experiments/Post_Stage_1_Larger_Sample_Plan.md` | `PS1-G0`; Document Ops benchmark; closure reports 001 through 005 | Larger controlled sample planning; input to `PS1-G2` | Acceptance claims require the accepted metric policy and measured results. |
+| `PS1-G1` | Larger Controlled Samples | `Accepted` | [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md); G6-aware execution successor [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md) | `docs/04_experiments/Post_Stage_1_Larger_Sample_Plan.md`; `docs/04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md` | `PS1-G0`; Document Ops benchmark; closure reports 001 through 005; `PS1-G6` local structured edit implementation | Larger controlled sample execution through `Vanta.PostStage1LargerSample`; input to `PS1-G2` | Acceptance claims require the accepted metric policy, measured results, and closure acceptance. |
 | `PS1-G2` | Larger Controlled Samples | `Accepted` | [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md) | `docs/05_evaluation/Post_Stage_1_Metric_Policy.md` | `PS1-G1`; `PS1-G5`; metrics definition; closure reports 001 through 005 | Threshold-governed acceptance candidates for larger controlled samples | Passing thresholds is not broad validation and still requires measured run reports plus closure acceptance. |
 | `PS1-G3` | Human or Secondary Labeling | `Accepted` | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; Evidence Packet spec; Metrics Definition; labeling guides | Evidence sufficiency labeling can begin under the fixed `PS1-LB-LABEL-001` scale | Evidence sufficiency labels have not been collected; no broad label claim exists yet. |
 | `PS1-G4` | Human or Secondary Labeling | `Accepted` | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; `PS1-G3`; labeling guides | Broader subjective label claims can use the accepted review and adjudication policy after labels are collected | Subjective metrics cannot support broad claims without policy-compliant packets, review, and adjudication records. |
@@ -51,6 +51,29 @@ successor manifest gate that explicitly supersedes it.
 
 - `PS1-G1`, `PS1-G2`, and `PS1-G5` are accepted and provide the Lane A sample,
   metric, and baseline identity policies.
+- `PS1-LA-SAMPLE-002` is the G6-aware Lane A execution successor. It preserves
+  the accepted 48-fixture sample size and 8-stratum shape while fixing
+  structured-edit routing and runner artifacts for
+  `Vanta.PostStage1LargerSample`.
+- The first measured `PS1-LA-SAMPLE-002` run at
+  `docs/04_experiments/results/post_stage_1_larger_sample/20260519_232854/`
+  completed with threshold status `failed_no_acceptance`. It produced the
+  required run artifacts, but the
+  [run report](../05_evaluation/Post_Stage_1_Lane_A_20260519_232854_Run_Report.md)
+  and
+  [closure candidate](Post_Stage_1_Lane_A_20260519_232854_Closure_Candidate.md)
+  record required-artifact, replay, and audit blockers. It is not
+  `accepted_by_closure`.
+- A repair-batch rerun at
+  `docs/04_experiments/results/post_stage_1_larger_sample/20260522_012221/`
+  also completed with threshold status `failed_no_acceptance`. It preserved
+  process-integrity hard gates and fixed the repeated-step audit-ref collapse,
+  but the
+  [run report](../05_evaluation/Post_Stage_1_Lane_A_20260522_012221_Run_Report.md)
+  and
+  [closure candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
+  record remaining task-success, required-artifact, replay, and audit blockers.
+  It is not `accepted_by_closure`.
 - `PS1-G3` and `PS1-G4` are accepted by
   [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
   Label collection remains `Not yet run`.

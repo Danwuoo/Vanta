@@ -165,6 +165,15 @@ the 48-fixture sample is run under the accepted sample, metric, and baseline
 identity policies. A future manifest closure must still accept measured results
 before a report may use `accepted_by_closure`.
 
+The G6-aware Lane A execution frame is
+[Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+with Plan ID `PS1-LA-SAMPLE-002`. It keeps the accepted 48-fixture,
+8-stratum Document Ops frame, adds the structured-edit fixture routing needed
+after `PS1-G6`, and names `Vanta.PostStage1LargerSample` as the runner that can
+emit `run.json`, `summary.md`, and `fixture_inventory.md`. The runner may report
+`pass_acceptance_candidate` when `PS1-G2` passes, but it may not report
+`accepted_by_closure`.
+
 Lane B is open for human or secondary labeling after labels are collected under
 [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
 No post-Stage-1 human or secondary labels have been collected yet, and a future
@@ -244,6 +253,7 @@ claim`.
 - [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
 - [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+- [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
 - [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)

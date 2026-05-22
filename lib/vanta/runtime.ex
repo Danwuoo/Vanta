@@ -39,8 +39,10 @@ defmodule Vanta.Runtime do
       }
 
       acc =
-        Enum.reduce_while(action_sequence["actions"], initial_acc, fn action, acc ->
-          case run_action(task, workspace, episode_id, action, acc) do
+        action_sequence["actions"]
+        |> Enum.with_index(1)
+        |> Enum.reduce_while(initial_acc, fn {action, occurrence_index}, acc ->
+          case run_action(task, workspace, episode_id, action, occurrence_index, acc) do
             %{stop?: true} = next_acc -> {:halt, next_acc}
             next_acc -> {:cont, next_acc}
           end
@@ -98,17 +100,24 @@ defmodule Vanta.Runtime do
     end
   end
 
-  defp run_action(task, workspace, episode_id, action, acc) do
+  defp run_action(task, workspace, episode_id, action, occurrence_index, acc) do
     action_type = action["action_type"]
     payload = action["action_payload"]
 
-    case ExecutionIRCompiler.compile(task, episode_id, action_type, payload) do
+    case ExecutionIRCompiler.compile(task, episode_id, action_type, payload, occurrence_index) do
       {:ok, step} ->
         execute_and_verify(task, workspace, step, acc)
 
       {:error, reason} ->
         rejected_step =
-          ExecutionIRCompiler.rejected_step(task, episode_id, action_type, payload, reason)
+          ExecutionIRCompiler.rejected_step(
+            task,
+            episode_id,
+            action_type,
+            payload,
+            reason,
+            occurrence_index
+          )
 
         failure_observation = %{
           "kind" => action_type,

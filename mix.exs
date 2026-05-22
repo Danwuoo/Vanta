@@ -7,6 +7,7 @@ defmodule Vanta.MixProject do
       version: "0.1.0",
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
     ]
   end
@@ -21,6 +22,12 @@ defmodule Vanta.MixProject do
     [
       {:jason, "~> 1.4"},
       {:ex_json_schema, "~> 0.10"}
+    ]
+  end
+
+  defp aliases do
+    [
+      "vanta.post_stage_1_larger_sample": ["vanta.post_stage1_larger_sample"]
     ]
   end
 end

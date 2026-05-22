@@ -106,6 +106,12 @@ defmodule Vanta.Experiment005 do
     |> Path.join("*/expected/working_set_acceptance.json")
     |> Path.wildcard()
     |> Enum.map(fn path -> path |> Path.dirname() |> Path.dirname() |> Path.join("task.json") end)
+    |> Enum.filter(fn task_path ->
+      task_path
+      |> Path.dirname()
+      |> Path.basename()
+      |> String.starts_with?("docops_ws_")
+    end)
     |> Enum.sort()
   end
 

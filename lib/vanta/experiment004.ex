@@ -75,7 +75,12 @@ defmodule Vanta.Experiment004 do
       task_path
       |> Path.dirname()
       |> FixtureAcceptance.expected_recovery_policy()
-      |> is_binary()
+      |> is_binary() and
+        task_path
+        |> Path.dirname()
+        |> Path.basename()
+        |> String.starts_with?("docops_ps1_")
+        |> Kernel.not()
     end)
   end
 

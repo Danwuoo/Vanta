@@ -113,7 +113,12 @@ against `WorkingSet` artifacts under fixed OpenClaw local smoke controls:
 the accepted `PS1-G1` sample frame for the first Lane A larger controlled
 Document Ops sample.
 
-The planned sample contains 48 fixtures across eight strata:
+[Post-Stage-1 Larger Sample G6 Successor Plan](Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+defines the G6-aware execution frame `PS1-LA-SAMPLE-002` for the Lane A runner.
+It preserves the 48-fixture frame and explicitly routes structured-edit
+fixtures into the behavioral strata below.
+
+The execution sample contains 48 fixtures across eight strata:
 
 - traceability extraction
 - terminology consistency
@@ -129,6 +134,11 @@ and future threshold-governed acceptance candidates under the accepted `PS1-G2`
 metric policy. It is not a completed run, broad benchmark coverage, or MVP
 acceptance claim by itself.
 
+The repository now contains the 48 mirrored docs/test fixtures required by the
+G6-aware execution frame. The dedicated runner is `Vanta.PostStage1LargerSample`
+and writes Lane A results under
+`docs/04_experiments/results/post_stage_1_larger_sample/<timestamp>/`.
+
 ## Status
 
 Fixture set prepared with deterministic acceptance recipes and exercised by:
@@ -142,9 +152,9 @@ Fixture set prepared with deterministic acceptance recipes and exercised by:
 The current status is local smoke support for Stage 1 plus measured Phase 4
 targeted recovery smoke coverage on three controlled recovery fixtures and
 measured Phase 5 working-set smoke coverage on five controlled long-context
-fixtures. The post-Stage-1 larger-sample frame is accepted for planning, but it
-has not been run. This is not broad benchmark coverage or statistical
-validation.
+fixtures. The post-Stage-1 larger-sample frame is implemented as a 48-fixture
+controlled sample with a dedicated runner, but no measured Lane A closure has
+been accepted. This is not broad benchmark coverage or statistical validation.
 
 ## Related Documents
 
@@ -158,5 +168,6 @@ validation.
 - [Experiment 005 Working Set Compiler](Experiment_005_Working_Set_Compiler.md)
 - [Stage 1 Experiment 005 Closure](../00_manifest/Stage_1_Experiment_005_Closure.md)
 - [Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md)
+- [Post-Stage-1 Larger Sample G6 Successor Plan](Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
 - [Baseline Identity Plan](Baseline_Identity_Plan.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)

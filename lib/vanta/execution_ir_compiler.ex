@@ -18,13 +18,13 @@ defmodule Vanta.ExecutionIRCompiler do
     "record_compensable_action" => "COMPENSABLE"
   }
 
-  def compile(task, episode_id, action_type, payload \\ %{}) do
+  def compile(task, episode_id, action_type, payload \\ %{}, occurrence_index \\ nil) do
     with :ok <- allowed_action?(task, action_type),
          {:ok, side_effect_class} <- side_effect_class(task, action_type),
          :ok <- stage1_side_effect?(side_effect_class) do
       step = %{
         "schema_version" => Vanta.schema_version(),
-        "step_id" => step_id(episode_id, action_type),
+        "step_id" => step_id(episode_id, action_type, occurrence_index),
         "episode_id" => episode_id,
         "parent_step_id" => nil,
         "action_type" => action_type,
@@ -50,7 +50,7 @@ defmodule Vanta.ExecutionIRCompiler do
 
   def action_side_effect_class(action_type), do: Map.fetch(@action_classes, action_type)
 
-  def rejected_step(_task, episode_id, action_type, payload, _reason) do
+  def rejected_step(_task, episode_id, action_type, payload, _reason, occurrence_index \\ nil) do
     side_effect_class =
       case Map.fetch(@action_classes, action_type) do
         {:ok, class} -> class
@@ -59,7 +59,7 @@ defmodule Vanta.ExecutionIRCompiler do
 
     step = %{
       "schema_version" => Vanta.schema_version(),
-      "step_id" => step_id(episode_id, action_type),
+      "step_id" => step_id(episode_id, action_type, occurrence_index),
       "episode_id" => episode_id,
       "parent_step_id" => nil,
       "action_type" => action_type,
@@ -108,7 +108,21 @@ defmodule Vanta.ExecutionIRCompiler do
     end
   end
 
-  defp step_id(episode_id, action_type), do: "step_#{episode_id}_#{action_type}"
+  defp step_id(episode_id, action_type, nil), do: "step_#{episode_id}_#{action_type}"
+
+  defp step_id(episode_id, action_type, occurrence_index)
+       when is_integer(occurrence_index) and occurrence_index >= 0 do
+    index =
+      occurrence_index
+      |> Integer.to_string()
+      |> String.pad_leading(3, "0")
+
+    "step_#{episode_id}_#{index}_#{action_type}"
+  end
+
+  defp step_id(episode_id, action_type, occurrence_index) do
+    "step_#{episode_id}_#{occurrence_index}_#{action_type}"
+  end
 
   defp expected_effect("read_file"), do: "Read fixture-local file content without mutation."
   defp expected_effect("list_files"), do: "List fixture-local files without mutation."

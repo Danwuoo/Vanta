@@ -19,22 +19,27 @@ Map how documents relate so readers can navigate from theory to implementation w
 11. [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
 12. [Obsidian Graph Status](Obsidian_Graph_Status.md)
 13. [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
-14. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
-15. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
-16. [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
-17. [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
-18. [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
-19. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
-20. [Design Theory](../01_theory/Design_Theory.md)
-21. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-22. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-23. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-24. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-25. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-26. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-27. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-28. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-29. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+14. [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+15. [Post-Stage-1 Lane A 20260519_232854 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260519_232854_Run_Report.md)
+16. [Post-Stage-1 Lane A 20260519_232854 Closure Candidate](Post_Stage_1_Lane_A_20260519_232854_Closure_Candidate.md)
+17. [Post-Stage-1 Lane A 20260522_012221 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260522_012221_Run_Report.md)
+18. [Post-Stage-1 Lane A 20260522_012221 Closure Candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
+19. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
+20. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+21. [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+22. [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+23. [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
+24. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
+25. [Design Theory](../01_theory/Design_Theory.md)
+26. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+27. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+28. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+29. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+30. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+31. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+32. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+33. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+34. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -114,6 +119,33 @@ advancement gate or satisfy any required artifact by itself.
 is the accepted `PS1-G1` sample-frame artifact. It fixes a 48-fixture Document
 Ops sample frame and strata for Lane A planning, but it does not set acceptance
 thresholds or report results.
+
+[Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+is the `PS1-LA-SAMPLE-002` execution successor for G6-aware Lane A runs. It
+keeps the 48-fixture, 8-stratum frame, fixes the structured-edit fixture
+routing, and names the `Vanta.PostStage1LargerSample` runner artifact contract.
+It does not report measured results or create closure acceptance.
+
+[Post-Stage-1 Lane A 20260519_232854 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260519_232854_Run_Report.md)
+records the first measured `PS1-LA-SAMPLE-002` run. The run completed and
+produced `run.json`, `summary.md`, and `fixture_inventory.md`, but its threshold
+status is `failed_no_acceptance` because required artifacts, replay consistency,
+and audit completeness did not meet `PS1-LA-METRIC-001`.
+
+[Post-Stage-1 Lane A 20260519_232854 Closure Candidate](Post_Stage_1_Lane_A_20260519_232854_Closure_Candidate.md)
+is a non-accepting manifest review candidate for that measured run. It records
+the blocking fix batches and explicitly does not create `accepted_by_closure`.
+
+[Post-Stage-1 Lane A 20260522_012221 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260522_012221_Run_Report.md)
+records the measured rerun after the first repair batch. The run completed and
+produced the required result files, but its threshold status remains
+`failed_no_acceptance` because task success, required artifacts, replay
+consistency, and audit completeness did not meet `PS1-LA-METRIC-001`.
+
+[Post-Stage-1 Lane A 20260522_012221 Closure Candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
+is a non-accepting manifest review candidate for the repair rerun. It records
+the remaining planner-context, positive-fixture alignment, and negative-fixture
+rejection-discipline fix batches.
 
 [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) is the
 accepted `PS1-G5` baseline-identity artifact. It keeps OpenClaw results labeled

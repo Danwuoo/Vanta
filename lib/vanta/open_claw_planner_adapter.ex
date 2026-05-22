@@ -14,12 +14,31 @@ defmodule Vanta.OpenClawPlannerAdapter do
   @default_agent "main"
   @default_timeout_seconds 600
   @default_thinking "off"
+  @default_max_prompt_chars 20_000
+  @default_max_response_chars 12_000
+
+  @context_overflow_markers [
+    "context overflow",
+    "context_overflow",
+    "context length",
+    "context window",
+    "maximum context",
+    "max context",
+    "too many tokens",
+    "token limit",
+    "prompt is too long",
+    "input is too long",
+    "exceeds the context"
+  ]
 
   def propose_actions(task, workspace, opts \\ []) do
     with {:ok, env} <- env(opts, task),
-         {:ok, response} <- call_openclaw(prompt(task, workspace), env, opts),
+         {:ok, prompt} <- prompt(task, workspace, opts),
+         {:ok, response} <- call_openclaw(prompt, env, opts),
          {:ok, text} <- extract_assistant_text(response),
-         {:ok, action_sequence} <- decode_action_sequence(text) do
+         :ok <- reject_context_overflow(text),
+         {:ok, response_text} <- enforce_response_budget(text, opts),
+         {:ok, action_sequence} <- decode_action_sequence(response_text) do
       PlannerAdapter.validate_action_sequence(action_sequence)
     end
   end
@@ -94,7 +113,60 @@ defmodule Vanta.OpenClawPlannerAdapter do
     end
   end
 
-  defp prompt(task, workspace) do
+  defp prompt(task, workspace, opts) do
+    max_chars = max_prompt_chars(opts)
+    full_previews = artifact_previews(task, workspace, :full)
+    full_prompt = prompt_text(task, full_previews)
+
+    if String.length(full_prompt) <= max_chars do
+      {:ok, full_prompt}
+    else
+      budgeted_prompt(task, workspace, max_chars)
+    end
+  end
+
+  defp budgeted_prompt(task, workspace, max_chars) do
+    blank_previews = artifact_previews(task, workspace, 0)
+    blank_prompt = prompt_text(task, blank_previews)
+    blank_prompt_chars = String.length(blank_prompt)
+
+    if blank_prompt_chars > max_chars do
+      {:error, {:planner_prompt_budget_exceeded, blank_prompt_chars, max_chars}}
+    else
+      artifact_count = task |> Map.get("input_artifacts", []) |> length() |> Kernel.max(1)
+      per_artifact_limit = div(max_chars - blank_prompt_chars, artifact_count)
+
+      fit_budgeted_prompt(task, workspace, max_chars, artifact_count, per_artifact_limit)
+    end
+  end
+
+  defp fit_budgeted_prompt(task, workspace, max_chars, artifact_count, per_artifact_limit) do
+    previews = artifact_previews(task, workspace, per_artifact_limit)
+    prompt = prompt_text(task, previews)
+    prompt_chars = String.length(prompt)
+
+    cond do
+      prompt_chars <= max_chars ->
+        {:ok, prompt}
+
+      per_artifact_limit <= 0 ->
+        {:error, {:planner_prompt_budget_exceeded, prompt_chars, max_chars}}
+
+      true ->
+        overflow = prompt_chars - max_chars
+        decrement = overflow |> div(artifact_count) |> Kernel.max(1)
+
+        fit_budgeted_prompt(
+          task,
+          workspace,
+          max_chars,
+          artifact_count,
+          Kernel.max(per_artifact_limit - decrement, 0)
+        )
+    end
+  end
+
+  defp prompt_text(task, artifact_previews) do
     """
     You are running as a non-interactive Vanta Experiment 001 planner.
 
@@ -161,7 +233,7 @@ defmodule Vanta.OpenClawPlannerAdapter do
     #{Jason.encode!(task, pretty: true)}
 
     Input artifact previews:
-    #{Jason.encode!(artifact_previews(task, workspace), pretty: true)}
+    #{Jason.encode!(artifact_previews, pretty: true)}
     """
   end
 
@@ -171,27 +243,65 @@ defmodule Vanta.OpenClawPlannerAdapter do
   end
 
   defp run_openclaw(prompt, env) do
-    script =
-      [
-        "cd ",
-        shell_path(env.openclaw_dir),
-        " && pnpm openclaw --no-color agent --local --json",
-        maybe_arg("--agent", env.agent),
-        " --session-id ",
-        shell_quote(env.session_id),
-        " --model ",
-        shell_quote(env.model),
-        maybe_arg("--thinking", env.thinking),
-        " --message ",
-        shell_quote(prompt),
-        " --timeout ",
-        Integer.to_string(env.timeout_seconds)
-      ]
-      |> IO.iodata_to_binary()
+    prompt_path = temp_file_path("prompt", ".txt")
+    script_path = temp_file_path("script", ".sh")
 
-    case System.cmd(env.wsl_executable, ["--", "bash", "-lic", script], stderr_to_stdout: true) do
-      {output, 0} -> decode_cli_json(output)
-      {output, status} -> {:error, {:openclaw_cli_failed, status, output}}
+    File.write!(prompt_path, prompt)
+    File.write!(script_path, openclaw_script(env, prompt_path))
+
+    try do
+      script = ["bash ", shell_quote(wsl_path(script_path))] |> IO.iodata_to_binary()
+
+      case System.cmd(env.wsl_executable, ["--", "bash", "-lic", script], stderr_to_stdout: true) do
+        {output, 0} -> decode_cli_json(output)
+        {output, status} -> {:error, {:openclaw_cli_failed, status, output}}
+      end
+    after
+      File.rm(prompt_path)
+      File.rm(script_path)
+    end
+  end
+
+  defp openclaw_script(env, prompt_path) do
+    [
+      "#!/usr/bin/env bash\n",
+      "set -euo pipefail\n",
+      "cd ",
+      shell_path(env.openclaw_dir),
+      "\n",
+      "pnpm openclaw --no-color agent --local --json",
+      maybe_arg("--agent", env.agent),
+      " --session-id ",
+      shell_quote(env.session_id),
+      " --model ",
+      shell_quote(env.model),
+      maybe_arg("--thinking", env.thinking),
+      " --message \"$(cat ",
+      shell_quote(wsl_path(prompt_path)),
+      ")\"",
+      " --timeout ",
+      Integer.to_string(env.timeout_seconds),
+      "\n"
+    ]
+    |> IO.iodata_to_binary()
+  end
+
+  defp temp_file_path(kind, extension) do
+    Path.join(
+      System.tmp_dir!(),
+      "vanta_openclaw_planner_#{kind}_#{System.unique_integer([:positive])}#{extension}"
+    )
+  end
+
+  defp wsl_path(path) do
+    path = Path.expand(path)
+
+    case Regex.run(~r/\A([a-zA-Z]):[\\\/](.*)\z/, path) do
+      [_, drive, rest] ->
+        "/mnt/#{String.downcase(drive)}/" <> String.replace(rest, "\\", "/")
+
+      _other ->
+        String.replace(path, "\\", "/")
     end
   end
 
@@ -232,6 +342,27 @@ defmodule Vanta.OpenClawPlannerAdapter do
 
   defp extract_assistant_text(_response), do: {:error, :missing_openclaw_payload_text}
 
+  defp reject_context_overflow(text) do
+    normalized = String.downcase(text)
+
+    if Enum.any?(@context_overflow_markers, &String.contains?(normalized, &1)) do
+      {:error, {:openclaw_context_overflow, bounded_error_text(text)}}
+    else
+      :ok
+    end
+  end
+
+  defp enforce_response_budget(text, opts) do
+    max_chars = max_response_chars(opts)
+    response_chars = String.length(text)
+
+    if response_chars > max_chars do
+      {:error, {:planner_response_budget_exceeded, response_chars, max_chars}}
+    else
+      {:ok, text}
+    end
+  end
+
   defp decode_action_sequence(text) do
     text
     |> strip_code_fence()
@@ -268,20 +399,62 @@ defmodule Vanta.OpenClawPlannerAdapter do
     end
   end
 
-  defp artifact_previews(task, workspace) do
+  defp artifact_previews(task, workspace, content_limit) do
     task
     |> Map.get("input_artifacts", [])
     |> Enum.map(fn artifact ->
       path = artifact["path"]
       abs_path = Path.join(workspace, path)
+      content = if File.regular?(abs_path), do: File.read!(abs_path), else: nil
 
-      %{
+      preview = %{
         "path" => path,
         "role" => artifact["role"],
-        "content" => if(File.regular?(abs_path), do: File.read!(abs_path), else: nil)
+        "content" => preview_content(content, content_limit),
+        "content_truncated" => content_truncated?(content, content_limit),
+        "original_char_count" => char_count(content),
+        "included_char_count" => included_char_count(content, content_limit)
       }
+
+      case artifact["description"] do
+        description when is_binary(description) -> Map.put(preview, "description", description)
+        _other -> preview
+      end
     end)
   end
+
+  defp preview_content(nil, _content_limit), do: nil
+  defp preview_content(content, :full), do: content
+
+  defp preview_content(content, content_limit)
+       when is_integer(content_limit) and content_limit >= 0 do
+    String.slice(content, 0, content_limit)
+  end
+
+  defp preview_content(content, _content_limit), do: content
+
+  defp content_truncated?(nil, _content_limit), do: false
+  defp content_truncated?(_content, :full), do: false
+
+  defp content_truncated?(content, content_limit)
+       when is_integer(content_limit) and content_limit >= 0 do
+    String.length(content) > content_limit
+  end
+
+  defp content_truncated?(_content, _content_limit), do: false
+
+  defp char_count(nil), do: 0
+  defp char_count(content), do: String.length(content)
+
+  defp included_char_count(nil, _content_limit), do: 0
+  defp included_char_count(content, :full), do: String.length(content)
+
+  defp included_char_count(content, content_limit)
+       when is_integer(content_limit) and content_limit >= 0 do
+    content |> String.length() |> Kernel.min(content_limit)
+  end
+
+  defp included_char_count(content, _content_limit), do: String.length(content)
 
   defp session_id(opts, task) do
     case Keyword.get(opts, :session_id) do
@@ -352,6 +525,26 @@ defmodule Vanta.OpenClawPlannerAdapter do
 
   defp fallback(value, fallback_value) do
     if blank?(value), do: fallback_value, else: value
+  end
+
+  defp max_prompt_chars(opts) do
+    opts
+    |> Keyword.get(:max_prompt_chars)
+    |> parse_positive_integer(@default_max_prompt_chars)
+  end
+
+  defp max_response_chars(opts) do
+    opts
+    |> Keyword.get(:max_response_chars)
+    |> parse_positive_integer(@default_max_response_chars)
+  end
+
+  defp bounded_error_text(text) do
+    if String.length(text) > 1_000 do
+      String.slice(text, 0, 1_000) <> "...<truncated>"
+    else
+      text
+    end
   end
 
   defp blank?(value), do: is_nil(value) or String.trim(to_string(value)) == ""

@@ -247,6 +247,42 @@ defmodule Vanta.RuntimeFlowTest do
     assert replay.consistent?
   end
 
+  test "runtime preserves audit refs for repeated action types in one episode" do
+    {task, workspace} = load_fixture("docops_detect_terms_001")
+
+    action_sequence = %{
+      "actions" => [
+        %{"action_type" => "read_file", "action_payload" => %{"path" => "inputs/term_a.md"}},
+        %{"action_type" => "read_file", "action_payload" => %{"path" => "inputs/term_b.md"}},
+        %{
+          "action_type" => "validate_artifact",
+          "action_payload" => %{
+            "paths" => ["inputs/term_a.md", "inputs/term_b.md"],
+            "validation" => "terminology_consistency"
+          }
+        }
+      ]
+    }
+
+    assert {:ok, result} = Runtime.run_task(task, workspace, action_sequence: action_sequence)
+
+    step_ids = Enum.map(result.steps, & &1["step_id"])
+
+    assert result.status == "committed"
+    assert length(step_ids) == 3
+    assert length(Enum.uniq(step_ids)) == 3
+    assert length(result.journal["steps"]) == 3
+    assert length(result.journal["evidence_refs"]) == 3
+    assert length(result.journal["verifier_output_refs"]) == 3
+    assert length(Enum.uniq(result.journal["evidence_refs"])) == 3
+    assert length(Enum.uniq(result.journal["verifier_output_refs"])) == 3
+
+    assert EvaluationHarness.audit_complete?(result.journal, %{
+             evidence_packets: result.evidence_packets,
+             verifier_outputs: result.verifier_outputs
+           })
+  end
+
   test "multistep compute_diff accepts LF candidate content against CRLF source files" do
     workspace = copy_fixture("docops_multistep_commit_001")
     target = Path.join(workspace, "inputs/workflow.md")
@@ -584,6 +620,60 @@ defmodule Vanta.RuntimeFlowTest do
              )
 
     assert [%{"action_type" => "validate_artifact"}] = action_sequence["actions"]
+  end
+
+  test "openclaw planner adapter rejects prompt budget overflow before runner call" do
+    {task, workspace} = load_fixture("docops_read_traceability_001")
+
+    runner = fn _prompt, _env -> flunk("runner should not be called after prompt overflow") end
+
+    assert {:error, {:planner_prompt_budget_exceeded, prompt_chars, 10}} =
+             OpenClawPlannerAdapter.propose_actions(task, workspace,
+               wsl_executable: "wsl.exe",
+               model: "gpt-5.4-mini",
+               max_prompt_chars: 10,
+               runner: runner
+             )
+
+    assert prompt_chars > 10
+  end
+
+  test "openclaw planner adapter rejects response budget overflow before JSON decode" do
+    {task, workspace} = load_fixture("docops_read_traceability_001")
+
+    runner = fn _prompt, _env ->
+      {:ok, %{"payloads" => [%{"text" => String.duplicate("x", 50)}]}}
+    end
+
+    assert {:error, {:planner_response_budget_exceeded, 50, 20}} =
+             OpenClawPlannerAdapter.propose_actions(task, workspace,
+               wsl_executable: "wsl.exe",
+               model: "gpt-5.4-mini",
+               max_response_chars: 20,
+               runner: runner
+             )
+  end
+
+  test "openclaw planner adapter classifies context overflow text explicitly" do
+    {task, workspace} = load_fixture("docops_read_traceability_001")
+
+    runner = fn _prompt, _env ->
+      {:ok,
+       %{
+         "payloads" => [
+           %{"text" => "OpenClaw error: maximum context length exceeded for this request."}
+         ]
+       }}
+    end
+
+    assert {:error, {:openclaw_context_overflow, message}} =
+             OpenClawPlannerAdapter.propose_actions(task, workspace,
+               wsl_executable: "wsl.exe",
+               model: "gpt-5.4-mini",
+               runner: runner
+             )
+
+    assert message =~ "maximum context length exceeded"
   end
 
   test "malformed action sequence is rejected before execution" do
