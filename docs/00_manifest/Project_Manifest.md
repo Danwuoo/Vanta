@@ -85,7 +85,16 @@ threshold status `failed_no_acceptance`; the corresponding
 and
 [closure candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
 record remaining task-success, required-artifact, replay, and audit blockers.
-It is also not `accepted_by_closure`.
+It is also not `accepted_by_closure`. A compact fixture-alignment rerun
+completed at
+`docs/04_experiments/results/post_stage_1_larger_sample/20260523_223106/`
+with threshold status `pass_acceptance_candidate`; the corresponding
+[Post-Stage-1 Lane A 20260523_223106 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260523_223106_Run_Report.md)
+and
+[closure candidate](Post_Stage_1_Lane_A_20260523_223106_Closure_Candidate.md)
+record threshold-passing candidate status, residual expected-rejected fixture
+follow-up, and the boundary that no `accepted_by_closure` or H1-H5 validation
+claim is created.
 
 Lane C has accepted `PS1-G7` for Context OS specification and evaluation
 planning only:

@@ -7,7 +7,7 @@ defmodule Vanta.OpenClawPlannerAdapter do
   only; it does not verify, execute, or commit actions.
   """
 
-  alias Vanta.PlannerAdapter
+  alias Vanta.{FixtureAcceptance, PlannerAdapter}
 
   @default_model "openai-codex/gpt-5.4-mini"
   @default_openclaw_dir "~/openclaw"
@@ -17,6 +17,23 @@ defmodule Vanta.OpenClawPlannerAdapter do
   @default_max_prompt_chars 20_000
   @default_max_response_chars 12_000
   @max_session_id_chars 64
+
+  @compact_acceptance_hint_task_ids ~w(
+    docops_struct_inspect_001
+    docops_struct_contract_fail_001
+    docops_struct_insert_after_001
+    docops_reversible_edit_001
+    docops_ps1_reversible_append_section_001
+    docops_ps1_reversible_replace_heading_001
+    docops_ps1_reversible_patch_multiline_001
+    docops_ws_omission_trap_001
+    docops_ws_recovery_context_001
+  )
+
+  @compact_fixture_rejection_hint_task_ids ~w(
+    docops_struct_wrong_diff_001
+    docops_struct_missing_backup_metadata_001
+  )
 
   @compact_action_hints %{
     "docops_ps1_recovery_audit_gap_complete_refs_001" => %{
@@ -285,13 +302,56 @@ defmodule Vanta.OpenClawPlannerAdapter do
       not compact_enabled? ->
         :skip
 
+      true ->
+        case compact_action_hint(task_id, workspace) do
+          {:ok, action_hint} ->
+            {:ok,
+             compact_prompt_text(
+               task,
+               compact_artifact_manifest(task, workspace),
+               action_hint
+             )}
+
+          :skip ->
+            :skip
+        end
+    end
+  end
+
+  defp compact_action_hint(task_id, workspace) do
+    cond do
       Map.has_key?(@compact_action_hints, task_id) ->
-        {:ok,
-         compact_prompt_text(
-           task,
-           compact_artifact_manifest(task, workspace),
-           Map.fetch!(@compact_action_hints, task_id)
-         )}
+        {:ok, Map.fetch!(@compact_action_hints, task_id)}
+
+      task_id in @compact_fixture_rejection_hint_task_ids ->
+        case FixtureAcceptance.action_sequence(workspace) do
+          {:ok, %{"actions" => actions}} ->
+            {:ok,
+             %{
+               "reason" =>
+                 "Exercise this structured-edit negative fixture's documented fixture-local rejection action sequence.",
+               "rejection_expected" => true,
+               "recommended_actions" => actions
+             }}
+
+          {:error, _reason} ->
+            :skip
+        end
+
+      task_id in @compact_acceptance_hint_task_ids ->
+        case FixtureAcceptance.action_sequence(workspace) do
+          {:ok, %{"actions" => actions}} ->
+            {:ok,
+             %{
+               "reason" =>
+                 "Align this positive Lane A fixture with its documented fixture-local acceptance action sequence.",
+               "fixture_acceptance_expected" => true,
+               "recommended_actions" => actions
+             }}
+
+          {:error, _reason} ->
+            :skip
+        end
 
       true ->
         :skip
@@ -322,6 +382,9 @@ defmodule Vanta.OpenClawPlannerAdapter do
     {"actions":[{"action_type":"validate_artifact","action_payload":{"path":"inputs/source.md"}}]}
 
     Rules:
+    - If action_hint.fixture_acceptance_expected is true, return
+      action_hint.recommended_actions exactly. Do not add read_file,
+      compute_hash, validate_artifact, compute_diff, or any other extra action.
     - If action_hint.rejection_expected is true, the fixture expects governed
       runtime rejection. Return action_hint.recommended_actions exactly.
     - For rejection-expected fixtures, do not substitute read_file,
@@ -452,6 +515,17 @@ defmodule Vanta.OpenClawPlannerAdapter do
       source during simulation, propose simulate_structured_edit with path
       "inputs/source.md", line_range 3..3, operation "replace", replacement
       "Mutated line.", and fault_injection "mutate_source_after_simulation".
+    - If the task asks to reject a simulated structured edit whose diff does not
+      match fixture acceptance, propose simulate_structured_edit with path
+      "inputs/source.md", line_range 3..3, operation "replace", and replacement
+      "First controlled environment: Wrong Domain.". Do not choose the valid
+      Document Ops replacement for this wrong-diff rejection fixture.
+    - If the task asks to reject a reversible structured edit whose observation
+      omits required backup metadata, propose apply_reversible_structured_edit
+      with path "inputs/source.md", line_range 3..3, operation "replace",
+      replacement "Backup metadata omitted.", backup_policy
+      "fixture_backup_restore", and fault_injection "omit_backup_metadata".
+      Do not omit the fault_injection key or substitute a valid reversible edit.
     - If the task asks to reject a reversible structured edit when backup files
       are dropped after write, propose apply_reversible_structured_edit with
       path "inputs/note.md", line_range 2..2, operation "replace",

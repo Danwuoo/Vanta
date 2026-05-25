@@ -74,6 +74,15 @@ successor manifest gate that explicitly supersedes it.
   [closure candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
   record remaining task-success, required-artifact, replay, and audit blockers.
   It is not `accepted_by_closure`.
+- A compact fixture-alignment rerun at
+  `docs/04_experiments/results/post_stage_1_larger_sample/20260523_223106/`
+  completed with threshold status `pass_acceptance_candidate`. The
+  [run report](../05_evaluation/Post_Stage_1_Lane_A_20260523_223106_Run_Report.md)
+  and
+  [closure candidate](Post_Stage_1_Lane_A_20260523_223106_Closure_Candidate.md)
+  record valid required artifacts, replay consistency `1.0`, audit completeness
+  `1.0`, and treatment task success `0.9583`. It is still not
+  `accepted_by_closure` and does not validate H1-H5.
 - `PS1-G3` and `PS1-G4` are accepted by
   [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
   Label collection remains `Not yet run`.

@@ -24,22 +24,24 @@ Map how documents relate so readers can navigate from theory to implementation w
 16. [Post-Stage-1 Lane A 20260519_232854 Closure Candidate](Post_Stage_1_Lane_A_20260519_232854_Closure_Candidate.md)
 17. [Post-Stage-1 Lane A 20260522_012221 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260522_012221_Run_Report.md)
 18. [Post-Stage-1 Lane A 20260522_012221 Closure Candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
-19. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
-20. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
-21. [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
-22. [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
-23. [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
-24. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
-25. [Design Theory](../01_theory/Design_Theory.md)
-26. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-27. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-28. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-29. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-30. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-31. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-32. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-33. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-34. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+19. [Post-Stage-1 Lane A 20260523_223106 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260523_223106_Run_Report.md)
+20. [Post-Stage-1 Lane A 20260523_223106 Closure Candidate](Post_Stage_1_Lane_A_20260523_223106_Closure_Candidate.md)
+21. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
+22. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+23. [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+24. [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+25. [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
+26. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
+27. [Design Theory](../01_theory/Design_Theory.md)
+28. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+29. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+30. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+31. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+32. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+33. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+34. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+35. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+36. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -146,6 +148,16 @@ consistency, and audit completeness did not meet `PS1-LA-METRIC-001`.
 is a non-accepting manifest review candidate for the repair rerun. It records
 the remaining planner-context, positive-fixture alignment, and negative-fixture
 rejection-discipline fix batches.
+
+[Post-Stage-1 Lane A 20260523_223106 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260523_223106_Run_Report.md)
+records the measured rerun after compact fixture-aligned planner prompt repairs.
+The run completed, produced the required result files, and reached threshold
+status `pass_acceptance_candidate`, with residual expected-rejected fixture
+misses documented as follow-up risk.
+
+[Post-Stage-1 Lane A 20260523_223106 Closure Candidate](Post_Stage_1_Lane_A_20260523_223106_Closure_Candidate.md)
+is a manifest review candidate for that threshold-passing measured run. It does
+not create `accepted_by_closure` and does not validate H1-H5.
 
 [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) is the
 accepted `PS1-G5` baseline-identity artifact. It keeps OpenClaw results labeled
