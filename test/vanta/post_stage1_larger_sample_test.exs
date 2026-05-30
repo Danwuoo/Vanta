@@ -86,7 +86,7 @@ defmodule Vanta.PostStage1LargerSampleTest do
     assert run["fixture_count"] == 48
 
     assert get_in(run, ["run_controls", "prompt_template_version"]) ==
-             "post_stage_1_larger_sample_openclaw_v4_structured_negative_rejection_alignment"
+             "post_stage_1_larger_sample_openclaw_v5_ws_evidence_packet_acceptance_alignment"
 
     assert :ok = Schema.validate("experiment_run", run)
 

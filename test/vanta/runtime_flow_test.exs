@@ -40,6 +40,7 @@ defmodule Vanta.RuntimeFlowTest do
     docops_ps1_reversible_append_section_001
     docops_ps1_reversible_replace_heading_001
     docops_ps1_reversible_patch_multiline_001
+    docops_ws_evidence_packet_001
     docops_ws_omission_trap_001
     docops_ws_recovery_context_001
   )

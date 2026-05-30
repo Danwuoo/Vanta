@@ -21,7 +21,9 @@ Plan ID: `PS1-LA-SAMPLE-002`.
 
 Status: `Execution successor to PS1-LA-SAMPLE-001 for G6-aware Lane A runs`.
 
-Run status: `Not yet run`.
+Run status: Measured runs exist. The latest documented full v5 run is
+`20260530_141649` with threshold status `pass_acceptance_candidate`. Measured
+results are reported separately and do not create `accepted_by_closure`.
 
 Runner: `Vanta.PostStage1LargerSample`.
 
@@ -125,3 +127,7 @@ may accept a measured result.
 - [Baseline Identity Plan](Baseline_Identity_Plan.md)
 - [Post-Stage-1 Runtime Scope Proposal](../00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md)
 - [Post-Stage-1 Advancement Gate](../00_manifest/Post_Stage_1_Advancement_Gate.md)
+- [Post-Stage-1 Lane A 20260525_223239 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260525_223239_Run_Report.md)
+- [Post-Stage-1 Lane A 20260525_223239 Closure Candidate](../00_manifest/Post_Stage_1_Lane_A_20260525_223239_Closure_Candidate.md)
+- [Post-Stage-1 Lane A 20260530_141649 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260530_141649_Run_Report.md)
+- [Post-Stage-1 Lane A 20260530_141649 Closure Candidate](../00_manifest/Post_Stage_1_Lane_A_20260530_141649_Closure_Candidate.md)

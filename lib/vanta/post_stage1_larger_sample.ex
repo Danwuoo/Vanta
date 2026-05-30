@@ -1039,7 +1039,7 @@ defmodule Vanta.PostStage1LargerSample do
       "context_planner_adapter" => inspect(opts.context_planner_adapter),
       "allowed_action_set" => Vanta.action_types(),
       "prompt_template_version" =>
-        "post_stage_1_larger_sample_openclaw_v4_structured_negative_rejection_alignment",
+        "post_stage_1_larger_sample_openclaw_v5_ws_evidence_packet_acceptance_alignment",
       "response_format" => "json_only",
       "prompt_character_budget" => opts.max_prompt_chars,
       "response_character_budget" => opts.max_response_chars,

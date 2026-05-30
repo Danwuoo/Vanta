@@ -39,6 +39,7 @@ Record documentation and research decisions that materially affect scope, interf
 | 2026-05-11 | Accept the `PS1-G7` Context OS expansion gate for specification and evaluation planning. | Full Context OS must remain separate from generic runtime scope expansion; moving beyond deterministic `Working Set Compiler v0` requires larger controlled working-set evidence, policy-compliant labels, fixed baseline identity, and process-integrity floors before any implementation or validation claim. | Accepted |
 | 2026-05-11 | Accept the `PS1-G8` side-effect escalation gate for specification and evaluation planning. | `COMMITTABLE`, `IRREVERSIBLE`, and `MEMORY_WRITE` effects require explicit evidence, verifier, approval, rollback, compensation, reconciliation, or memory-write policy before any later implementation batch; accepting the gate policy does not authorize runtime execution. | Accepted |
 | 2026-05-12 | Implement `PS1-G6` as a local structured edit runtime interface. | The batch updates specs, schemas, runtime code, mirrored fixtures, and tests together for fixture-local `inspect_document_structure`, `validate_document_contract`, `simulate_structured_edit`, and `apply_reversible_structured_edit` without expanding side-effect classes or making H1-H5 validation claims. | Accepted |
+| 2026-05-27 | Retire vault-specific graph and hub navigation in favor of `Document_Map.md`. | Repository navigation should remain plain Markdown and keep governance, routing, and traceability in tracked functional documents. | Accepted |
 
 ## Post-Stage-1 Gate Tracking
 
