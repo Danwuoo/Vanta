@@ -173,6 +173,38 @@ defmodule Vanta.StructuredEditTest do
     end)
   end
 
+  test "missing-selector fixture rejects substituted resolvable line ranges" do
+    {task, workspace} = load_fixture("docops_struct_selector_missing_001")
+
+    substituted_sequence = %{
+      "actions" => [
+        %{
+          "action_type" => "simulate_structured_edit",
+          "action_payload" => %{
+            "path" => "inputs/source.md",
+            "selector" => %{
+              "type" => "line_range",
+              "start_line" => 3,
+              "end_line" => 3
+            },
+            "operation" => "replace",
+            "replacement" => "Mutated line."
+          }
+        }
+      ]
+    }
+
+    assert {:ok, result} =
+             Runtime.run_task(task, workspace, action_sequence: substituted_sequence)
+
+    assert result.status == "rejected"
+    assert result.task_success?
+
+    [verifier_output] = result.verifier_outputs
+    assert verifier_output["decision"] == "reject"
+    assert "structured_selector_missing" in verifier_output["violated_constraints"]
+  end
+
   test "structured runtime episodes are audit-complete and replay-consistent with artifacts" do
     {task, workspace} = load_fixture("docops_struct_simulate_md_001")
 

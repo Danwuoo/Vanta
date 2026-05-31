@@ -17,31 +17,34 @@ Map how documents relate so readers can navigate from theory to implementation w
 9. [Stage 1 Experiment 005 Closure](Stage_1_Experiment_005_Closure.md)
 10. [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md)
 11. [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
-12. [Obsidian Graph Status](Obsidian_Graph_Status.md)
-13. [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
-14. [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
-15. [Post-Stage-1 Lane A 20260519_232854 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260519_232854_Run_Report.md)
-16. [Post-Stage-1 Lane A 20260519_232854 Closure Candidate](Post_Stage_1_Lane_A_20260519_232854_Closure_Candidate.md)
-17. [Post-Stage-1 Lane A 20260522_012221 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260522_012221_Run_Report.md)
-18. [Post-Stage-1 Lane A 20260522_012221 Closure Candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
-19. [Post-Stage-1 Lane A 20260523_223106 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260523_223106_Run_Report.md)
-20. [Post-Stage-1 Lane A 20260523_223106 Closure Candidate](Post_Stage_1_Lane_A_20260523_223106_Closure_Candidate.md)
-21. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
-22. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
-23. [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
-24. [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
-25. [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
-26. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
-27. [Design Theory](../01_theory/Design_Theory.md)
-28. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-29. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-30. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-31. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-32. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-33. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-34. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-35. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-36. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+12. [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+13. [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+14. [Post-Stage-1 Lane A 20260519_232854 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260519_232854_Run_Report.md)
+15. [Post-Stage-1 Lane A 20260519_232854 Closure Candidate](Post_Stage_1_Lane_A_20260519_232854_Closure_Candidate.md)
+16. [Post-Stage-1 Lane A 20260522_012221 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260522_012221_Run_Report.md)
+17. [Post-Stage-1 Lane A 20260522_012221 Closure Candidate](Post_Stage_1_Lane_A_20260522_012221_Closure_Candidate.md)
+18. [Post-Stage-1 Lane A 20260523_223106 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260523_223106_Run_Report.md)
+19. [Post-Stage-1 Lane A 20260523_223106 Closure Candidate](Post_Stage_1_Lane_A_20260523_223106_Closure_Candidate.md)
+20. [Post-Stage-1 Lane A 20260525_223239 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260525_223239_Run_Report.md)
+21. [Post-Stage-1 Lane A 20260525_223239 Closure Candidate](Post_Stage_1_Lane_A_20260525_223239_Closure_Candidate.md)
+22. [Post-Stage-1 Lane A 20260530_141649 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260530_141649_Run_Report.md)
+23. [Post-Stage-1 Lane A 20260530_141649 Closure Candidate](Post_Stage_1_Lane_A_20260530_141649_Closure_Candidate.md)
+24. [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
+25. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+26. [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+27. [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+28. [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
+29. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
+30. [Design Theory](../01_theory/Design_Theory.md)
+31. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+32. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+33. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+34. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+35. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+36. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+37. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+38. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+39. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -52,6 +55,60 @@ Map how documents relate so readers can navigate from theory to implementation w
 - Experiments define how claims will be tested.
 - Evaluation documents define metrics and labeling rules.
 - Engineering documents define build sequencing and module boundaries.
+
+## Markdown Navigation
+
+This document is the repository's Markdown navigation source. It preserves
+layer routing and source-to-implementation paths without depending on external
+note-graph configuration, frontmatter, or application-specific link syntax.
+
+### Layer Route
+
+| Layer | Directory | Primary navigation |
+| --- | --- | --- |
+| L0 | `docs/00_manifest/` | [Project Manifest](Project_Manifest.md), [Document Map](Document_Map.md), [Traceability Matrix](Traceability_Matrix.md), [Glossary](Glossary.md), [Decision Log](Decision_Log.md), [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md) |
+| L1 | `docs/01_theory/` | [Design Theory](../01_theory/Design_Theory.md), [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md), [Research Hypotheses](../01_theory/Research_Hypotheses.md), [Alternative Theories](../01_theory/Alternative_Theories.md) |
+| L2 | `docs/02_specs/` | [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md), [Execution IR and Episode Semantics](../02_specs/Execution_IR_and_Episode_Semantics.md), [Evidence Packet and Verifier Runtime](../02_specs/Evidence_Packet_and_Verifier_Runtime.md), [Commit Abort Replay Semantics](../02_specs/Commit_Abort_Replay_Semantics.md), [Failure Taxonomy v0](../02_specs/Failure_Taxonomy_v0.md), [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md) |
+| L3 | `docs/03_schemas/` | Runtime, benchmark, and evaluation data contracts under [schema contracts](../03_schemas/) |
+| L4 | `docs/04_experiments/` | [Document Ops Benchmark](../04_experiments/Document_Ops_Benchmark.md), [Benchmark Task Format](../04_experiments/Benchmark_Task_Format.md), [Ablation Plan](../04_experiments/Ablation_Plan.md), Experiment 001 through 005 protocols, and post-Stage-1 sample plans |
+| L5 | `docs/05_evaluation/` | [Metrics Definition](../05_evaluation/Metrics_Definition.md), labeling guides, report templates, and measured run reports |
+| L6 | `docs/06_engineering/` | [MVP Architecture](../06_engineering/MVP_Architecture.md), [Repository Structure](../06_engineering/Repository_Structure.md), [Runtime Module Plan](../06_engineering/Runtime_Module_Plan.md), [Implementation Timeline](../06_engineering/Implementation_Timeline.md), [Testing Strategy](../06_engineering/Testing_Strategy.md) |
+
+### Primary Flow
+
+[Project Manifest](Project_Manifest.md)
+-> [Design Theory](../01_theory/Design_Theory.md)
+-> [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+-> [schema contracts](../03_schemas/)
+-> [Document Ops Benchmark](../04_experiments/Document_Ops_Benchmark.md)
+-> [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+-> [MVP Architecture](../06_engineering/MVP_Architecture.md)
+
+### Source-To-Implementation Spine
+
+[Design Theory](../01_theory/Design_Theory.md)
+-> [Stage 0 Boundary Lock](Stage_0_Boundary_Lock.md)
+-> [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+-> [Experiment 001 Minimal Loop](../04_experiments/Experiment_001_Minimal_Loop.md)
+-> [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+-> [MVP Architecture](../06_engineering/MVP_Architecture.md)
+
+[Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+-> [Research Questions](Research_Questions.md)
+-> [Ablation Plan](../04_experiments/Ablation_Plan.md)
+-> [Implementation Timeline](../06_engineering/Implementation_Timeline.md)
+
+### Post-Stage-1 Routing
+
+[Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md)
+-> [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
+-> [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
+-> [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+-> [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
+-> [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+-> [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
+-> [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
+-> [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
 
 ## Stage 0 Gate
 
@@ -159,6 +216,33 @@ misses documented as follow-up risk.
 is a manifest review candidate for that threshold-passing measured run. It does
 not create `accepted_by_closure` and does not validate H1-H5.
 
+[Post-Stage-1 Lane A 20260525_223239 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260525_223239_Run_Report.md)
+records the measured rerun after structured negative rejection alignment. The
+run completed, produced the required result files, and reached threshold status
+`pass_acceptance_candidate`; it also records a root-planner overshoot on
+`docops_ws_evidence_packet_001` and the post-run focused repair.
+
+[Post-Stage-1 Lane A 20260525_223239 Closure Candidate](Post_Stage_1_Lane_A_20260525_223239_Closure_Candidate.md)
+is a manifest review candidate for that threshold-passing measured run. It does
+not create `accepted_by_closure`, does not validate H1-H5, and does not treat
+the focused repair as a full 48-fixture rerun.
+
+[Post-Stage-1 Lane A 20260530_141649 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260530_141649_Run_Report.md)
+records the full v5 measured rerun after
+`docops_ws_evidence_packet_001` focused repair. The run completed, produced the
+required result files, reached threshold status `pass_acceptance_candidate`,
+and records that the prior extra `compute_hash` overshoot no longer appears for
+that fixture. It also records one residual expected-rejected structured
+selector fixture failure and a later focused selector repair that has targeted
+test coverage but no completed full-run artifact set yet.
+
+[Post-Stage-1 Lane A 20260530_141649 Closure Candidate](Post_Stage_1_Lane_A_20260530_141649_Closure_Candidate.md)
+is a manifest review candidate for that threshold-passing full v5 measured run.
+It does not create `accepted_by_closure`, does not validate H1-H5, does not
+authorize full Context OS, and does not describe OpenClaw local harness arms as
+pure model-only baselines. It records the same post-run focused selector repair
+without treating it as closure acceptance or a new measured full-run result.
+
 [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) is the
 accepted `PS1-G5` baseline-identity artifact. It keeps OpenClaw results labeled
 as local harness runs and supplements them with separately named direct API
@@ -194,13 +278,6 @@ impact review, evaluation planning, and implementation planning only; runtime
 execution of `COMMITTABLE`, `IRREVERSIBLE`, and `MEMORY_WRITE` actions remains
 blocked until later accepted specs, schemas, experiments, labels, and
 implementation batches exist.
-
-## Obsidian Graph
-
-[Obsidian Graph Status](Obsidian_Graph_Status.md) defines the current graph
-filter, layer hub spine, post-Stage-1 workbench, and cleanup rules for the
-Obsidian vault. It is navigation support only and does not replace the manifest,
-document map, or traceability matrix.
 
 ## Translation Sources
 

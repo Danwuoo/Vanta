@@ -95,6 +95,33 @@ and
 record threshold-passing candidate status, residual expected-rejected fixture
 follow-up, and the boundary that no `accepted_by_closure` or H1-H5 validation
 claim is created.
+A later rerun completed at
+`docs/04_experiments/results/post_stage_1_larger_sample/20260525_223239/`
+with threshold status `pass_acceptance_candidate`; the corresponding
+[Post-Stage-1 Lane A 20260525_223239 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260525_223239_Run_Report.md)
+and
+[closure candidate](Post_Stage_1_Lane_A_20260525_223239_Closure_Candidate.md)
+record a measured root-planner overshoot on `docops_ws_evidence_packet_001`
+and a post-run focused repair that removes the extra disallowed `compute_hash`
+for future runs. It is also not `accepted_by_closure`, and the focused repair is
+not a substitute for a full 48-fixture v5 rerun.
+A full v5 rerun completed at
+`docs/04_experiments/results/post_stage_1_larger_sample/20260530_141649/`
+with threshold status `pass_acceptance_candidate`; the corresponding
+[Post-Stage-1 Lane A 20260530_141649 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260530_141649_Run_Report.md)
+and
+[closure candidate](Post_Stage_1_Lane_A_20260530_141649_Closure_Candidate.md)
+record that the `docops_ws_evidence_packet_001` focused repair has been
+exercised in a full 48-fixture measured run and that the prior extra
+`compute_hash` overshoot no longer appears for that fixture. The run still has
+one measured expected-rejected structured-selector failure on
+`docops_struct_selector_missing_001`. A post-run focused repair now adds that
+fixture to the compact structured-edit rejection prompt path and adds a
+fixture-oracle selector-failure guard; targeted tests pass, but a full rerun
+attempt on 2026-05-31 timed out without producing a new complete run artifact
+set. The `20260530_141649` run is not `accepted_by_closure`, does not validate
+H1-H5, and does not promote OpenClaw local harness arms to pure model-only
+baselines.
 
 Lane C has accepted `PS1-G7` for Context OS specification and evaluation
 planning only:

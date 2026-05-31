@@ -1,12 +1,3 @@
-/.obsidian
-/docs/00_manifest/Manifest_Index.md
-/docs/Vanta_Documentation_Graph.md
-/docs/06_engineering/Engineering_Index.md
-/docs/05_evaluation/Evaluation_Index.md
-docs/04_experiments/Experiments_Index.md
-docs/03_schemas/Schemas_Index.md
-/docs/02_specs/Specs_Index.md
-docs/01_theory/Theory_Index.md
 /_build/
 /deps/
 /.elixir_ls/

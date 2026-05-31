@@ -168,47 +168,10 @@ defmodule Vanta.OpenClawRecoveryAdapter do
   end
 
   defp run_openclaw(prompt, env) do
-    prompt_path = temp_file_path("prompt", ".txt")
-    script_path = temp_file_path("script", ".sh")
-
-    File.write!(prompt_path, prompt)
-    File.write!(script_path, openclaw_script(env, prompt_path))
-
-    try do
-      script = ["bash ", shell_quote(wsl_path(script_path))] |> IO.iodata_to_binary()
-
-      case System.cmd(env.wsl_executable, ["--", "bash", "-lic", script], stderr_to_stdout: true) do
-        {output, 0} -> decode_cli_json(output)
-        {output, status} -> {:error, {:openclaw_cli_failed, status, output}}
-      end
-    after
-      File.rm(prompt_path)
-      File.rm(script_path)
-    end
-  end
-
-  defp openclaw_script(env, prompt_path) do
-    [
-      "#!/usr/bin/env bash\n",
-      "set -euo pipefail\n",
-      "cd ",
-      shell_path(env.openclaw_dir),
-      "\n",
-      "pnpm openclaw --no-color agent --local --json",
-      maybe_arg("--agent", env.agent),
-      " --session-id ",
-      shell_quote(env.session_id),
-      " --model ",
-      shell_quote(env.model),
-      maybe_arg("--thinking", env.thinking),
-      " --message \"$(cat ",
-      shell_quote(wsl_path(prompt_path)),
-      ")\"",
-      " --timeout ",
-      Integer.to_string(env.timeout_seconds),
-      "\n"
-    ]
-    |> IO.iodata_to_binary()
+    Vanta.OpenClawHarness.run_agent(prompt, env,
+      temp_prefix: "vanta_openclaw_recovery",
+      decoder: &decode_cli_json/1
+    )
   end
 
   defp decode_recovery_decision(text, recovery_input, budget) do
@@ -404,25 +367,6 @@ defmodule Vanta.OpenClawRecoveryAdapter do
     end
   end
 
-  defp temp_file_path(kind, extension) do
-    Path.join(
-      System.tmp_dir!(),
-      "vanta_openclaw_recovery_#{kind}_#{System.unique_integer([:positive])}#{extension}"
-    )
-  end
-
-  defp wsl_path(path) do
-    path = Path.expand(path)
-
-    case Regex.run(~r/\A([a-zA-Z]):[\\\/](.*)\z/, path) do
-      [_, drive, rest] ->
-        "/mnt/#{String.downcase(drive)}/" <> String.replace(rest, "\\", "/")
-
-      _other ->
-        String.replace(path, "\\", "/")
-    end
-  end
-
   defp openai_model_from_env do
     case System.get_env("OPENAI_MODEL") do
       nil -> nil
@@ -433,34 +377,6 @@ defmodule Vanta.OpenClawRecoveryAdapter do
 
   defp normalize_model("openai-codex/" <> _rest = model), do: model
   defp normalize_model(model), do: "openai-codex/#{model}"
-
-  defp maybe_arg(_name, value) when is_nil(value), do: ""
-
-  defp maybe_arg(name, value) do
-    value = to_string(value)
-
-    if blank?(value) do
-      ""
-    else
-      [" ", name, " ", shell_quote(value)]
-    end
-  end
-
-  defp shell_path("~/"), do: "~"
-
-  defp shell_path("~/" <> rest) do
-    if String.match?(rest, ~r/\A[-_a-zA-Z0-9.\/]+\z/) do
-      "~/" <> rest
-    else
-      shell_quote("~/" <> rest)
-    end
-  end
-
-  defp shell_path(path), do: shell_quote(path)
-
-  defp shell_quote(value) do
-    "'" <> String.replace(to_string(value), "'", "'\\''") <> "'"
-  end
 
   defp parse_positive_integer(value, _default) when is_integer(value) and value > 0, do: value
 

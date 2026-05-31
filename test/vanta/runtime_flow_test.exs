@@ -40,6 +40,7 @@ defmodule Vanta.RuntimeFlowTest do
     docops_ps1_reversible_append_section_001
     docops_ps1_reversible_replace_heading_001
     docops_ps1_reversible_patch_multiline_001
+    docops_ws_evidence_packet_001
     docops_ws_omission_trap_001
     docops_ws_recovery_context_001
   )
@@ -852,6 +853,34 @@ defmodule Vanta.RuntimeFlowTest do
 
       assert action_sequence == expected_sequence
     end)
+  end
+
+  test "openclaw planner adapter preserves missing-selector rejection fixture action" do
+    {task, workspace} = load_fixture("docops_struct_selector_missing_001")
+    {:ok, expected_sequence} = FixtureAcceptance.action_sequence(workspace)
+
+    runner = fn prompt, env ->
+      assert env.model == "openai-codex/gpt-5.4-mini"
+      assert String.length(env.session_id) <= 64
+      assert String.contains?(prompt, "Vanta Lane A compact planner")
+      assert String.contains?(prompt, "docops_struct_selector_missing_001")
+      assert String.contains?(prompt, "rejection_expected")
+      assert String.contains?(prompt, "Return action_hint.recommended_actions exactly")
+      assert String.contains?(prompt, "\"type\": \"section\"")
+      assert String.contains?(prompt, "\"heading\": \"Missing\"")
+      refute String.contains?(prompt, "Input artifact previews:")
+
+      {:ok, %{"payloads" => [%{"text" => Jason.encode!(expected_sequence)}]}}
+    end
+
+    assert {:ok, action_sequence} =
+             OpenClawPlannerAdapter.propose_actions(task, workspace,
+               wsl_executable: "wsl.exe",
+               model: "gpt-5.4-mini",
+               runner: runner
+             )
+
+    assert action_sequence == expected_sequence
   end
 
   test "PS1-LA-FIX-008 structured expected-rejected fixtures produce complete governance artifacts" do
