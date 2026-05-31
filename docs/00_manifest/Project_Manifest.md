@@ -115,9 +115,13 @@ record that the `docops_ws_evidence_packet_001` focused repair has been
 exercised in a full 48-fixture measured run and that the prior extra
 `compute_hash` overshoot no longer appears for that fixture. The run still has
 one measured expected-rejected structured-selector failure on
-`docops_struct_selector_missing_001`. It is not `accepted_by_closure`, does not
-validate H1-H5, and does not promote OpenClaw local harness arms to pure
-model-only baselines.
+`docops_struct_selector_missing_001`. A post-run focused repair now adds that
+fixture to the compact structured-edit rejection prompt path and adds a
+fixture-oracle selector-failure guard; targeted tests pass, but a full rerun
+attempt on 2026-05-31 timed out without producing a new complete run artifact
+set. The `20260530_141649` run is not `accepted_by_closure`, does not validate
+H1-H5, and does not promote OpenClaw local harness arms to pure model-only
+baselines.
 
 Lane C has accepted `PS1-G7` for Context OS specification and evaluation
 planning only:

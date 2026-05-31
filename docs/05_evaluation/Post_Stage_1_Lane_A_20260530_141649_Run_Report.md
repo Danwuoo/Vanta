@@ -109,6 +109,37 @@ This residual failure is included in the aggregate treatment
 `pass_acceptance_candidate` under `PS1-LA-METRIC-001`, but it is not closure
 acceptance.
 
+## Post-Run Focused Repair
+
+After the measured run, `docops_struct_selector_missing_001` was added to the
+planner adapter's compact structured-edit rejection path. The compact planner
+hint now routes the fixture to its documented `section` selector for heading
+`Missing` instead of relying on the root planner to infer the missing-selector
+case from prose.
+
+The fixture acceptance oracle was also tightened for selector-failure fixtures:
+when `expected_failure_labels` contains `structured_selector_missing` or
+`structured_selector_ambiguous`, the observed `selector_resolution.status` must
+match the expected selector failure. This prevents a substituted resolvable
+`line_range` action from being accepted as a valid commit for an
+expected-rejected selector fixture.
+
+Focused verification after the code change produced:
+
+| Check | Result |
+| --- | --- |
+| Substituted `line_range` action from the measured failure | verifier rejected with `structured_selector_missing` |
+| Fixture action sequence path | runtime status `rejected`, task success `true` |
+| Planner compact prompt path | returns the documented missing-section rejection action |
+| Targeted tests | `mix test test/vanta/structured_edit_test.exs test/vanta/runtime_flow_test.exs test/vanta/post_stage1_larger_sample_test.exs` passed: 49 tests, 0 failures |
+
+A full `mix vanta.post_stage_1_larger_sample --fixtures
+docs/04_experiments/fixtures/document_ops` rerun was attempted on
+2026-05-31, but the local harness did not complete within a 30-minute tool
+timeout. No new complete `run.json`, `summary.md`, or `fixture_inventory.md`
+artifact set was produced, so this focused repair does not rewrite the measured
+`20260530_141649` aggregate metrics.
+
 ## Interpretation
 
 The run is a measured larger controlled Lane A run with threshold status
@@ -126,6 +157,9 @@ Allowed statements:
 - Required artifacts, replay consistency, and audit completeness all reached
   `1.0000`.
 - The result is eligible for manifest review as a pass acceptance candidate.
+- A post-run focused repair now prevents the documented
+  `docops_struct_selector_missing_001` residual from becoming a resolvable
+  line-range commit in focused runtime and planner checks.
 
 Disallowed statements:
 
@@ -135,6 +169,9 @@ Disallowed statements:
 - Do not describe OpenClaw arms as pure model-only baselines.
 - Do not treat `docops_ws_evidence_packet_001` repair success as eliminating
   all residual Lane A fixture risk.
+- Do not treat the post-run focused selector repair as a completed full
+  48-fixture rerun or as changing the measured `20260530_141649` aggregate
+  metrics.
 
 ## Related Documents
 

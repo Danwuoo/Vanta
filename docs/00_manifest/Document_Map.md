@@ -233,13 +233,15 @@ records the full v5 measured rerun after
 required result files, reached threshold status `pass_acceptance_candidate`,
 and records that the prior extra `compute_hash` overshoot no longer appears for
 that fixture. It also records one residual expected-rejected structured
-selector fixture failure.
+selector fixture failure and a later focused selector repair that has targeted
+test coverage but no completed full-run artifact set yet.
 
 [Post-Stage-1 Lane A 20260530_141649 Closure Candidate](Post_Stage_1_Lane_A_20260530_141649_Closure_Candidate.md)
 is a manifest review candidate for that threshold-passing full v5 measured run.
 It does not create `accepted_by_closure`, does not validate H1-H5, does not
 authorize full Context OS, and does not describe OpenClaw local harness arms as
-pure model-only baselines.
+pure model-only baselines. It records the same post-run focused selector repair
+without treating it as closure acceptance or a new measured full-run result.
 
 [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) is the
 accepted `PS1-G5` baseline-identity artifact. It keeps OpenClaw results labeled

@@ -105,8 +105,11 @@ successor manifest gate that explicitly supersedes it.
   `1.0`, treatment task success `0.9792`, and full-run confirmation that the
   `docops_ws_evidence_packet_001` root planner no longer appends the extra
   disallowed `compute_hash`. One expected-rejected structured-selector fixture,
-  `docops_struct_selector_missing_001`, still committed and remains follow-up
-  risk. The run is not `accepted_by_closure` and does not validate H1-H5.
+  `docops_struct_selector_missing_001`, still committed in the measured run.
+  A later focused repair added a compact missing-selector rejection hint and a
+  fixture-oracle selector-failure guard; targeted tests pass, but a 2026-05-31
+  full rerun attempt timed out without producing a new complete artifact set.
+  The run is not `accepted_by_closure` and does not validate H1-H5.
 - `PS1-G3` and `PS1-G4` are accepted by
   [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
   Label collection remains `Not yet run`.

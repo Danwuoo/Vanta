@@ -5,6 +5,11 @@ defmodule Vanta.FixtureAcceptance do
 
   alias Vanta.Schema
 
+  @expected_selector_failure_status %{
+    "structured_selector_missing" => "missing",
+    "structured_selector_ambiguous" => "ambiguous"
+  }
+
   def load(workspace) do
     path = Path.join(workspace, "expected/acceptance.json")
 
@@ -139,7 +144,8 @@ defmodule Vanta.FixtureAcceptance do
              "simulate_structured_edit",
              "apply_reversible_structured_edit"
            ] do
-    with :ok <- compare_expected_diff(workspace, observation),
+    with :ok <- compare_expected_failure_selector_status(workspace, observation),
+         :ok <- compare_expected_diff(workspace, observation),
          :ok <- compare_expected_selector_resolution(workspace, observation) do
       :ok
     else
@@ -223,6 +229,24 @@ defmodule Vanta.FixtureAcceptance do
     |> case do
       :not_applicable -> :ok
       result -> result
+    end
+  end
+
+  defp compare_expected_failure_selector_status(workspace, observation) do
+    expected_labels = expected_failure_labels(workspace)
+
+    @expected_selector_failure_status
+    |> Enum.find(fn {label, _status} -> label in expected_labels end)
+    |> case do
+      nil ->
+        :ok
+
+      {label, expected_status} ->
+        if get_in(observation, ["selector_resolution", "status"]) == expected_status do
+          :ok
+        else
+          {:error, label}
+        end
     end
   end
 

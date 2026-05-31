@@ -23,7 +23,11 @@ Status: `Execution successor to PS1-LA-SAMPLE-001 for G6-aware Lane A runs`.
 
 Run status: Measured runs exist. The latest documented full v5 run is
 `20260530_141649` with threshold status `pass_acceptance_candidate`. Measured
-results are reported separately and do not create `accepted_by_closure`.
+results are reported separately and do not create `accepted_by_closure`. A
+post-run focused repair now covers the residual
+`docops_struct_selector_missing_001` selector-substitution failure in targeted
+tests, but the 2026-05-31 full rerun attempt timed out before producing a new
+complete run artifact set.
 
 Runner: `Vanta.PostStage1LargerSample`.
 

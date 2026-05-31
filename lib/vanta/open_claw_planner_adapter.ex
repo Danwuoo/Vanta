@@ -32,6 +32,7 @@ defmodule Vanta.OpenClawPlannerAdapter do
   )
 
   @compact_fixture_rejection_hint_task_ids ~w(
+    docops_struct_selector_missing_001
     docops_struct_wrong_diff_001
     docops_struct_missing_backup_metadata_001
   )

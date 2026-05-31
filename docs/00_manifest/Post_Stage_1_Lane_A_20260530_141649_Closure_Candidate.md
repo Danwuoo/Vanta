@@ -80,6 +80,27 @@ This residual failure is reflected in the treatment `task_success_rate` of
 `0.9792`. It does not block the metric-policy threshold status, but it remains
 follow-up risk for future fixture-alignment work.
 
+## Focused Repair Check
+
+Post-run code repair added `docops_struct_selector_missing_001` to the compact
+structured-edit rejection prompt path and added a fixture-oracle guard requiring
+selector-failure fixtures to observe the expected `selector_resolution.status`.
+
+Focused checks after the repair show that the measured failure's substituted
+`line_range` action is now rejected with `structured_selector_missing`, the
+documented fixture action sequence still produces runtime status `rejected` and
+task success `true`, and the OpenClaw compact planner path returns the
+documented missing-section rejection action. The targeted command
+`mix test test/vanta/structured_edit_test.exs test/vanta/runtime_flow_test.exs test/vanta/post_stage1_larger_sample_test.exs`
+passed with 49 tests and 0 failures.
+
+A full `mix vanta.post_stage_1_larger_sample --fixtures
+docs/04_experiments/fixtures/document_ops` rerun was attempted on 2026-05-31,
+but it did not complete before a 30-minute tool timeout and produced no new
+complete run artifact set. The focused repair does not rewrite the measured
+`20260530_141649` aggregate metrics and is not a substitute for a later full
+48-fixture rerun.
+
 ## Closure Decision
 
 This measured run reaches the metric-policy status
@@ -97,6 +118,9 @@ The candidate is useful because it records:
 - measured removal of the prior `docops_ws_evidence_packet_001` extra-action
   overshoot from the root governed-execution action sequence
 - one remaining expected-rejected structured selector fixture failure
+- a focused post-run correction that prevents that selector fixture from being
+  accepted after substitution with a resolvable line-range action in focused
+  checks
 
 No `accepted_by_closure` status is created. No broad validation claim is
 authorized.
@@ -105,7 +129,7 @@ authorized.
 
 | Follow-up | Required future treatment |
 | --- | --- |
-| `docops_struct_selector_missing_001` | Align the planner or fixture-context path so the expected missing-selector rejection case is not converted into a resolvable line-range edit. |
+| `docops_struct_selector_missing_001` | Focused planner and fixture-oracle repair is complete; a later full 48-fixture rerun is still needed before this repair can be treated as a measured full-run result. |
 | Lane B labels | Human or secondary labels remain not collected for post-Stage-1 Lane B. |
 | Closure acceptance | Requires an explicit later manifest closure if the project chooses to accept a measured candidate. |
 
@@ -119,6 +143,8 @@ authorized.
 - The `docops_ws_evidence_packet_001` repair is now covered by a full
   48-fixture v5 rerun, but that does not eliminate the documented residual
   Lane A fixture risk.
+- The focused selector repair is not a new measured full-run artifact set and
+  does not change the `20260530_141649` aggregate metrics.
 
 ## Related Documents
 
