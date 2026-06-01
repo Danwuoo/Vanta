@@ -22,6 +22,27 @@ Run status: `Not yet run`.
 
 Label status: `Not yet run`.
 
+Prepared label packet:
+[Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
+covers candidate `context_omission_error_rate` and
+`working_set_relevance_score` items from the `20260601_113121` Lane A closure
+run.
+Human labels, secondary review, adjudication, and agreement reporting remain
+`Not yet run`, so this packet does not yet satisfy the label-evidence
+requirement for moving beyond deterministic `Working Set Compiler v0`.
+
+Planning bundle draft:
+[Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md),
+[Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md),
+and
+[Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
+use the `20260601_113121` Lane A closure run as input. They are planning
+artifacts only. They do not change schemas, implement runtime behavior, collect
+Lane B labels, authorize memory writes or learned retrieval, or validate H3.
+
+The earlier `20260530_141649` packet is superseded historical material only; it
+must not be treated as the active accepted-run source for this gate.
+
 Accepted unlock: Context OS specification and evaluation planning only.
 
 ## Inputs
@@ -132,6 +153,9 @@ Reports that do not satisfy this gate must use labels such as
 - [Phase 5 Working Set Compiler Gate](Phase_5_Working_Set_Compiler_Gate.md)
 - [Stage 1 Experiment 005 Closure](Stage_1_Experiment_005_Closure.md)
 - [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+- [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
+- [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
+- [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)

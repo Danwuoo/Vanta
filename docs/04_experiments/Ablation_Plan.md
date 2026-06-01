@@ -109,6 +109,7 @@ keeps baseline identity labels intact.
 - [Stage 1 Experiment 005 Closure](../00_manifest/Stage_1_Experiment_005_Closure.md)
 - [Experiment 005 Working Set Compiler](Experiment_005_Working_Set_Compiler.md)
 - [Experiment 005 Local Run Report](../05_evaluation/Experiment_005_Local_Run_Report.md)
+- [Post-Stage-1 Context OS Evaluation Plan](Post_Stage_1_Context_OS_Evaluation_Plan.md)
 - [Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md)
 - [Baseline Identity Plan](Baseline_Identity_Plan.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)

@@ -160,10 +160,12 @@ implementation planning only. It does not authorize runtime execution of
 `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` actions, change schemas,
 collect labels, run experiments, approve production deployment, or validate H5.
 
-Lane A is open for threshold-governed larger-sample acceptance candidates after
-the 48-fixture sample is run under the accepted sample, metric, and baseline
-identity policies. A future manifest closure must still accept measured results
-before a report may use `accepted_by_closure`.
+Lane A has an accepted threshold-governed larger-sample closure for the
+`20260601_113121` measured `PS1-LA-SAMPLE-002` run. The
+[Post-Stage-1 Lane A 20260601_113121 Closure](Post_Stage_1_Lane_A_20260601_113121_Closure.md)
+accepts that named Document Ops run as `accepted_by_closure` after it passed
+the accepted sample, metric, and baseline identity policies. This does not
+validate H1-H5 or broaden runtime scope.
 
 The G6-aware Lane A execution frame is
 [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
@@ -176,6 +178,10 @@ emit `run.json`, `summary.md`, and `fixture_inventory.md`. The runner may report
 
 Lane B is open for human or secondary labeling after labels are collected under
 [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
+The active prepared packet is
+[Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md),
+with report shell
+[Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md).
 No post-Stage-1 human or secondary labels have been collected yet, and a future
 report must still include packet, blinding, review, adjudication, agreement,
 and interpretation-boundary metadata before using broader label claims.
@@ -191,6 +197,21 @@ Lane C is also open for Context OS specification and evaluation planning under
 [Context OS Expansion Gate](Context_OS_Expansion_Gate.md). The accepted
 `PS1-G7` scope remains planning-only and keeps `Working Set Compiler v0` as the
 current implemented context capability.
+
+The first `PS1-G7` planning bundle is aligned to the `20260601_113121` Lane A
+closure run in
+[Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md),
+[Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md),
+and
+[Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md).
+It routes the measured working-set metrics into planning artifacts only. Lane B
+labels remain `Not yet run`, so this bundle does not authorize implementation,
+schema changes, memory writes, learned retrieval, full Context OS validation,
+or H3 validation.
+
+The earlier `20260530_141649` Lane B packet and Context OS planning input are
+historical only. They were prepared before the selector-repair closure and must
+not be used as the active accepted-run routing source.
 
 Lane C is also open for side-effect specification and evaluation planning under
 [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md). The accepted
@@ -251,6 +272,9 @@ claim`.
 - [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
 - [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
 - [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
+- [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
+- [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
+- [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 - [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
@@ -258,5 +282,6 @@ claim`.
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)
 - [Implementation Timeline](../06_engineering/Implementation_Timeline.md)

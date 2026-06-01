@@ -20,6 +20,15 @@ Context OS specification and evaluation planning only. It does not authorize
 runtime implementation, schema changes, learned retrieval, ranking,
 compression, memory governance, memory writes, or H3 validation claims.
 
+The first `PS1-G7` planning bundle aligned to the `20260601_113121` Lane A
+closure run is
+[Post-Stage-1 Context OS Planning Draft Spec](Post_Stage_1_Context_OS_Planning_Draft_Spec.md),
+[Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md),
+and
+[Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md).
+It uses measured Lane A working-set metrics for planning only; Lane B labels
+remain `Not yet run`.
+
 ## Scope
 
 - Working set artifact boundaries.
@@ -131,6 +140,9 @@ Any work beyond deterministic `Working Set Compiler v0` must route through
 - [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Project Manifest](../00_manifest/Project_Manifest.md)
 - [Context OS Expansion Gate](../00_manifest/Context_OS_Expansion_Gate.md)
+- [Post-Stage-1 Context OS Planning Draft Spec](Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
+- [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
+- [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 - [Side-Effect Escalation Gate](../00_manifest/Side_Effect_Escalation_Gate.md)
 - [Research Questions](../00_manifest/Research_Questions.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)

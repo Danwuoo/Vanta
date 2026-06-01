@@ -175,7 +175,15 @@ Disallowed statements:
 
 ## Related Documents
 
+Any Lane B links in this section are historical for this non-accepted source run
+and are superseded by the `20260601_113121` Lane B packet for current
+accepted-run routing.
+
 - [Post-Stage-1 Advancement Gate](../00_manifest/Post_Stage_1_Advancement_Gate.md)
 - [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
 - [Post-Stage-1 Metric Policy](Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Lane A 20260530_141649 Closure Candidate](../00_manifest/Post_Stage_1_Lane_A_20260530_141649_Closure_Candidate.md)
+- [Post-Stage-1 Lane B 20260530_141649 Blinded Label Packet](label_packets/post_stage_1_lane_b_20260530_141649/README.md)
+- [Post-Stage-1 Lane B 20260530_141649 Label Report Skeleton](Post_Stage_1_Lane_B_20260530_141649_Label_Report_Skeleton.md)
+- [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
+- [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)

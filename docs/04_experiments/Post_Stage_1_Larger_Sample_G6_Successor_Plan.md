@@ -21,13 +21,11 @@ Plan ID: `PS1-LA-SAMPLE-002`.
 
 Status: `Execution successor to PS1-LA-SAMPLE-001 for G6-aware Lane A runs`.
 
-Run status: Measured runs exist. The latest documented full v5 run is
-`20260530_141649` with threshold status `pass_acceptance_candidate`. Measured
-results are reported separately and do not create `accepted_by_closure`. A
-post-run focused repair now covers the residual
-`docops_struct_selector_missing_001` selector-substitution failure in targeted
-tests, but the 2026-05-31 full rerun attempt timed out before producing a new
-complete run artifact set.
+Run status: Measured runs exist. The latest documented full selector-repair run
+is `20260601_113121` with runner threshold status
+`pass_acceptance_candidate`. The corresponding manifest closure accepts that
+run as `accepted_by_closure` for the named Lane A Document Ops sample. It does
+not validate H1-H5 or broaden runtime scope.
 
 Runner: `Vanta.PostStage1LargerSample`.
 
@@ -135,3 +133,5 @@ may accept a measured result.
 - [Post-Stage-1 Lane A 20260525_223239 Closure Candidate](../00_manifest/Post_Stage_1_Lane_A_20260525_223239_Closure_Candidate.md)
 - [Post-Stage-1 Lane A 20260530_141649 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260530_141649_Run_Report.md)
 - [Post-Stage-1 Lane A 20260530_141649 Closure Candidate](../00_manifest/Post_Stage_1_Lane_A_20260530_141649_Closure_Candidate.md)
+- [Post-Stage-1 Lane A 20260601_113121 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
+- [Post-Stage-1 Lane A 20260601_113121 Closure](../00_manifest/Post_Stage_1_Lane_A_20260601_113121_Closure.md)

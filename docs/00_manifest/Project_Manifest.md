@@ -53,6 +53,21 @@ sufficiency labels use the `PS1-LB-LABEL-001` five-level scale, and subjective
 or oracle-sensitive labels require the documented review and adjudication path.
 No post-Stage-1 human or secondary labels have been collected yet.
 
+The active blinded Lane B packet is prepared from the `20260601_113121` Lane A
+closure run:
+[Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md),
+with a companion
+[label report skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md).
+It covers candidate artifacts for `evidence_sufficiency_score`,
+`context_omission_error_rate`, and `working_set_relevance_score`. Human labels,
+secondary review, adjudication, and agreement reporting remain `Not yet run`.
+The packet is not broader evaluation evidence until labels are collected and
+reported under `PS1-LB-LABEL-001`.
+
+The earlier `20260530_141649` Lane B packet remains only as a superseded
+historical packet for a non-accepted source run whose selector-missing item
+captured the pre-repair committed artifact.
+
 Lane C has implemented the `PS1-G6` local runtime batch:
 [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
 names `Document Ops Structured Edit Action Surface v0`; the G6 batch adds
@@ -69,9 +84,8 @@ runner `Vanta.PostStage1LargerSample` can produce `run.json`, `summary.md`, and
 `fixture_inventory.md` under
 `docs/04_experiments/results/post_stage_1_larger_sample/<timestamp>/` and can
 only report `blocked_missing_metric`, `failed_no_acceptance`, or
-`pass_acceptance_candidate` before manifest closure. No measured Lane A
-acceptance closure has been accepted yet. The first measured `PS1-LA-SAMPLE-002`
-run completed at
+`pass_acceptance_candidate` before manifest closure. The first measured
+`PS1-LA-SAMPLE-002` run completed at
 `docs/04_experiments/results/post_stage_1_larger_sample/20260519_232854/` with
 threshold status `failed_no_acceptance`; the corresponding
 [Post-Stage-1 Lane A 20260519_232854 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260519_232854_Run_Report.md)
@@ -122,6 +136,19 @@ attempt on 2026-05-31 timed out without producing a new complete run artifact
 set. The `20260530_141649` run is not `accepted_by_closure`, does not validate
 H1-H5, and does not promote OpenClaw local harness arms to pure model-only
 baselines.
+A full selector-repair rerun completed at
+`docs/04_experiments/results/post_stage_1_larger_sample/20260601_113121/`
+with threshold status `pass_acceptance_candidate`; the corresponding
+[Post-Stage-1 Lane A 20260601_113121 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
+records treatment task success `1.0000`, replay consistency `1.0000`, audit
+completeness `1.0000`, process-integrity hard gates at `0`, and measured
+full-run coverage of the `docops_struct_selector_missing_001` repair. The
+[Post-Stage-1 Lane A 20260601_113121 Closure](Post_Stage_1_Lane_A_20260601_113121_Closure.md)
+accepts this measured run as `accepted_by_closure` for the named
+threshold-governed Document Ops Lane A sample. It does not validate H1-H5,
+authorize full Context OS, approve production readiness, authorize memory
+writes or irreversible effects, or promote OpenClaw local harness arms to pure
+model-only baselines.
 
 Lane C has accepted `PS1-G7` for Context OS specification and evaluation
 planning only:
@@ -130,6 +157,19 @@ conditions for moving beyond deterministic `Working Set Compiler v0`. It does
 not implement full Context OS, change schemas, authorize learned retrieval or
 compression, approve memory governance, collect labels, run experiments, or
 validate H3.
+
+A first `PS1-G7` Context OS planning bundle has been aligned to the
+`20260601_113121` Lane A closure run:
+[Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md),
+[Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md),
+and
+[Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md).
+The bundle records that Lane A working-set metrics support planning-level
+budget, provenance, omission, relevance, stability, and process-integrity
+statements for the measured run. It also records that Lane B labels remain
+`Not yet run`, so human-labeled context quality, H3, learned retrieval, memory
+governance, schema changes, runtime implementation, and full Context OS
+validation remain blocked.
 
 Lane C has accepted `PS1-G8` for side-effect specification and evaluation
 planning only:
