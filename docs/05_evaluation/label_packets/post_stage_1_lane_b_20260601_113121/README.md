@@ -25,6 +25,7 @@ or inter-annotator agreement results. Label collection status is
 | `evidence_sufficiency_items.jsonl` | Eight blinded evidence sufficiency label items sampled from the accepted run artifact. |
 | `working_set_context_items.jsonl` | Twelve blinded working-set omission and relevance items: six long-context tasks by two blinded context arms. |
 | `adjudication_placeholders.json` | Empty adjudication record scaffold and trigger rules. |
+| `label_results_template.json` | Packet-local label result import template for `PS1-LB-LABEL-001`; not a core runtime schema. |
 | `../../Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md` | Report skeleton for recording labels after collection. |
 
 ## Source Run
@@ -140,6 +141,30 @@ Working-set item labels must fill:
 - rationale
 
 All fields are currently `Not yet run`.
+
+## Label Result Import Path
+
+The packet-local result format is `PS1-LB-LABEL-RESULT-LOCAL-001`, with
+`label_policy_version: PS1-LB-LABEL-001`. It is a collection and
+validation aid for this Lane B packet only; it does not expand the core
+runtime schemas in `docs/03_schemas/`.
+
+Use `label_results_template.json` as the starting structure for imported
+raw labels. Before any report claim, validate a filled results file with:
+
+```text
+mix vanta.post_stage_1_lane_b_label_results --mode validate --results <filled-results.json>
+```
+
+To produce a machine-readable import summary for filling the report after
+real labels are collected, use:
+
+```text
+mix vanta.post_stage_1_lane_b_label_results --mode import-summary --results <filled-results.json> --out <summary.json>
+```
+
+These commands must not be used to treat templates, dry-run fixtures, or
+generated test data as real human labels.
 
 ## Interpretation Boundary
 

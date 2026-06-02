@@ -26,6 +26,8 @@ defmodule Vanta.PostStage1LaneBPacketTest do
 
     assert length(packet.evidence_sufficiency_items) == 8
     assert length(packet.working_set_context_items) == 12
+    assert packet.label_results_template["result_format"] == "PS1-LB-LABEL-RESULT-LOCAL-001"
+    assert packet.label_results_template["label_collection_status"] == "Not yet run"
   end
 
   test "redacts oracle-sensitive task fields for primary labeler packets" do

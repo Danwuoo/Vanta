@@ -1,0 +1,1427 @@
+defmodule Vanta.PostStage1LaneBLabelResults do
+  @moduledoc """
+  Validates packet-local Post-Stage-1 Lane B label result imports.
+
+  This module is an evaluation tooling layer for `PS1-LB-LABEL-001`. It does
+  not define runtime behavior, verifier output, approval flow, or a core schema
+  contract.
+  """
+
+  @default_run_timestamp "20260601_113121"
+  @result_format "PS1-LB-LABEL-RESULT-LOCAL-001"
+  @label_policy_version "PS1-LB-LABEL-001"
+  @not_yet_run "Not yet run"
+  @review_mode "double_human_adjudicated"
+  @human_label_source "human"
+
+  @collection_statuses [
+    @not_yet_run,
+    "in_progress",
+    "collected_pending_adjudication",
+    "complete_pending_report"
+  ]
+
+  @freeze_statuses [@not_yet_run, "open", "frozen"]
+  @agreement_statuses [@not_yet_run, "small_sample_raw_counts", "reported"]
+  @evidence_metric "evidence_sufficiency_score"
+  @working_context_metric "working_set_context"
+  @context_omission_metric "context_omission_error_rate"
+  @working_set_relevance_metric "working_set_relevance_score"
+
+  @policy_metrics [
+    @evidence_metric,
+    @context_omission_metric,
+    @working_set_relevance_metric
+  ]
+
+  @review_results ["confirm", "revise", "needs_adjudication"]
+  @omission_severities ["none", "minor", "material", "critical", "needs_review"]
+  @critical_omission_values [true, false, "needs_review"]
+  @relevance_labels ["task_critical", "supporting", "irrelevant", "harmful", "needs_review"]
+
+  @packet_quality_labels [
+    "sufficient",
+    "mostly_sufficient",
+    "partial",
+    "minimal",
+    "absent_or_misleading",
+    "needs_review"
+  ]
+
+  @exposure_timings ["not_exposed", "after_primary_label_freeze"]
+
+  def result_format, do: @result_format
+
+  def template(opts \\ []) do
+    with {:ok, packet} <- load_packet(opts) do
+      {:ok, template_for_packet(packet)}
+    end
+  end
+
+  def template_for_packet(packet) do
+    %{
+      "result_format" => @result_format,
+      "label_policy_version" => @label_policy_version,
+      "packet_id" => packet.packet_manifest["packet_id"],
+      "packet_manifest_path" =>
+        get_in(packet.packet_manifest, ["artifact_paths", "packet_manifest"]) ||
+          path_join(packet.packet_dir, "packet_manifest.json"),
+      "label_collection_status" => @not_yet_run,
+      "review_mode" => @review_mode,
+      "primary_label_freeze" => %{
+        "status" => @not_yet_run,
+        "frozen_at" => @not_yet_run,
+        "fixture_oracle_exposed_before_freeze" => false,
+        "oracle_exposure_notes" => @not_yet_run
+      },
+      "raw_labels" => %{
+        @evidence_metric => [],
+        @working_context_metric => []
+      },
+      "secondary_reviews" => [],
+      "adjudication_records" => [],
+      "agreement_report" => %{
+        "status" => @not_yet_run,
+        "method" => @not_yet_run,
+        "raw_agreement_counts" => @not_yet_run,
+        "notes" => @not_yet_run
+      },
+      "reporting_boundary" => %{
+        "claim_level" => "template only; no labels imported",
+        "disallowed_claims" => [
+          "human-labeled broader evaluation evidence",
+          "secondary review completed",
+          "adjudication completed",
+          "inter-annotator agreement reported",
+          "H1-H5 validation",
+          "full Context OS validation",
+          "production readiness",
+          "runtime approval or human-in-the-loop verifier claim"
+        ]
+      }
+    }
+  end
+
+  def write_template(path, opts \\ []) do
+    cwd = Keyword.get(opts, :cwd, File.cwd!())
+    path_abs = Path.expand(path, cwd)
+
+    with {:ok, template} <- template(opts) do
+      File.mkdir_p!(Path.dirname(path_abs))
+      write_json!(path_abs, template)
+
+      {:ok,
+       %{
+         path: display_path(path_abs, cwd),
+         packet_id: template["packet_id"],
+         result_format: @result_format,
+         label_collection_status: @not_yet_run
+       }}
+    end
+  end
+
+  def validate_file(path, opts \\ []) do
+    cwd = Keyword.get(opts, :cwd, File.cwd!())
+    path_abs = Path.expand(path, cwd)
+
+    with {:ok, packet} <- load_packet(opts),
+         {:ok, results} <- load_json(path_abs) do
+      validate_results(results, packet, display_path(path_abs, cwd))
+    end
+  end
+
+  def write_import_summary(results_path, out_path, opts \\ []) do
+    cwd = Keyword.get(opts, :cwd, File.cwd!())
+    out_abs = Path.expand(out_path, cwd)
+
+    with {:ok, summary} <- validate_file(results_path, opts) do
+      File.mkdir_p!(Path.dirname(out_abs))
+      write_json!(out_abs, summary)
+      {:ok, Map.put(summary, "summary_path", display_path(out_abs, cwd))}
+    end
+  end
+
+  defp load_packet(opts) do
+    config = normalize_opts(opts)
+
+    paths = %{
+      manifest: Path.join(config.packet_dir_abs, "packet_manifest.json"),
+      evidence: Path.join(config.packet_dir_abs, "evidence_sufficiency_items.jsonl"),
+      working_set: Path.join(config.packet_dir_abs, "working_set_context_items.jsonl"),
+      adjudication: Path.join(config.packet_dir_abs, "adjudication_placeholders.json")
+    }
+
+    with {:ok, manifest} <- load_json(paths.manifest),
+         {:ok, evidence_items} <- load_jsonl(paths.evidence),
+         {:ok, working_set_items} <- load_jsonl(paths.working_set),
+         {:ok, adjudication_placeholders} <- load_json(paths.adjudication),
+         :ok <-
+           validate_packet_inputs(
+             manifest,
+             evidence_items,
+             working_set_items,
+             adjudication_placeholders
+           ) do
+      {:ok,
+       %{
+         cwd: config.cwd,
+         packet_dir: config.packet_dir,
+         packet_manifest: manifest,
+         evidence_sufficiency_items: evidence_items,
+         working_set_context_items: working_set_items,
+         adjudication_placeholders: adjudication_placeholders,
+         evidence_ids: MapSet.new(Enum.map(evidence_items, & &1["packet_id"])),
+         working_set_ids: MapSet.new(Enum.map(working_set_items, & &1["packet_id"])),
+         item_refs: item_reference_index(evidence_items, working_set_items),
+         candidate_refs: candidate_ref_index(working_set_items)
+       }}
+    end
+  end
+
+  defp normalize_opts(opts) do
+    cwd = Keyword.get(opts, :cwd, File.cwd!())
+    run_timestamp = Keyword.get(opts, :run_timestamp, @default_run_timestamp)
+    packet_dir = Keyword.get(opts, :packet_dir, default_packet_dir(run_timestamp))
+
+    %{
+      cwd: cwd,
+      packet_dir: display_path(packet_dir, cwd),
+      packet_dir_abs: Path.expand(packet_dir, cwd)
+    }
+  end
+
+  defp default_packet_dir(run_timestamp) do
+    "docs/05_evaluation/label_packets/post_stage_1_lane_b_#{run_timestamp}"
+  end
+
+  defp validate_packet_inputs(manifest, evidence_items, working_set_items, adjudication) do
+    errors =
+      []
+      |> require_equal(
+        "packet label_policy_version",
+        manifest["label_policy_version"],
+        @label_policy_version
+      )
+      |> require_equal("packet_status", manifest["packet_status"], "prepared_for_labeling")
+      |> require_equal(
+        "packet label_collection_status",
+        manifest["label_collection_status"],
+        @not_yet_run
+      )
+      |> require_equal(
+        "source closure status",
+        get_in(manifest, ["source_run", "closure_status"]),
+        "accepted_by_closure"
+      )
+      |> require_equal("adjudication placeholder status", adjudication["status"], @not_yet_run)
+      |> require_count("evidence sufficiency packet items", evidence_items, 8)
+      |> require_count("working-set context packet items", working_set_items, 12)
+      |> require_equal(
+        "manifest evidence item count",
+        get_in(manifest, ["metric_scope", @evidence_metric, "item_count"]),
+        length(evidence_items)
+      )
+      |> require_equal(
+        "manifest context omission item count",
+        get_in(manifest, ["metric_scope", @context_omission_metric, "item_count"]),
+        length(working_set_items)
+      )
+      |> require_equal(
+        "manifest working-set relevance item count",
+        get_in(manifest, ["metric_scope", @working_set_relevance_metric, "item_count"]),
+        length(working_set_items)
+      )
+
+    if errors == [], do: :ok, else: {:error, Enum.reverse(errors)}
+  end
+
+  defp validate_results(results, packet, result_path) when is_map(results) do
+    raw_labels = map_field(results, "raw_labels")
+    evidence_labels = list_field(raw_labels, @evidence_metric)
+    working_labels = list_field(raw_labels, @working_context_metric)
+    secondary_reviews = list_field(results, "secondary_reviews")
+    adjudication_records = list_field(results, "adjudication_records")
+    agreement_report = map_field(results, "agreement_report")
+    freeze = map_field(results, "primary_label_freeze")
+    collection_status = results["label_collection_status"]
+
+    coverage = coverage_summary(evidence_labels, working_labels, secondary_reviews, packet)
+    triggers = adjudication_triggers(evidence_labels, working_labels, secondary_reviews, packet)
+    unhandled_triggers = unhandled_triggers(triggers, adjudication_records)
+    needs_review_count = needs_review_count(evidence_labels, working_labels)
+
+    errors =
+      []
+      |> validate_top_level(results, packet)
+      |> validate_raw_label_container(raw_labels)
+      |> validate_freeze(freeze)
+      |> validate_evidence_labels(evidence_labels, packet)
+      |> validate_working_set_labels(working_labels, packet)
+      |> validate_no_duplicate_reviewers(@evidence_metric, evidence_labels)
+      |> validate_no_duplicate_reviewers(@working_context_metric, working_labels)
+      |> validate_secondary_reviews(secondary_reviews, packet, freeze)
+      |> validate_adjudication_records(adjudication_records, packet, freeze)
+      |> validate_agreement_report(agreement_report)
+      |> validate_collection_state(
+        collection_status,
+        evidence_labels,
+        working_labels,
+        secondary_reviews,
+        adjudication_records,
+        agreement_report,
+        freeze,
+        coverage,
+        unhandled_triggers
+      )
+
+    if errors == [] do
+      {:ok,
+       %{
+         "status" => "ok",
+         "result_path" => result_path,
+         "result_format" => @result_format,
+         "label_policy_version" => @label_policy_version,
+         "packet_id" => packet.packet_manifest["packet_id"],
+         "label_collection_status" => collection_status,
+         "raw_label_counts" => %{
+           @evidence_metric => length(evidence_labels),
+           @working_context_metric => length(working_labels)
+         },
+         "secondary_review_count" => length(secondary_reviews),
+         "adjudication_record_count" => length(adjudication_records),
+         "needs_review_count" => needs_review_count,
+         "adjudication_required_count" => length(triggers),
+         "unhandled_adjudication_required_count" => length(unhandled_triggers),
+         "adjudication_required" => triggers,
+         "review_coverage" => coverage,
+         "fixture_oracle_exposed_before_freeze" => freeze["fixture_oracle_exposed_before_freeze"],
+         "claim_boundary" =>
+           "Import validation summary only. It is not human-labeled broader evaluation evidence until real labels, adjudication, agreement reporting, and the Lane B report are completed under PS1-LB-LABEL-001."
+       }}
+    else
+      {:error, Enum.reverse(errors)}
+    end
+  end
+
+  defp validate_results(_results, _packet, result_path) do
+    {:error, ["#{result_path} must contain a JSON object"]}
+  end
+
+  defp validate_top_level(errors, results, packet) do
+    allowed_keys =
+      MapSet.new(~w(
+        result_format
+        label_policy_version
+        packet_id
+        packet_manifest_path
+        label_collection_status
+        review_mode
+        primary_label_freeze
+        raw_labels
+        secondary_reviews
+        adjudication_records
+        agreement_report
+        reporting_boundary
+      ))
+
+    unknown_keys = Map.keys(results) |> Enum.reject(&MapSet.member?(allowed_keys, &1))
+
+    errors
+    |> add_unknown_key_errors("result", unknown_keys)
+    |> require_equal("result_format", results["result_format"], @result_format)
+    |> require_equal(
+      "label_policy_version",
+      results["label_policy_version"],
+      @label_policy_version
+    )
+    |> require_equal("packet_id", results["packet_id"], packet.packet_manifest["packet_id"])
+    |> require_equal("review_mode", results["review_mode"], @review_mode)
+    |> require_in(
+      "label_collection_status",
+      results["label_collection_status"],
+      @collection_statuses
+    )
+    |> require_string("packet_manifest_path", results["packet_manifest_path"])
+  end
+
+  defp validate_raw_label_container(errors, raw_labels) do
+    errors
+    |> require_map("raw_labels", raw_labels)
+    |> require_list("raw_labels.#{@evidence_metric}", raw_labels[@evidence_metric])
+    |> require_list("raw_labels.#{@working_context_metric}", raw_labels[@working_context_metric])
+  end
+
+  defp validate_freeze(errors, freeze) do
+    errors
+    |> require_map("primary_label_freeze", freeze)
+    |> require_in("primary_label_freeze.status", freeze["status"], @freeze_statuses)
+    |> require_boolean(
+      "primary_label_freeze.fixture_oracle_exposed_before_freeze",
+      freeze["fixture_oracle_exposed_before_freeze"]
+    )
+    |> then(fn errors ->
+      if freeze["fixture_oracle_exposed_before_freeze"] == false do
+        errors
+      else
+        [
+          "primary_label_freeze.fixture_oracle_exposed_before_freeze must remain false under PS1-LB-LABEL-001"
+          | errors
+        ]
+      end
+    end)
+    |> then(fn errors ->
+      if freeze["status"] == "frozen" do
+        require_string(errors, "primary_label_freeze.frozen_at", freeze["frozen_at"])
+      else
+        errors
+      end
+    end)
+  end
+
+  defp validate_evidence_labels(errors, labels, packet) do
+    labels
+    |> Enum.with_index(1)
+    |> Enum.reduce(errors, fn {label, index}, errors ->
+      context = "raw_labels.#{@evidence_metric}[#{index}]"
+      item_id = label["item_id"]
+      known_refs = Map.get(packet.item_refs, item_id, MapSet.new())
+
+      errors
+      |> require_map(context, label)
+      |> require_allowed_keys(
+        context,
+        label,
+        ~w(metric item_id label_source reviewer_id raw_label_0_to_4_or_needs_review confidence rationale referenced_artifact_ids labeled_at)
+      )
+      |> require_equal("#{context}.metric", label["metric"], @evidence_metric)
+      |> require_equal("#{context}.label_source", label["label_source"], @human_label_source)
+      |> require_known_id("#{context}.item_id", item_id, packet.evidence_ids)
+      |> require_reviewer_id("#{context}.reviewer_id", label["reviewer_id"])
+      |> require_evidence_raw_label(
+        "#{context}.raw_label_0_to_4_or_needs_review",
+        label["raw_label_0_to_4_or_needs_review"]
+      )
+      |> require_confidence("#{context}.confidence", label["confidence"])
+      |> require_string("#{context}.rationale", label["rationale"])
+      |> require_referenced_artifacts(
+        "#{context}.referenced_artifact_ids",
+        label["referenced_artifact_ids"],
+        known_refs
+      )
+    end)
+  end
+
+  defp validate_working_set_labels(errors, labels, packet) do
+    labels
+    |> Enum.with_index(1)
+    |> Enum.reduce(errors, fn {label, index}, errors ->
+      context = "raw_labels.#{@working_context_metric}[#{index}]"
+      item_id = label["item_id"]
+      known_refs = Map.get(packet.item_refs, item_id, MapSet.new())
+      candidate_refs = Map.get(packet.candidate_refs, item_id, MapSet.new())
+
+      errors
+      |> require_map(context, label)
+      |> require_allowed_keys(
+        context,
+        label,
+        ~w(metric item_id label_source reviewer_id omission per_ref_relevance_labels packet_relevance_quality confidence rationale referenced_artifact_ids labeled_at)
+      )
+      |> require_equal("#{context}.metric", label["metric"], @working_context_metric)
+      |> require_equal("#{context}.label_source", label["label_source"], @human_label_source)
+      |> require_known_id("#{context}.item_id", item_id, packet.working_set_ids)
+      |> require_reviewer_id("#{context}.reviewer_id", label["reviewer_id"])
+      |> validate_omission("#{context}.omission", label["omission"], candidate_refs)
+      |> validate_per_ref_relevance(
+        "#{context}.per_ref_relevance_labels",
+        label["per_ref_relevance_labels"],
+        candidate_refs
+      )
+      |> require_in(
+        "#{context}.packet_relevance_quality",
+        label["packet_relevance_quality"],
+        @packet_quality_labels
+      )
+      |> require_confidence("#{context}.confidence", label["confidence"])
+      |> require_string("#{context}.rationale", label["rationale"])
+      |> require_referenced_artifacts(
+        "#{context}.referenced_artifact_ids",
+        label["referenced_artifact_ids"],
+        known_refs
+      )
+    end)
+  end
+
+  defp validate_secondary_reviews(errors, reviews, packet, freeze) do
+    reviews
+    |> Enum.with_index(1)
+    |> Enum.reduce(errors, fn {review, index}, errors ->
+      context = "secondary_reviews[#{index}]"
+      metric = review["metric"]
+      item_ids = item_ids_for_secondary_metric(metric, packet)
+      known_refs = Map.get(packet.item_refs, review["item_id"], MapSet.new())
+
+      errors
+      |> require_map(context, review)
+      |> require_allowed_keys(
+        context,
+        review,
+        ~w(metric item_id primary_reviewer_id secondary_reviewer_id review_result confidence rationale referenced_artifact_ids fixture_oracle_exposed fixture_oracle_exposure_timing reviewed_at)
+      )
+      |> require_in("#{context}.metric", metric, [@evidence_metric, @working_context_metric])
+      |> require_known_id("#{context}.item_id", review["item_id"], item_ids)
+      |> require_reviewer_id("#{context}.primary_reviewer_id", review["primary_reviewer_id"])
+      |> require_reviewer_id("#{context}.secondary_reviewer_id", review["secondary_reviewer_id"])
+      |> require_distinct_reviewers(
+        context,
+        review["primary_reviewer_id"],
+        review["secondary_reviewer_id"]
+      )
+      |> require_in("#{context}.review_result", review["review_result"], @review_results)
+      |> require_confidence("#{context}.confidence", review["confidence"])
+      |> require_string("#{context}.rationale", review["rationale"])
+      |> require_referenced_artifacts(
+        "#{context}.referenced_artifact_ids",
+        review["referenced_artifact_ids"],
+        known_refs
+      )
+      |> validate_oracle_exposure(context, review, freeze)
+    end)
+  end
+
+  defp validate_adjudication_records(errors, records, packet, freeze) do
+    records
+    |> Enum.with_index(1)
+    |> Enum.reduce(errors, fn {record, index}, errors ->
+      context = "adjudication_records[#{index}]"
+      metric = record["metric"]
+      item_ids = item_ids_for_policy_metric(metric, packet)
+      known_refs = Map.get(packet.item_refs, record["item_id"], MapSet.new())
+
+      errors
+      |> require_map(context, record)
+      |> require_allowed_keys(
+        context,
+        record,
+        ~w(metric item_id trigger_reasons original_labels adjudicated_label adjudicator_id rationale artifact_refs_inspected fixture_oracle_exposed fixture_oracle_exposure_timing adjudicated_at)
+      )
+      |> require_in("#{context}.metric", metric, @policy_metrics)
+      |> require_known_id("#{context}.item_id", record["item_id"], item_ids)
+      |> require_non_empty_string_list("#{context}.trigger_reasons", record["trigger_reasons"])
+      |> validate_original_labels("#{context}.original_labels", record["original_labels"])
+      |> validate_adjudicated_label(
+        "#{context}.adjudicated_label",
+        metric,
+        record["adjudicated_label"],
+        packet,
+        record["item_id"]
+      )
+      |> require_reviewer_id("#{context}.adjudicator_id", record["adjudicator_id"])
+      |> require_string("#{context}.rationale", record["rationale"])
+      |> require_referenced_artifacts(
+        "#{context}.artifact_refs_inspected",
+        record["artifact_refs_inspected"],
+        known_refs
+      )
+      |> validate_oracle_exposure(context, record, freeze)
+    end)
+  end
+
+  defp validate_agreement_report(errors, agreement_report) do
+    errors
+    |> require_map("agreement_report", agreement_report)
+    |> require_in("agreement_report.status", agreement_report["status"], @agreement_statuses)
+    |> then(fn errors ->
+      if agreement_report["status"] == @not_yet_run do
+        errors
+      else
+        errors
+        |> require_string("agreement_report.method", agreement_report["method"])
+        |> require_map(
+          "agreement_report.raw_agreement_counts",
+          agreement_report["raw_agreement_counts"]
+        )
+        |> require_string("agreement_report.notes", agreement_report["notes"])
+      end
+    end)
+  end
+
+  defp validate_collection_state(
+         errors,
+         @not_yet_run,
+         evidence_labels,
+         working_labels,
+         secondary_reviews,
+         adjudication_records,
+         agreement_report,
+         freeze,
+         _coverage,
+         _unhandled_triggers
+       ) do
+    errors
+    |> require_empty("raw evidence labels", evidence_labels)
+    |> require_empty("raw working-set labels", working_labels)
+    |> require_empty("secondary_reviews", secondary_reviews)
+    |> require_empty("adjudication_records", adjudication_records)
+    |> require_equal("primary_label_freeze.status", freeze["status"], @not_yet_run)
+    |> require_equal("agreement_report.status", agreement_report["status"], @not_yet_run)
+  end
+
+  defp validate_collection_state(
+         errors,
+         "collected_pending_adjudication",
+         _evidence_labels,
+         _working_labels,
+         _secondary_reviews,
+         _adjudication_records,
+         _agreement_report,
+         freeze,
+         coverage,
+         _unhandled_triggers
+       ) do
+    errors
+    |> require_equal("primary_label_freeze.status", freeze["status"], "frozen")
+    |> require_full_coverage("collected_pending_adjudication", coverage)
+  end
+
+  defp validate_collection_state(
+         errors,
+         "complete_pending_report",
+         _evidence_labels,
+         _working_labels,
+         _secondary_reviews,
+         _adjudication_records,
+         agreement_report,
+         freeze,
+         coverage,
+         unhandled_triggers
+       ) do
+    errors
+    |> require_equal("primary_label_freeze.status", freeze["status"], "frozen")
+    |> require_full_coverage("complete_pending_report", coverage)
+    |> require_empty_unhandled_triggers(unhandled_triggers)
+    |> then(fn errors ->
+      if agreement_report["status"] == @not_yet_run do
+        ["complete_pending_report requires agreement_report.status to be reported" | errors]
+      else
+        errors
+      end
+    end)
+  end
+
+  defp validate_collection_state(
+         errors,
+         "in_progress",
+         _evidence_labels,
+         _working_labels,
+         _secondary_reviews,
+         _adjudication_records,
+         _agreement_report,
+         _freeze,
+         _coverage,
+         _unhandled_triggers
+       ) do
+    errors
+  end
+
+  defp validate_collection_state(errors, _other, _e, _w, _s, _a, _g, _f, _c, _u), do: errors
+
+  defp validate_no_duplicate_reviewers(errors, metric, labels) do
+    labels
+    |> Enum.group_by(fn label -> {label["item_id"], label["reviewer_id"]} end)
+    |> Enum.filter(fn {{item_id, reviewer_id}, grouped} ->
+      present?(item_id) and present?(reviewer_id) and length(grouped) > 1
+    end)
+    |> Enum.reduce(errors, fn {{item_id, reviewer_id}, _grouped}, errors ->
+      [
+        "#{metric} has duplicate raw labels for item #{item_id} by reviewer #{reviewer_id}"
+        | errors
+      ]
+    end)
+  end
+
+  defp validate_omission(errors, context, omission, candidate_refs) do
+    errors
+    |> require_map(context, omission)
+    |> require_allowed_keys(
+      context,
+      omission,
+      ~w(omission_severity omitted_task_critical_ref_ids task_critical_candidate_ref_ids critical_omission denominator_ref_ids)
+    )
+    |> require_in(
+      "#{context}.omission_severity",
+      omission["omission_severity"],
+      @omission_severities
+    )
+    |> require_ref_id_list(
+      "#{context}.omitted_task_critical_ref_ids",
+      omission["omitted_task_critical_ref_ids"],
+      candidate_refs
+    )
+    |> require_ref_id_list(
+      "#{context}.task_critical_candidate_ref_ids",
+      omission["task_critical_candidate_ref_ids"],
+      candidate_refs
+    )
+    |> require_in(
+      "#{context}.critical_omission",
+      omission["critical_omission"],
+      @critical_omission_values
+    )
+    |> require_ref_id_list(
+      "#{context}.denominator_ref_ids",
+      omission["denominator_ref_ids"],
+      candidate_refs
+    )
+  end
+
+  defp validate_per_ref_relevance(errors, context, labels, candidate_refs) do
+    errors = require_list(errors, context, labels)
+    labels = if is_list(labels), do: labels, else: []
+
+    labeled_ids =
+      labels
+      |> Enum.map(& &1["ref_id"])
+      |> Enum.filter(&present?/1)
+
+    duplicate_ids =
+      labeled_ids
+      |> Enum.frequencies()
+      |> Enum.filter(fn {_ref_id, count} -> count > 1 end)
+      |> Enum.map(fn {ref_id, _count} -> ref_id end)
+
+    missing_ids =
+      candidate_refs
+      |> MapSet.difference(MapSet.new(labeled_ids))
+      |> MapSet.to_list()
+      |> Enum.sort()
+
+    extra_ids =
+      labeled_ids
+      |> MapSet.new()
+      |> MapSet.difference(candidate_refs)
+      |> MapSet.to_list()
+      |> Enum.sort()
+
+    labels
+    |> Enum.with_index(1)
+    |> Enum.reduce(errors, fn {label, index}, errors ->
+      entry_context = "#{context}[#{index}]"
+
+      errors
+      |> require_map(entry_context, label)
+      |> require_allowed_keys(entry_context, label, ~w(ref_id relevance_label))
+      |> require_known_id("#{entry_context}.ref_id", label["ref_id"], candidate_refs)
+      |> require_in(
+        "#{entry_context}.relevance_label",
+        label["relevance_label"],
+        @relevance_labels
+      )
+    end)
+    |> then(fn errors ->
+      errors
+      |> add_list_error("#{context} has duplicate ref_id values", duplicate_ids)
+      |> add_list_error("#{context} is missing candidate ref_ids", missing_ids)
+      |> add_list_error("#{context} has unknown candidate ref_ids", extra_ids)
+    end)
+  end
+
+  defp validate_original_labels(errors, context, labels) do
+    errors = require_list(errors, context, labels)
+    labels = if is_list(labels), do: labels, else: []
+
+    errors =
+      if labels == [] do
+        ["#{context} must include the original labels inspected for adjudication" | errors]
+      else
+        errors
+      end
+
+    labels
+    |> Enum.with_index(1)
+    |> Enum.reduce(errors, fn {label, index}, errors ->
+      label_context = "#{context}[#{index}]"
+
+      errors
+      |> require_map(label_context, label)
+      |> require_reviewer_id("#{label_context}.reviewer_id", label["reviewer_id"])
+    end)
+  end
+
+  defp validate_adjudicated_label(errors, context, @evidence_metric, label, _packet, _item_id) do
+    require_evidence_raw_label(errors, context, label)
+  end
+
+  defp validate_adjudicated_label(
+         errors,
+         context,
+         @context_omission_metric,
+         label,
+         packet,
+         item_id
+       ) do
+    candidate_refs = Map.get(packet.candidate_refs, item_id, MapSet.new())
+    validate_omission(errors, context, label, candidate_refs)
+  end
+
+  defp validate_adjudicated_label(
+         errors,
+         context,
+         @working_set_relevance_metric,
+         label,
+         packet,
+         item_id
+       ) do
+    candidate_refs = Map.get(packet.candidate_refs, item_id, MapSet.new())
+
+    errors
+    |> require_map(context, label)
+    |> require_allowed_keys(context, label, ~w(per_ref_relevance_labels packet_relevance_quality))
+    |> validate_per_ref_relevance(
+      "#{context}.per_ref_relevance_labels",
+      label["per_ref_relevance_labels"],
+      candidate_refs
+    )
+    |> require_in(
+      "#{context}.packet_relevance_quality",
+      label["packet_relevance_quality"],
+      @packet_quality_labels
+    )
+  end
+
+  defp validate_adjudicated_label(errors, context, _metric, _label, _packet, _item_id) do
+    ["#{context} cannot be validated because metric is not a PS1-LB-LABEL-001 metric" | errors]
+  end
+
+  defp validate_oracle_exposure(errors, context, record, freeze) do
+    errors =
+      errors
+      |> require_boolean("#{context}.fixture_oracle_exposed", record["fixture_oracle_exposed"])
+      |> require_in(
+        "#{context}.fixture_oracle_exposure_timing",
+        record["fixture_oracle_exposure_timing"],
+        @exposure_timings
+      )
+
+    cond do
+      record["fixture_oracle_exposed"] == true and
+          record["fixture_oracle_exposure_timing"] != "after_primary_label_freeze" ->
+        [
+          "#{context}.fixture_oracle_exposure_timing must be after_primary_label_freeze when fixture_oracle_exposed is true"
+          | errors
+        ]
+
+      record["fixture_oracle_exposed"] == true and freeze["status"] != "frozen" ->
+        ["#{context} exposes fixture oracle metadata before primary labels are frozen" | errors]
+
+      record["fixture_oracle_exposed"] == false and
+          record["fixture_oracle_exposure_timing"] != "not_exposed" ->
+        [
+          "#{context}.fixture_oracle_exposure_timing must be not_exposed when fixture_oracle_exposed is false"
+          | errors
+        ]
+
+      true ->
+        errors
+    end
+  end
+
+  defp coverage_summary(evidence_labels, working_labels, secondary_reviews, packet) do
+    %{
+      @evidence_metric =>
+        metric_coverage(@evidence_metric, packet.evidence_ids, evidence_labels, secondary_reviews),
+      @context_omission_metric =>
+        metric_coverage(
+          @working_context_metric,
+          packet.working_set_ids,
+          working_labels,
+          secondary_reviews
+        ),
+      @working_set_relevance_metric =>
+        metric_coverage(
+          @working_context_metric,
+          packet.working_set_ids,
+          working_labels,
+          secondary_reviews
+        )
+    }
+  end
+
+  defp metric_coverage(raw_metric, expected_ids, labels, secondary_reviews) do
+    covered_ids =
+      expected_ids
+      |> Enum.filter(fn item_id ->
+        raw_reviewers =
+          labels
+          |> Enum.filter(&(&1["item_id"] == item_id))
+          |> Enum.map(& &1["reviewer_id"])
+          |> Enum.filter(&present?/1)
+          |> MapSet.new()
+
+        secondary_substitution =
+          Enum.any?(secondary_reviews, fn review ->
+            review["metric"] == raw_metric and review["item_id"] == item_id and
+              present?(review["primary_reviewer_id"]) and
+              present?(review["secondary_reviewer_id"]) and
+              review["primary_reviewer_id"] != review["secondary_reviewer_id"] and
+              review["review_result"] in ["confirm", "revise"]
+          end)
+
+        MapSet.size(raw_reviewers) >= 2 or secondary_substitution
+      end)
+      |> Enum.sort()
+
+    missing_ids =
+      expected_ids
+      |> MapSet.difference(MapSet.new(covered_ids))
+      |> MapSet.to_list()
+      |> Enum.sort()
+
+    %{
+      "expected_item_count" => MapSet.size(expected_ids),
+      "fully_reviewed_item_count" => length(covered_ids),
+      "missing_item_ids" => missing_ids
+    }
+  end
+
+  defp adjudication_triggers(evidence_labels, working_labels, secondary_reviews, packet) do
+    evidence_triggers(evidence_labels, secondary_reviews)
+    |> Kernel.++(context_omission_triggers(working_labels, secondary_reviews, packet))
+    |> Kernel.++(working_set_relevance_triggers(working_labels, secondary_reviews, packet))
+    |> Enum.map(fn trigger ->
+      Map.update!(trigger, "trigger_reasons", fn reasons ->
+        reasons |> Enum.uniq() |> Enum.sort()
+      end)
+    end)
+    |> Enum.sort_by(&{&1["metric"], &1["item_id"]})
+  end
+
+  defp evidence_triggers(labels, secondary_reviews) do
+    labels
+    |> Enum.group_by(& &1["item_id"])
+    |> Enum.flat_map(fn {item_id, item_labels} ->
+      raw_values = Enum.map(item_labels, & &1["raw_label_0_to_4_or_needs_review"])
+      numeric = Enum.filter(raw_values, &is_integer/1)
+
+      reasons =
+        []
+        |> maybe_add(Enum.any?(raw_values, &(&1 == "needs_review")), "needs_review")
+        |> maybe_add(pairwise_difference_at_least?(numeric, 2), "ordinal_difference_ge_2")
+        |> maybe_add(acceptability_boundary_split?(numeric), "acceptability_boundary_split")
+        |> maybe_add(
+          secondary_needs_adjudication?(@evidence_metric, item_id, secondary_reviews),
+          "secondary_review_needs_adjudication"
+        )
+
+      trigger_or_empty(@evidence_metric, item_id, reasons)
+    end)
+  end
+
+  defp context_omission_triggers(labels, secondary_reviews, _packet) do
+    labels
+    |> Enum.group_by(& &1["item_id"])
+    |> Enum.flat_map(fn {item_id, item_labels} ->
+      omissions = Enum.map(item_labels, &map_field(&1, "omission"))
+
+      reasons =
+        []
+        |> maybe_add(Enum.any?(omissions, &omission_needs_review?/1), "needs_review")
+        |> maybe_add(
+          set_field_disagrees?(omissions, "omitted_task_critical_ref_ids"),
+          "omitted_task_critical_ref_ids_disagreement"
+        )
+        |> maybe_add(
+          set_field_disagrees?(omissions, "task_critical_candidate_ref_ids"),
+          "task_critical_candidate_ref_ids_disagreement"
+        )
+        |> maybe_add(
+          set_field_disagrees?(omissions, "denominator_ref_ids"),
+          "denominator_disagreement"
+        )
+        |> maybe_add(
+          scalar_field_disagrees?(omissions, "critical_omission"),
+          "critical_omission_disagreement"
+        )
+        |> maybe_add(
+          secondary_needs_adjudication?(@working_context_metric, item_id, secondary_reviews),
+          "secondary_review_needs_adjudication"
+        )
+
+      trigger_or_empty(@context_omission_metric, item_id, reasons)
+    end)
+  end
+
+  defp working_set_relevance_triggers(labels, secondary_reviews, _packet) do
+    labels
+    |> Enum.group_by(& &1["item_id"])
+    |> Enum.flat_map(fn {item_id, item_labels} ->
+      per_ref_labels = Enum.map(item_labels, &list_field(&1, "per_ref_relevance_labels"))
+      qualities = Enum.map(item_labels, & &1["packet_relevance_quality"])
+
+      reasons =
+        []
+        |> maybe_add(
+          per_ref_needs_review?(per_ref_labels) or Enum.any?(qualities, &(&1 == "needs_review")),
+          "needs_review"
+        )
+        |> maybe_add(per_ref_harmful?(per_ref_labels), "harmful_marked")
+        |> maybe_add(per_ref_disagrees?(per_ref_labels), "per_ref_relevance_disagreement")
+        |> maybe_add(length(Enum.uniq(qualities)) > 1, "packet_relevance_quality_disagreement")
+        |> maybe_add(
+          secondary_needs_adjudication?(@working_context_metric, item_id, secondary_reviews),
+          "secondary_review_needs_adjudication"
+        )
+
+      trigger_or_empty(@working_set_relevance_metric, item_id, reasons)
+    end)
+  end
+
+  defp trigger_or_empty(_metric, _item_id, []), do: []
+
+  defp trigger_or_empty(metric, item_id, reasons) do
+    [%{"metric" => metric, "item_id" => item_id, "trigger_reasons" => reasons}]
+  end
+
+  defp unhandled_triggers(triggers, adjudication_records) do
+    adjudicated_keys =
+      adjudication_records
+      |> Enum.map(&{&1["metric"], &1["item_id"]})
+      |> MapSet.new()
+
+    Enum.reject(triggers, fn trigger ->
+      MapSet.member?(adjudicated_keys, {trigger["metric"], trigger["item_id"]})
+    end)
+  end
+
+  defp needs_review_count(evidence_labels, working_labels) do
+    evidence_count =
+      Enum.count(evidence_labels, &(&1["raw_label_0_to_4_or_needs_review"] == "needs_review"))
+
+    working_count =
+      Enum.count(working_labels, fn label ->
+        omission = map_field(label, "omission")
+        per_ref = list_field(label, "per_ref_relevance_labels")
+
+        omission_needs_review?(omission) or per_ref_needs_review?([per_ref]) or
+          label["packet_relevance_quality"] == "needs_review"
+      end)
+
+    evidence_count + working_count
+  end
+
+  defp maybe_add(reasons, true, reason), do: [reason | reasons]
+  defp maybe_add(reasons, _condition, _reason), do: reasons
+
+  defp pairwise_difference_at_least?(values, threshold) do
+    values != [] and Enum.max(values) - Enum.min(values) >= threshold
+  end
+
+  defp acceptability_boundary_split?(values) do
+    Enum.any?(values, &(&1 <= 2)) and Enum.any?(values, &(&1 >= 3))
+  end
+
+  defp omission_needs_review?(omission) do
+    omission["omission_severity"] == "needs_review" or
+      omission["critical_omission"] == "needs_review"
+  end
+
+  defp set_field_disagrees?(maps, field) do
+    maps
+    |> Enum.map(fn map -> map |> list_field(field) |> Enum.sort() end)
+    |> Enum.uniq()
+    |> length()
+    |> Kernel.>(1)
+  end
+
+  defp scalar_field_disagrees?(maps, field) do
+    maps
+    |> Enum.map(& &1[field])
+    |> Enum.uniq()
+    |> length()
+    |> Kernel.>(1)
+  end
+
+  defp per_ref_needs_review?(per_ref_label_sets) do
+    Enum.any?(per_ref_label_sets, fn labels ->
+      Enum.any?(labels, &(&1["relevance_label"] == "needs_review"))
+    end)
+  end
+
+  defp per_ref_harmful?(per_ref_label_sets) do
+    Enum.any?(per_ref_label_sets, fn labels ->
+      Enum.any?(labels, &(&1["relevance_label"] == "harmful"))
+    end)
+  end
+
+  defp per_ref_disagrees?(per_ref_label_sets) do
+    per_ref_label_sets
+    |> Enum.map(fn labels ->
+      labels
+      |> Enum.map(&{&1["ref_id"], &1["relevance_label"]})
+      |> Enum.sort()
+    end)
+    |> Enum.uniq()
+    |> length()
+    |> Kernel.>(1)
+  end
+
+  defp secondary_needs_adjudication?(metric, item_id, secondary_reviews) do
+    Enum.any?(secondary_reviews, fn review ->
+      review["metric"] == metric and review["item_id"] == item_id and
+        review["review_result"] == "needs_adjudication"
+    end)
+  end
+
+  defp item_reference_index(evidence_items, working_set_items) do
+    evidence_refs =
+      evidence_items
+      |> Map.new(fn item -> {item["packet_id"], evidence_reference_ids(item)} end)
+
+    working_refs =
+      working_set_items
+      |> Map.new(fn item -> {item["packet_id"], working_set_reference_ids(item)} end)
+
+    Map.merge(evidence_refs, working_refs)
+  end
+
+  defp candidate_ref_index(working_set_items) do
+    working_set_items
+    |> Map.new(fn item ->
+      refs =
+        item
+        |> Map.get("candidate_ref_inventory", [])
+        |> Enum.map(& &1["ref_id"])
+        |> Enum.filter(&present?/1)
+        |> MapSet.new()
+
+      {item["packet_id"], refs}
+    end)
+  end
+
+  defp evidence_reference_ids(item) do
+    [
+      item["packet_id"],
+      item["task_id"],
+      item["task_packet_path"],
+      item["source_artifact_dir"],
+      get_in(item, ["evidence_packet", "evidence_id"]),
+      get_in(item, ["evidence_packet", "episode_id"]),
+      get_in(item, ["evidence_packet", "step_id"]),
+      get_in(item, ["evidence_packet", "action_ref"]),
+      get_in(item, ["verifier_output", "verifier_output_id"]),
+      get_in(item, ["commit_or_reject_record", "episode_id"])
+    ]
+    |> Kernel.++(List.wrap(get_in(item, ["commit_or_reject_record", "evidence_refs"])))
+    |> Kernel.++(List.wrap(get_in(item, ["commit_or_reject_record", "verifier_output_refs"])))
+    |> Kernel.++(List.wrap(get_in(item, ["commit_or_reject_record", "state_hashes"])))
+    |> known_ref_set()
+  end
+
+  defp working_set_reference_ids(item) do
+    item
+    |> Map.get("candidate_ref_inventory", [])
+    |> Enum.map(& &1["ref_id"])
+    |> Kernel.++(List.wrap(item["selected_ref_ids"]))
+    |> Kernel.++([
+      item["packet_id"],
+      item["task_id"],
+      item["context_artifact_id"],
+      item["task_packet_path"],
+      item["source_artifact_dir"]
+    ])
+    |> known_ref_set()
+  end
+
+  defp known_ref_set(values) do
+    values
+    |> Enum.filter(&present?/1)
+    |> MapSet.new()
+  end
+
+  defp item_ids_for_secondary_metric(@evidence_metric, packet), do: packet.evidence_ids
+  defp item_ids_for_secondary_metric(@working_context_metric, packet), do: packet.working_set_ids
+  defp item_ids_for_secondary_metric(_metric, _packet), do: MapSet.new()
+
+  defp item_ids_for_policy_metric(@evidence_metric, packet), do: packet.evidence_ids
+  defp item_ids_for_policy_metric(@context_omission_metric, packet), do: packet.working_set_ids
+
+  defp item_ids_for_policy_metric(@working_set_relevance_metric, packet),
+    do: packet.working_set_ids
+
+  defp item_ids_for_policy_metric(_metric, _packet), do: MapSet.new()
+
+  defp map_field(map, field) when is_map(map) do
+    case map[field] do
+      value when is_map(value) -> value
+      _other -> %{}
+    end
+  end
+
+  defp map_field(_value, _field), do: %{}
+
+  defp list_field(map, field) when is_map(map) do
+    case map[field] do
+      value when is_list(value) -> value
+      _other -> []
+    end
+  end
+
+  defp list_field(_value, _field), do: []
+
+  defp require_map(errors, label, value) do
+    if is_map(value), do: errors, else: ["#{label} must be an object" | errors]
+  end
+
+  defp require_list(errors, label, value) do
+    if is_list(value), do: errors, else: ["#{label} must be a list" | errors]
+  end
+
+  defp require_empty(errors, label, value) do
+    if value == [],
+      do: errors,
+      else: ["#{label} must be empty while status is Not yet run" | errors]
+  end
+
+  defp require_equal(errors, label, actual, expected) do
+    if actual == expected do
+      errors
+    else
+      ["#{label} is #{inspect(actual)}, expected #{inspect(expected)}" | errors]
+    end
+  end
+
+  defp require_in(errors, label, actual, allowed) do
+    if actual in allowed do
+      errors
+    else
+      ["#{label} is #{inspect(actual)}, expected one of #{inspect(allowed)}" | errors]
+    end
+  end
+
+  defp require_count(errors, label, value, expected_count) when is_list(value) do
+    if length(value) == expected_count do
+      errors
+    else
+      ["#{label} count is #{length(value)}, expected #{expected_count}" | errors]
+    end
+  end
+
+  defp require_known_id(errors, label, value, allowed_ids) do
+    if present?(value) and MapSet.member?(allowed_ids, value) do
+      errors
+    else
+      ["#{label} is #{inspect(value)}, expected a referenced packet item ID" | errors]
+    end
+  end
+
+  defp require_reviewer_id(errors, label, value) do
+    cond do
+      not is_binary(value) ->
+        ["#{label} must be a stable reviewer ID string" | errors]
+
+      value == @not_yet_run or String.trim(value) == "" ->
+        ["#{label} must not be #{inspect(@not_yet_run)} or blank" | errors]
+
+      not Regex.match?(~r/^[A-Za-z0-9_.:-]+$/, value) ->
+        [
+          "#{label} must use a stable anonymized ID with letters, digits, dot, underscore, colon, or dash"
+          | errors
+        ]
+
+      true ->
+        errors
+    end
+  end
+
+  defp require_distinct_reviewers(errors, context, primary, secondary) do
+    if is_binary(primary) and is_binary(secondary) and primary == secondary do
+      ["#{context} primary and secondary reviewer IDs must differ" | errors]
+    else
+      errors
+    end
+  end
+
+  defp require_evidence_raw_label(errors, label, value) do
+    if value == "needs_review" or (is_integer(value) and value >= 0 and value <= 4) do
+      errors
+    else
+      ["#{label} must be an integer 0-4 or needs_review" | errors]
+    end
+  end
+
+  defp require_confidence(errors, label, value) do
+    if is_number(value) and value >= 0.0 and value <= 1.0 do
+      errors
+    else
+      ["#{label} must be a number between 0.0 and 1.0" | errors]
+    end
+  end
+
+  defp require_string(errors, label, value) do
+    cond do
+      not is_binary(value) ->
+        ["#{label} must be a non-empty string" | errors]
+
+      value == @not_yet_run or String.trim(value) == "" ->
+        ["#{label} must not be #{inspect(@not_yet_run)} or blank" | errors]
+
+      true ->
+        errors
+    end
+  end
+
+  defp require_boolean(errors, label, value) do
+    if is_boolean(value), do: errors, else: ["#{label} must be true or false" | errors]
+  end
+
+  defp require_ref_id_list(errors, label, value, known_refs) do
+    errors = require_list(errors, label, value)
+    refs = if is_list(value), do: value, else: []
+
+    unknown =
+      refs
+      |> Enum.reject(&MapSet.member?(known_refs, &1))
+      |> Enum.sort()
+
+    cond do
+      Enum.any?(refs, &(not is_binary(&1))) ->
+        ["#{label} must contain only string ref IDs" | errors]
+
+      unknown != [] ->
+        ["#{label} contains unknown ref IDs #{inspect(unknown)}" | errors]
+
+      true ->
+        errors
+    end
+  end
+
+  defp require_non_empty_string_list(errors, label, value) do
+    errors = require_list(errors, label, value)
+    values = if is_list(value), do: value, else: []
+
+    cond do
+      values == [] ->
+        ["#{label} must not be empty" | errors]
+
+      Enum.any?(values, &(not is_binary(&1) or String.trim(&1) == "")) ->
+        ["#{label} must contain only non-empty strings" | errors]
+
+      true ->
+        errors
+    end
+  end
+
+  defp require_referenced_artifacts(errors, label, value, known_refs) do
+    errors = require_non_empty_string_list(errors, label, value)
+    refs = if is_list(value), do: value, else: []
+
+    unknown =
+      refs
+      |> Enum.reject(&MapSet.member?(known_refs, &1))
+      |> Enum.sort()
+
+    if unknown == [] do
+      errors
+    else
+      ["#{label} contains unknown artifact IDs #{inspect(unknown)}" | errors]
+    end
+  end
+
+  defp require_allowed_keys(errors, context, value, allowed_keys) when is_map(value) do
+    allowed = MapSet.new(allowed_keys)
+    unknown = Map.keys(value) |> Enum.reject(&MapSet.member?(allowed, &1))
+    add_unknown_key_errors(errors, context, unknown)
+  end
+
+  defp require_allowed_keys(errors, _context, _value, _allowed_keys), do: errors
+
+  defp add_unknown_key_errors(errors, _context, []), do: errors
+
+  defp add_unknown_key_errors(errors, context, unknown_keys) do
+    ["#{context} has unsupported keys #{inspect(Enum.sort(unknown_keys))}" | errors]
+  end
+
+  defp add_list_error(errors, _message, []), do: errors
+  defp add_list_error(errors, message, values), do: ["#{message}: #{inspect(values)}" | errors]
+
+  defp require_full_coverage(errors, status, coverage) do
+    coverage
+    |> Enum.reduce(errors, fn {metric, metric_coverage}, errors ->
+      if metric_coverage["missing_item_ids"] == [] do
+        errors
+      else
+        [
+          "#{status} requires full review coverage for #{metric}; missing #{inspect(metric_coverage["missing_item_ids"])}"
+          | errors
+        ]
+      end
+    end)
+  end
+
+  defp require_empty_unhandled_triggers(errors, []), do: errors
+
+  defp require_empty_unhandled_triggers(errors, unhandled_triggers) do
+    [
+      "complete_pending_report requires adjudication records for triggered items: #{inspect(unhandled_triggers)}"
+      | errors
+    ]
+  end
+
+  defp load_json(path) do
+    with {:ok, text} <- load_text(path),
+         {:ok, json} <- Jason.decode(text) do
+      {:ok, json}
+    else
+      {:error, errors} when is_list(errors) ->
+        {:error, errors}
+
+      {:error, %Jason.DecodeError{} = error} ->
+        {:error, ["failed to decode JSON #{path}: #{Exception.message(error)}"]}
+    end
+  end
+
+  defp load_jsonl(path) do
+    with {:ok, text} <- load_text(path) do
+      text
+      |> String.split(~r/\R/, trim: true)
+      |> Enum.reduce_while({:ok, []}, fn line, {:ok, rows} ->
+        case Jason.decode(line) do
+          {:ok, row} ->
+            {:cont, {:ok, rows ++ [row]}}
+
+          {:error, error} ->
+            {:halt, {:error, ["failed to decode JSONL #{path}: #{Exception.message(error)}"]}}
+        end
+      end)
+    end
+  end
+
+  defp load_text(path) do
+    case File.read(path) do
+      {:ok, text} -> {:ok, strip_bom(text)}
+      {:error, reason} -> {:error, ["failed to read #{path}: #{:file.format_error(reason)}"]}
+    end
+  end
+
+  defp write_json!(path, data), do: File.write!(path, Jason.encode!(data, pretty: true))
+
+  defp strip_bom(<<0xEF, 0xBB, 0xBF, rest::binary>>), do: rest
+  defp strip_bom(text), do: text
+
+  defp path_join(left, right), do: Path.join(left, right) |> slash_path()
+
+  defp display_path(path, cwd) do
+    expanded = Path.expand(path, cwd)
+    cwd = Path.expand(cwd)
+
+    expanded
+    |> Path.relative_to(cwd)
+    |> slash_path()
+  end
+
+  defp slash_path(path), do: String.replace(path, "\\", "/")
+
+  defp present?(value) when is_binary(value), do: String.trim(value) != ""
+  defp present?(nil), do: false
+  defp present?(_value), do: true
+end

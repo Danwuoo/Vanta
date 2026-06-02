@@ -134,7 +134,11 @@ successor manifest gate that explicitly supersedes it.
   It covers `evidence_sufficiency_score`, `context_omission_error_rate`, and
   `working_set_relevance_score` candidates. Human labels, secondary review,
   adjudication, and agreement reporting remain `Not yet run`, so no broad label
-  claim exists yet.
+  claim exists yet. The packet now includes a packet-local
+  `label_results_template.json`, and `Vanta.PostStage1LaneBLabelResults`
+  provides validation and import-summary tooling for real future label files;
+  this tooling does not create labels, expand core schemas, authorize runtime
+  approvals, or change the `Not yet run` label status.
 - The earlier `20260530_141649` Lane B packet remains as a superseded
   historical packet only. It is not the current accepted-run Lane B source
   because the source run was not `accepted_by_closure` and its

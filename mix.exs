@@ -28,7 +28,8 @@ defmodule Vanta.MixProject do
   defp aliases do
     [
       "vanta.post_stage_1_larger_sample": ["vanta.post_stage1_larger_sample"],
-      "vanta.post_stage_1_lane_b_packet": ["vanta.post_stage1_lane_b_packet"]
+      "vanta.post_stage_1_lane_b_packet": ["vanta.post_stage1_lane_b_packet"],
+      "vanta.post_stage_1_lane_b_label_results": ["vanta.post_stage1_lane_b_label_results"]
     ]
   end
 end

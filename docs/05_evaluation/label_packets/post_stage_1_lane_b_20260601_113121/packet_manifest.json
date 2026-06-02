@@ -23,10 +23,12 @@
   },
   "artifact_paths": {
     "packet_readme": "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md",
+    "packet_manifest": "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/packet_manifest.json",
     "redacted_task_packets": "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/redacted_task_packets/",
     "evidence_sufficiency_items": "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/evidence_sufficiency_items.jsonl",
     "working_set_context_items": "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/working_set_context_items.jsonl",
     "adjudication_placeholders": "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/adjudication_placeholders.json",
+    "label_results_template": "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_template.json",
     "label_report_skeleton": "docs/05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md"
   },
   "metric_scope": {

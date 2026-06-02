@@ -62,7 +62,10 @@ It covers candidate artifacts for `evidence_sufficiency_score`,
 `context_omission_error_rate`, and `working_set_relevance_score`. Human labels,
 secondary review, adjudication, and agreement reporting remain `Not yet run`.
 The packet is not broader evaluation evidence until labels are collected and
-reported under `PS1-LB-LABEL-001`.
+reported under `PS1-LB-LABEL-001`. A packet-local label result template and
+validator/import-summary task now provide a collection, import, validation, and
+report-filling path for real labels; this is evaluation tooling only and does
+not expand runtime behavior, core schemas, or approval paths.
 
 The earlier `20260530_141649` Lane B packet remains only as a superseded
 historical packet for a non-accepted source run whose selector-missing item

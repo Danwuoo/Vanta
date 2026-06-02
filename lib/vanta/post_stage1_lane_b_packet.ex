@@ -56,15 +56,22 @@ defmodule Vanta.PostStage1LaneBPacket do
          {:ok, redacted_task_packets} <- build_redacted_task_packets(config),
          {:ok, evidence_items} <- build_evidence_items(run, config),
          {:ok, working_set_items} <- build_working_set_items(run, config) do
+      packet_manifest = packet_manifest(config, run, evidence_items, working_set_items)
+
       packet = %{
         opts: config,
-        packet_manifest: packet_manifest(config, run, evidence_items, working_set_items),
+        packet_manifest: packet_manifest,
         readme: packet_readme(config),
         redacted_task_packets: redacted_task_packets,
         evidence_sufficiency_items: evidence_items,
         working_set_context_items: working_set_items,
         adjudication_placeholders:
           adjudication_placeholders(config, evidence_items, working_set_items),
+        label_results_template:
+          Vanta.PostStage1LaneBLabelResults.template_for_packet(%{
+            packet_manifest: packet_manifest,
+            packet_dir: config.out_path
+          }),
         label_report_skeleton: label_report_skeleton(config)
       }
 
@@ -103,6 +110,11 @@ defmodule Vanta.PostStage1LaneBPacket do
         packet.adjudication_placeholders
       )
 
+      write_json!(
+        Path.join(config.out_abs, "label_results_template.json"),
+        packet.label_results_template
+      )
+
       File.mkdir_p!(Path.dirname(config.label_report_abs))
       write_text!(config.label_report_abs, packet.label_report_skeleton)
 
@@ -111,6 +123,7 @@ defmodule Vanta.PostStage1LaneBPacket do
          packet_id: packet.packet_manifest["packet_id"],
          packet_dir: config.out_path,
          label_report_skeleton: config.label_report_path,
+         label_results_template: path_join(config.out_path, "label_results_template.json"),
          evidence_item_count: length(packet.evidence_sufficiency_items),
          working_set_item_count: length(packet.working_set_context_items)
        }}
@@ -141,6 +154,11 @@ defmodule Vanta.PostStage1LaneBPacket do
           "adjudication_placeholders.json",
           actual.adjudication_placeholders,
           expected.adjudication_placeholders
+        )
+        |> require_equal(
+          "label_results_template.json",
+          actual.label_results_template,
+          expected.label_results_template
         )
         |> require_equal(
           "redacted_task_packets",
@@ -517,6 +535,7 @@ defmodule Vanta.PostStage1LaneBPacket do
   defp artifact_paths(config) do
     %{
       "packet_readme" => path_join(config.out_path, "README.md"),
+      "packet_manifest" => path_join(config.out_path, "packet_manifest.json"),
       "redacted_task_packets" =>
         ensure_trailing_slash(path_join(config.out_path, "redacted_task_packets")),
       "evidence_sufficiency_items" =>
@@ -524,6 +543,7 @@ defmodule Vanta.PostStage1LaneBPacket do
       "working_set_context_items" =>
         path_join(config.out_path, "working_set_context_items.jsonl"),
       "adjudication_placeholders" => path_join(config.out_path, "adjudication_placeholders.json"),
+      "label_results_template" => path_join(config.out_path, "label_results_template.json"),
       "label_report_skeleton" => config.label_report_path
     }
   end
@@ -649,6 +669,7 @@ defmodule Vanta.PostStage1LaneBPacket do
     | `evidence_sufficiency_items.jsonl` | Eight blinded evidence sufficiency label items sampled from the accepted run artifact. |
     | `working_set_context_items.jsonl` | Twelve blinded working-set omission and relevance items: six long-context tasks by two blinded context arms. |
     | `adjudication_placeholders.json` | Empty adjudication record scaffold and trigger rules. |
+    | `label_results_template.json` | Packet-local label result import template for `PS1-LB-LABEL-001`; not a core runtime schema. |
     | `../../Post_Stage_1_Lane_B_#{config.run_timestamp}_Label_Report_Skeleton.md` | Report skeleton for recording labels after collection. |
 
     ## Source Run
@@ -758,6 +779,30 @@ defmodule Vanta.PostStage1LaneBPacket do
 
     All fields are currently `Not yet run`.
 
+    ## Label Result Import Path
+
+    The packet-local result format is `PS1-LB-LABEL-RESULT-LOCAL-001`, with
+    `label_policy_version: #{@label_policy_version}`. It is a collection and
+    validation aid for this Lane B packet only; it does not expand the core
+    runtime schemas in `docs/03_schemas/`.
+
+    Use `label_results_template.json` as the starting structure for imported
+    raw labels. Before any report claim, validate a filled results file with:
+
+    ```text
+    mix vanta.post_stage_1_lane_b_label_results --mode validate --results <filled-results.json>
+    ```
+
+    To produce a machine-readable import summary for filling the report after
+    real labels are collected, use:
+
+    ```text
+    mix vanta.post_stage_1_lane_b_label_results --mode import-summary --results <filled-results.json> --out <summary.json>
+    ```
+
+    These commands must not be used to treat templates, dry-run fixtures, or
+    generated test data as real human labels.
+
     ## Interpretation Boundary
 
     This packet may support a future Lane B label report after labels are collected
@@ -801,6 +846,7 @@ defmodule Vanta.PostStage1LaneBPacket do
     | Evidence sufficiency items | `#{path_join(config.out_path, "evidence_sufficiency_items.jsonl")}` |
     | Working-set context items | `#{path_join(config.out_path, "working_set_context_items.jsonl")}` |
     | Adjudication placeholders | `#{path_join(config.out_path, "adjudication_placeholders.json")}` |
+    | Label result import template | `#{path_join(config.out_path, "label_results_template.json")}` |
 
     ## Supersession Boundary
 
@@ -834,6 +880,63 @@ defmodule Vanta.PostStage1LaneBPacket do
     `input_artifacts.role` and `input_artifacts.description` fields, arm identity
     mapping, expected labels, task success flags, aggregate item metrics, and
     post-run repair notes remain withheld until labels are frozen.
+
+    The packet-local label result format is
+    `PS1-LB-LABEL-RESULT-LOCAL-001`. It is a local collection/import template
+    for this Lane B packet and does not extend core runtime schemas.
+
+    ## Collection, Import, Validation, And Reporting Flow
+
+    Label collection remains `Not yet run` until real reviewer labels are
+    imported from a filled result file and validated under `#{@label_policy_version}`.
+    The template file is not label evidence.
+
+    Reviewer fields for evidence sufficiency raw labels:
+
+    - `metric: evidence_sufficiency_score`
+    - `item_id`
+    - `label_source: human`
+    - `reviewer_id`
+    - `raw_label_0_to_4_or_needs_review`
+    - `confidence`
+    - `rationale`
+    - `referenced_artifact_ids`
+
+    Reviewer fields for working-set raw labels:
+
+    - `metric: working_set_context`
+    - `item_id`
+    - `label_source: human`
+    - `reviewer_id`
+    - `omission` fields for severity, omitted task-critical refs,
+      task-critical candidate refs, `critical_omission`, and denominator refs
+    - `per_ref_relevance_labels`
+    - `packet_relevance_quality`
+    - `confidence`
+    - `rationale`
+    - `referenced_artifact_ids`
+
+    Required sequence:
+
+    1. Freeze the blinded packet and distribute only primary-labeler-visible
+       packet files.
+    2. Collect raw primary labels with stable reviewer IDs and no fixture oracle
+       exposure.
+    3. Freeze primary labels before fixture oracle fields, arm identity mapping,
+       source task oracle fields, or aggregate Lane A item results are exposed.
+    4. Validate the filled result file with
+       `mix vanta.post_stage_1_lane_b_label_results --mode validate --results <filled-results.json>`.
+    5. Complete documented secondary review only if the report records the
+       substitution allowed by `#{@label_policy_version}`.
+    6. Complete adjudication records for all validator-triggered disagreements,
+       `needs_review` labels, evidence `0-2` versus `3-4` splits, harmful
+       relevance labels, task-critical disputes, critical-omission disputes, and
+       denominator disputes.
+    7. Produce an import summary with
+       `mix vanta.post_stage_1_lane_b_label_results --mode import-summary --results <filled-results.json> --out <summary.json>`.
+    8. Fill this report only from real labels, adjudicated labels, agreement
+       counts, fixture-oracle exposure metadata, and the validated import
+       summary.
 
     ## Candidate Sample
 
@@ -1112,6 +1215,7 @@ defmodule Vanta.PostStage1LaneBPacket do
       evidence_sufficiency_items: Path.join(config.out_abs, "evidence_sufficiency_items.jsonl"),
       working_set_context_items: Path.join(config.out_abs, "working_set_context_items.jsonl"),
       adjudication_placeholders: Path.join(config.out_abs, "adjudication_placeholders.json"),
+      label_results_template: Path.join(config.out_abs, "label_results_template.json"),
       label_report_skeleton: config.label_report_abs
     }
 
@@ -1141,6 +1245,7 @@ defmodule Vanta.PostStage1LaneBPacket do
            {:ok, evidence} <- load_jsonl(paths.evidence_sufficiency_items),
            {:ok, working_set} <- load_jsonl(paths.working_set_context_items),
            {:ok, adjudication} <- load_json(paths.adjudication_placeholders),
+           {:ok, label_results_template} <- load_json(paths.label_results_template),
            {:ok, report} <- load_text(paths.label_report_skeleton),
            {:ok, redacted} <- load_redacted_packets(config, task_ids) do
         {:ok,
@@ -1150,6 +1255,7 @@ defmodule Vanta.PostStage1LaneBPacket do
            evidence_sufficiency_items: evidence,
            working_set_context_items: working_set,
            adjudication_placeholders: adjudication,
+           label_results_template: label_results_template,
            label_report_skeleton: report,
            redacted_task_packets: redacted
          }}
@@ -1234,7 +1340,10 @@ defmodule Vanta.PostStage1LaneBPacket do
       [
         actual.packet_manifest["label_collection_status"],
         get_in(actual.packet_manifest, ["adjudication", "status"]),
-        actual.adjudication_placeholders["status"]
+        actual.adjudication_placeholders["status"],
+        actual.label_results_template["label_collection_status"],
+        get_in(actual.label_results_template, ["primary_label_freeze", "status"]),
+        get_in(actual.label_results_template, ["agreement_report", "status"])
       ]
       |> Enum.with_index()
       |> Enum.flat_map(fn {value, index} ->

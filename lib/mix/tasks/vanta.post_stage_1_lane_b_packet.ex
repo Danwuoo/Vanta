@@ -38,6 +38,7 @@ defmodule Mix.Tasks.Vanta.PostStage1LaneBPacket do
             Mix.shell().info("Lane B packet generated: #{result.packet_id}")
             Mix.shell().info("Packet: #{result.packet_dir}")
             Mix.shell().info("Label report skeleton: #{result.label_report_skeleton}")
+            Mix.shell().info("Label result template: #{result.label_results_template}")
             Mix.shell().info("Evidence items: #{result.evidence_item_count}")
             Mix.shell().info("Working-set items: #{result.working_set_item_count}")
 
