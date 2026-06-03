@@ -26,6 +26,7 @@ or inter-annotator agreement results. Label collection status is
 | `working_set_context_items.jsonl` | Twelve blinded working-set omission and relevance items: six long-context tasks by two blinded context arms. |
 | `adjudication_placeholders.json` | Empty adjudication record scaffold and trigger rules. |
 | `label_results_template.json` | Packet-local label result import template for `PS1-LB-LABEL-001`; not a core runtime schema. |
+| `coordinator_primary_label_packet_freeze.json` | Coordinator-only freeze record for the primary-labeler-visible allowlist. This is not a reviewer-visible artifact and does not freeze primary labels. |
 | `../../Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md` | Report skeleton for recording labels after collection. |
 
 ## Source Run
@@ -93,6 +94,12 @@ Primary labelers must not see before labels are frozen:
   baseline or treatment
 - task success flags from the source run
 - post-run repair notes when labeling the measured artifact
+
+The primary-labeler-visible packet was frozen for distribution in
+`coordinator_primary_label_packet_freeze.json` on 2026-06-03. This freeze only
+confirms the reviewer-visible allowlist. It does not freeze primary labels,
+does not expose fixture oracle metadata, and does not change label collection
+status from `Not yet run`.
 
 Coordinator-only source artifacts, including the original fixture `task.json`
 files, may be used after primary labels are frozen for scoring, secondary

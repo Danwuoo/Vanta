@@ -66,6 +66,9 @@ reported under `PS1-LB-LABEL-001`. A packet-local label result template and
 validator/import-summary task now provide a collection, import, validation, and
 report-filling path for real labels; this is evaluation tooling only and does
 not expand runtime behavior, core schemas, or approval paths.
+The primary-labeler-visible allowlist for this packet was frozen on
+2026-06-03 in the packet-local coordinator freeze record; primary labels have
+not been collected or frozen, and fixture oracle metadata remains withheld.
 
 The earlier `20260530_141649` Lane B packet remains only as a superseded
 historical packet for a non-accepted source run whose selector-missing item

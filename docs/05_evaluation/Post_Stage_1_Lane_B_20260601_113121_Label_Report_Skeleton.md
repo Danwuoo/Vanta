@@ -13,6 +13,9 @@
 - Label collection status: `Not yet run`
 - Report status: `Not yet run`
 - Claim level before labels: prepared blinded label packet only
+- Primary reviewer packet freeze: `frozen_for_primary_review_distribution`
+  on 2026-06-03; primary labels are not frozen because raw labels have not
+  been collected.
 
 ## Source Artifacts
 
@@ -29,6 +32,7 @@
 | Working-set context items | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/working_set_context_items.jsonl` |
 | Adjudication placeholders | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/adjudication_placeholders.json` |
 | Label result import template | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_template.json` |
+| Coordinator packet freeze record | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_primary_label_packet_freeze.json` |
 
 ## Supersession Boundary
 
@@ -67,6 +71,15 @@ The packet-local label result format is
 `PS1-LB-LABEL-RESULT-LOCAL-001`. It is a local collection/import template
 for this Lane B packet and does not extend core runtime schemas.
 
+The primary-labeler-visible packet allowlist is frozen in
+`coordinator_primary_label_packet_freeze.json`. The reviewer-visible materials
+are limited to `evidence_sufficiency_items.jsonl`,
+`working_set_context_items.jsonl`, `redacted_task_packets/`, and the fixture
+input artifacts referenced by those item records. Fixture oracle metadata, arm
+identity mapping, Lane A aggregate or item-level metric results, task success
+flags, and post-run repair notes remain withheld until primary labels are
+frozen.
+
 ## Collection, Import, Validation, And Reporting Flow
 
 Label collection remains `Not yet run` until real reviewer labels are
@@ -100,8 +113,7 @@ Reviewer fields for working-set raw labels:
 
 Required sequence:
 
-1. Freeze the blinded packet and distribute only primary-labeler-visible
-   packet files.
+1. Distribute only the frozen primary-labeler-visible packet files.
 2. Collect raw primary labels with stable reviewer IDs and no fixture oracle
    exposure.
 3. Freeze primary labels before fixture oracle fields, arm identity mapping,
@@ -211,8 +223,8 @@ Disallowed before labels are collected:
 
 ## Next Steps
 
-1. Freeze the primary labeling packet and distribute only the blinded item
-   files and referenced source artifacts to reviewers.
+1. Distribute only the frozen primary-labeler-visible packet files and
+   referenced fixture input artifacts to reviewers.
 2. Collect two independent labels per item or record an allowed secondary
    review substitution.
 3. Freeze primary labels before exposing fixture oracle fields or arm identity
