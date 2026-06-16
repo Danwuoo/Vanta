@@ -24,6 +24,15 @@ Label status: `Not yet run`.
 Accepted unlock: side-effect specification, schema impact review, evaluation
 planning, and implementation planning only.
 
+First planning bundle:
+[Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md),
+[Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md),
+and
+[Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md).
+This bundle defines a fixture-local Document Ops `COMMITTABLE` planning surface
+only. It does not authorize runtime execution, schema changes, approval
+collection, experiments, production readiness, or H5 validation.
+
 ## Inputs
 
 This gate depends on the existing side-effect boundary stack:
@@ -34,6 +43,9 @@ This gate depends on the existing side-effect boundary stack:
 - [Execution IR and Episode Semantics](../02_specs/Execution_IR_and_Episode_Semantics.md)
 - [Evidence Packet and Verifier Runtime](../02_specs/Evidence_Packet_and_Verifier_Runtime.md)
 - [Commit Abort Replay Semantics](../02_specs/Commit_Abort_Replay_Semantics.md)
+- [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
+- [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
+- [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
 

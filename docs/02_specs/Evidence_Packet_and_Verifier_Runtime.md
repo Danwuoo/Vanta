@@ -83,6 +83,12 @@ execution. `MEMORY_WRITE` contracts must include a memory candidate, source
 provenance, retention and scope policy, staleness and conflict checks, deletion
 or retraction path, verifier `accept`, and journal audit.
 
+The first routed `PS1-G8` planning bundle is
+[Post-Stage-1 Side-Effect Planning Draft Spec](Post_Stage_1_Side_Effect_Planning_Draft_Spec.md).
+It defines pre-effect evidence, post-effect evidence, verifier, and approval
+boundaries for a fixture-local Document Ops `COMMITTABLE` planning placeholder
+only. It does not collect approvals or produce post-effect evidence.
+
 ## Open Questions
 
 - Which evidence fields are mandatory for Stage 1?
@@ -96,5 +102,6 @@ or retraction path, verifier `accept`, and journal audit.
 - [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Post-Stage-1 Runtime Scope Proposal](../00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md)
 - [Side-Effect Escalation Gate](../00_manifest/Side_Effect_Escalation_Gate.md)
+- [Post-Stage-1 Side-Effect Planning Draft Spec](Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)

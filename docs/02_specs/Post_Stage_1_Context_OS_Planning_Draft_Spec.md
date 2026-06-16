@@ -25,7 +25,8 @@ Metric policy version: `PS1-LA-METRIC-001`.
 
 Label policy version: `PS1-LB-LABEL-001`.
 
-Lane B label status: `Not yet run`.
+Lane B label status: `complete_reported` for the first active
+`20260601_113121` packet.
 
 Implementation status: `Not authorized`.
 
@@ -46,7 +47,8 @@ This planning draft depends on:
 - [Post-Stage-1 Lane A 20260601_113121 Closure](../00_manifest/Post_Stage_1_Lane_A_20260601_113121_Closure.md)
 - `docs/04_experiments/results/post_stage_1_larger_sample/20260601_113121/run.json`
 - [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
-- [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Coordinator-only post-freeze context unblind memo](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_only_post_freeze_context_unblind_memo.md)
 
 ## Planning Boundary
 
@@ -133,16 +135,18 @@ The `20260601_113121` Lane A closure run supports these planning facts:
 | Disallowed side-effect classes | `0` | The measured run stayed inside accepted side-effect classes. |
 | Required artifacts valid | `true` | `run.json`, `summary.md`, and `fixture_inventory.md` were produced and linked. |
 
-## Lane B Blocking Items
+## Lane B Label Evidence And Remaining Limits
 
-These items remain planning-only because Lane B labels are `Not yet run`:
+The first active Lane B label report now provides packet-level human-labeled
+context-quality evidence for the blinded working-set items:
 
-| Item | Why it is blocked |
+| Item | Current status |
 | --- | --- |
-| Human-labeled omission evidence | The blinded packet exists, but raw labels, adjudication, and agreement do not. |
-| Human-labeled relevance evidence | The blinded packet exists, but double annotation or documented secondary review is missing. |
-| Broader context-quality claim | `PS1-LB-LABEL-001` requires label source, review mode, adjudication, and agreement reporting. |
-| H3 interpretation | The source run is accepted only for the named Lane A threshold-governed sample; Lane B labels, Context OS implementation, and Context OS evaluation remain missing. |
+| Human-labeled omission evidence | Available for the named active packet: `context_omission_error_rate = 0.3684` across blinded working-set items. |
+| Human-labeled relevance evidence | Available for the named active packet: `working_set_relevance_score = 0.7742` across blinded working-set items. |
+| Post-freeze arm interpretation | Available only in the coordinator-only unblind memo. It maps blinded arms to the PS1-G5 compliant bounded raw-trace baseline and `Working Set Compiler v0` treatment after primary label freeze, and must not be copied into reviewer-visible packet records. |
+| Broader context-quality claim | Limited to the named active packet; raw agreement counts are reported because the sample is small. |
+| H3 interpretation | Still blocked. The source run is accepted only for the named Lane A threshold-governed sample, and Context OS implementation plus Context OS evaluation remain missing. |
 | Full Context OS claim | Full Context OS implementation, learned retrieval, compression, and memory governance remain outside this gate. |
 
 ## Rejection Conditions
@@ -156,6 +160,7 @@ only as exploratory if it:
 - treats the `20260601_113121` Lane A closure as H3 or full Context OS
   validation
 - treats fixture-oracle working-set metrics as human-labeled evidence
+- copies post-freeze arm identity mapping into reviewer-visible packet artifacts
 - hides OpenClaw local harness identity
 - introduces learned retrieval, learned ranking, learned compression, memory
   writes, or full memory dumps
@@ -179,6 +184,7 @@ only as exploratory if it:
 - [Context OS Expansion Gate](../00_manifest/Context_OS_Expansion_Gate.md)
 - [Context OS and Working Set Compiler Note](Context_OS_and_Working_Set_Compiler_Note.md)
 - [Post-Stage-1 Lane A 20260601_113121 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
-- [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Coordinator-only post-freeze context unblind memo](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_only_post_freeze_context_unblind_memo.md)
 - [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
 - [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)

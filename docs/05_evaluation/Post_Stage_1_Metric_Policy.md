@@ -131,9 +131,10 @@ interpretation boundaries.
 
 `PS1-G3` and `PS1-G4` are accepted by
 [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
-Label collection remains `Not yet run`.
+The first active Lane B packet for `20260601_113121` now has collected,
+frozen, validated, and reported primary labels under `PS1-LB-LABEL-001`.
 
-Until policy-compliant human or secondary labels are collected and reported:
+Outside a policy-compliant label packet and report:
 
 - evidence sufficiency may still be scored by automated structural checks or
   fixture oracles for acceptance-threshold purposes when the label source is
@@ -165,5 +166,6 @@ adjudication, agreement, and interpretation-boundary metadata.
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report](Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 - [Metrics Definition](Metrics_Definition.md)
 - [Evaluation Report Template](Evaluation_Report_Template.md)

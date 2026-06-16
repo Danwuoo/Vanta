@@ -1,4 +1,4 @@
-# Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton
+# Post-Stage-1 Lane B 20260601_113121 Label Report
 
 ## Experiment
 
@@ -10,12 +10,19 @@
 - Label policy version: `PS1-LB-LABEL-001`
 - Metric policy version: `PS1-LA-METRIC-001`
 - Context gate policy version: `PS1-LC-CTX-GATE-001`
-- Label collection status: `Not yet run`
-- Report status: `Not yet run`
-- Claim level before labels: prepared blinded label packet only
+- Label collection status: `complete_reported`
+- Report status: `reported_from_validated_primary_labels`
+- Claim level after labels: `20260601_113121` active packet Lane B labeled
+  evaluation evidence only
 - Primary reviewer packet freeze: `frozen_for_primary_review_distribution`
-  on 2026-06-03; primary labels are not frozen because raw labels have not
-  been collected.
+  on 2026-06-03
+- Primary label freeze: `frozen` at `2026-06-05T21:40:44+08:00`
+- Fixture oracle metadata exposed before primary label freeze: `no`
+
+For this packet, `complete_reported` means the primary labels were collected,
+frozen, validated, import-summarized, and reported in this Lane B label report.
+It is a packet-local evaluation status only and does not create a runtime
+approval or broader validation claim.
 
 ## Source Artifacts
 
@@ -30,13 +37,13 @@
 | Redacted task packets | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/redacted_task_packets/` |
 | Evidence sufficiency items | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/evidence_sufficiency_items.jsonl` |
 | Working-set context items | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/working_set_context_items.jsonl` |
-| Adjudication placeholders | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/adjudication_placeholders.json` |
-| Label result import template | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_template.json` |
+| Filled primary label results | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_primary_filled.json` |
+| Import summary | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_import_summary.json` |
 | Coordinator packet freeze record | `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_primary_label_packet_freeze.json` |
 
 ## Supersession Boundary
 
-This report skeleton supersedes
+This report supersedes
 `Post_Stage_1_Lane_B_20260530_141649_Label_Report_Skeleton.md` as the active
 Lane B reporting shell. The older skeleton remains a historical shell for the
 non-accepted `20260530_141649` source run and its prepared packet only.
@@ -51,86 +58,43 @@ rebuild.
 
 | Metric | Item count | Review mode | Label source | Status |
 | --- | ---: | --- | --- | --- |
-| `evidence_sufficiency_score` | 8 | `double_human_adjudicated` | `human` | `Not yet run` |
-| `context_omission_error_rate` | 12 | `double_human_adjudicated` | `human` | `Not yet run` |
-| `working_set_relevance_score` | 12 | `double_human_adjudicated` | `human` | `Not yet run` |
+| `evidence_sufficiency_score` | 8 | `double_human_adjudicated` | `human` | `complete_reported` |
+| `context_omission_error_rate` | 12 | `double_human_adjudicated` | `human` | `complete_reported` |
+| `working_set_relevance_score` | 12 | `double_human_adjudicated` | `human` | `complete_reported` |
 
-Reviewer identity policy: anonymized reviewer IDs are allowed, but each raw
-label must preserve a stable reviewer ID.
+Reviewer identity policy: stable anonymized reviewer IDs are preserved in the
+filled result file. The collected primary reviewer IDs are `reviewer_A` and
+`reviewer_B`.
 
-Fixture oracle metadata exposed before label freeze: `no`.
-
-Blinding policy: primary labelers see only the packet item records, referenced
-redacted task packets, fixture input artifacts, redacted candidate-ref
-inventories, and blinded context arm names. Fixture oracle role fields, original
-`input_artifacts.role` and `input_artifacts.description` fields, arm identity
-mapping, expected labels, task success flags, aggregate item metrics, and
-post-run repair notes remain withheld until labels are frozen.
+Blinding policy: primary labelers received only the packet item records,
+referenced redacted task packets, fixture input artifacts, redacted
+candidate-ref inventories, and blinded context arm names. Fixture oracle role
+fields, original `input_artifacts.role` and `input_artifacts.description`
+fields, arm identity mapping, expected labels, task success flags, aggregate
+item metrics, and post-run repair notes were withheld until primary labels were
+frozen.
 
 The packet-local label result format is
-`PS1-LB-LABEL-RESULT-LOCAL-001`. It is a local collection/import template
-for this Lane B packet and does not extend core runtime schemas.
-
-The primary-labeler-visible packet allowlist is frozen in
-`coordinator_primary_label_packet_freeze.json`. The reviewer-visible materials
-are limited to `evidence_sufficiency_items.jsonl`,
-`working_set_context_items.jsonl`, `redacted_task_packets/`, and the fixture
-input artifacts referenced by those item records. Fixture oracle metadata, arm
-identity mapping, Lane A aggregate or item-level metric results, task success
-flags, and post-run repair notes remain withheld until primary labels are
-frozen.
+`PS1-LB-LABEL-RESULT-LOCAL-001`. It is a local collection/import format for
+this Lane B packet and does not extend core runtime schemas.
 
 ## Collection, Import, Validation, And Reporting Flow
 
-Label collection remains `Not yet run` until real reviewer labels are
-imported from a filled result file and validated under `PS1-LB-LABEL-001`.
-The template file is not label evidence.
+Completed sequence:
 
-Reviewer fields for evidence sufficiency raw labels:
-
-- `metric: evidence_sufficiency_score`
-- `item_id`
-- `label_source: human`
-- `reviewer_id`
-- `raw_label_0_to_4_or_needs_review`
-- `confidence`
-- `rationale`
-- `referenced_artifact_ids`
-
-Reviewer fields for working-set raw labels:
-
-- `metric: working_set_context`
-- `item_id`
-- `label_source: human`
-- `reviewer_id`
-- `omission` fields for severity, omitted task-critical refs,
-  task-critical candidate refs, `critical_omission`, and denominator refs
-- `per_ref_relevance_labels`
-- `packet_relevance_quality`
-- `confidence`
-- `rationale`
-- `referenced_artifact_ids`
-
-Required sequence:
-
-1. Distribute only the frozen primary-labeler-visible packet files.
-2. Collect raw primary labels with stable reviewer IDs and no fixture oracle
-   exposure.
-3. Freeze primary labels before fixture oracle fields, arm identity mapping,
-   source task oracle fields, or aggregate Lane A item results are exposed.
-4. Validate the filled result file with
-   `mix vanta.post_stage_1_lane_b_label_results --mode validate --results <filled-results.json>`.
-5. Complete documented secondary review only if the report records the
-   substitution allowed by `PS1-LB-LABEL-001`.
-6. Complete adjudication records for all validator-triggered disagreements,
-   `needs_review` labels, evidence `0-2` versus `3-4` splits, harmful
-   relevance labels, task-critical disputes, critical-omission disputes, and
-   denominator disputes.
-7. Produce an import summary with
-   `mix vanta.post_stage_1_lane_b_label_results --mode import-summary --results <filled-results.json> --out <summary.json>`.
-8. Fill this report only from real labels, adjudicated labels, agreement
-   counts, fixture-oracle exposure metadata, and the validated import
-   summary.
+1. Distributed only the frozen primary-labeler-visible packet files through the
+   package prepared from the coordinator allowlist.
+2. Collected raw primary labels with stable reviewer IDs and no fixture oracle
+   exposure before freeze.
+3. Froze primary labels at `2026-06-05T21:40:44+08:00`.
+4. Validated the filled result file:
+   `mix vanta.post_stage_1_lane_b_label_results --mode validate --results docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_primary_filled.json`.
+5. Validator reported zero `needs_review` labels, zero adjudication triggers,
+   and zero unhandled adjudication triggers.
+6. Produced import summary:
+   `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_import_summary.json`.
+7. Filled this report from the real raw labels, primary label freeze metadata,
+   raw agreement counts, validation output, and import summary.
 
 ## Candidate Sample
 
@@ -160,75 +124,144 @@ Working-set candidates:
 
 ## Label Results
 
-Human labels have not been collected.
-
 | Metric | Raw labels | Adjudicated labels | Score | `needs_review` count | Status |
-| --- | --- | --- | --- | --- | --- |
-| `evidence_sufficiency_score` | `Not yet run` | `Not yet run` | `Not yet run` | `Not yet run` | `Not yet run` |
-| `context_omission_error_rate` | `Not yet run` | `Not yet run` | `Not yet run` | `Not yet run` | `Not yet run` |
-| `working_set_relevance_score` | `Not yet run` | `Not yet run` | `Not yet run` | `Not yet run` | `Not yet run` |
+| --- | ---: | --- | ---: | ---: | --- |
+| `evidence_sufficiency_score` | 16 | No adjudication required; exact matching primary labels retained | `0.9375` | 0 | `complete_reported` |
+| `context_omission_error_rate` | 24 | No adjudication required; exact matching primary labels retained | `0.3684` (`14 / 38`) | 0 | `complete_reported` |
+| `working_set_relevance_score` | 24 | No adjudication required; exact matching primary labels retained | `0.7742` (`24 / 31`) | 0 | `complete_reported` |
+
+Evidence sufficiency raw labels:
+
+| Item | Reviewer labels | Item normalized score |
+| --- | --- | ---: |
+| `lb20260601-es-001` | `4`, `4` | `1.0000` |
+| `lb20260601-es-002` | `4`, `4` | `1.0000` |
+| `lb20260601-es-003` | `4`, `4` | `1.0000` |
+| `lb20260601-es-004` | `4`, `4` | `1.0000` |
+| `lb20260601-es-005` | `3`, `3` | `0.7500` |
+| `lb20260601-es-006` | `4`, `4` | `1.0000` |
+| `lb20260601-es-007` | `3`, `3` | `0.7500` |
+| `lb20260601-es-008` | `4`, `4` | `1.0000` |
+
+Human-derived working-set labels by blinded arm:
+
+| Blinded arm | Omission error rate | Working-set relevance score |
+| --- | ---: | ---: |
+| `context_arm_A` | `0.7368` (`14 / 19`) | `0.4545` (`5 / 11`) |
+| `context_arm_B` | `0.0000` (`0 / 19`) | `0.9500` (`19 / 20`) |
+| Combined | `0.3684` (`14 / 38`) | `0.7742` (`24 / 31`) |
+
+The blinded arm names are reported without revealing the arm identity mapping.
 
 ## Adjudication
 
-Adjudication status: `Not yet run`.
+Adjudication status: `completed_no_records_required`.
 
-Required adjudication triggers:
+Validator output:
 
-- any reviewer marks `needs_review`
-- evidence sufficiency labels differ by two or more levels
-- evidence sufficiency labels split across the `0-2` versus `3-4`
-  acceptability boundary
-- reviewers disagree on `task_critical`, `critical_omission`, `harmful`, or
-  denominator fields for working-set metrics
+- `needs_review_count`: 0
+- `adjudication_required_count`: 0
+- `unhandled_adjudication_required_count`: 0
+- `adjudication_record_count`: 0
 
-Adjudication records must include original labels, adjudicated label,
-adjudicator ID, rationale, artifact refs inspected, and whether fixture oracle
-metadata was exposed.
+No reviewer marked `needs_review`; no evidence labels differed by two or more
+levels; no evidence labels split across the `0-2` versus `3-4` acceptability
+boundary; and reviewers did not disagree on harmful relevance,
+task-critical refs, critical omission, or denominator fields.
+
+Fixture oracle metadata exposure during adjudication: `not_exposed`; no
+adjudication inspection was required after primary labels were frozen.
 
 ## Agreement
 
-Inter-annotator agreement: `Not yet run`.
+Inter-annotator agreement status: `small_sample_raw_counts`.
 
-If this first active batch remains too small for stable agreement statistics,
-report raw agreement counts and state that agreement statistics are not
-meaningful at the sample size.
+Raw agreement counts:
+
+| Label surface | Exact agreement | Exact disagreement |
+| --- | ---: | ---: |
+| Evidence sufficiency raw label | 8 / 8 item pairs | 0 / 8 item pairs |
+| Working-set omission fields | 12 / 12 item pairs | 0 / 12 item pairs |
+| Working-set per-ref relevance labels | 12 / 12 item pairs | 0 / 12 item pairs |
+| Working-set packet relevance quality | 12 / 12 item pairs | 0 / 12 item pairs |
+
+This first active packet is too small for stable inter-annotator agreement
+statistics, so the report gives raw agreement counts only.
+
+## Import Summary
+
+Validated import summary:
+
+- Summary path:
+  `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_import_summary.json`
+- Result path:
+  `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_primary_filled.json`
+- Raw label counts:
+  `evidence_sufficiency_score = 16`,
+  `working_set_context = 24`
+- Review coverage:
+  `evidence_sufficiency_score = 8 / 8`,
+  `context_omission_error_rate = 12 / 12`,
+  `working_set_relevance_score = 12 / 12`
+- Secondary review count: 0
+- Adjudication required count: 0
+- Unhandled adjudication required count: 0
+- Fixture oracle exposed before freeze: `false`
+- Reported metric score parity:
+  `evidence_sufficiency_score = 0.9375`,
+  `context_omission_error_rate = 0.3684 (14 / 38)`,
+  `working_set_relevance_score = 0.7742 (24 / 31)`
+- Parity check command:
+  `mix vanta.post_stage_1_lane_b_label_results --mode report-parity --results docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_primary_filled.json --import-summary docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_import_summary.json --report docs/05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md`
 
 ## Interpretation Boundaries
 
-Allowed before labels are collected:
+Allowed after this report:
 
-- The `20260601_113121` Lane A closure run has a prepared blinded Lane B label
-  packet.
-- The packet includes candidate artifact paths, review modes, blinding
-  boundary, supersession boundary, and adjudication placeholders for the three
-  named metrics.
+- The `20260601_113121` Lane A closure run has a completed active Lane B label
+  packet with 40 real raw primary labels, primary label freeze, validation,
+  raw agreement counts, and import summary under `PS1-LB-LABEL-001`.
+- The labels are Lane B labeled evaluation evidence for the named active packet
+  and the named metrics only.
 
-Disallowed before labels are collected:
+Disallowed:
 
-- human-labeled broader evaluation evidence
 - new `accepted_by_closure` status beyond the Lane A source closure
 - H1-H5 validation
 - full Context OS validation
 - production readiness
 - human-in-the-loop verifier or runtime approval claims
 - replacing the measured Lane A aggregate metrics with label results
+- model-only baseline claims for OpenClaw local harness results
 
 ## Findings
 
-`Not yet run`.
+- The active packet has complete primary coverage: 16 evidence sufficiency raw
+  labels and 24 working-set context raw labels.
+- Both reviewers agreed exactly across all item pairs, so validator-triggered
+  adjudication was not required.
+- Evidence sufficiency labels produce a human-labeled score of `0.9375` for the
+  sampled evidence items.
+- Human-derived working-set context labels produce combined
+  `context_omission_error_rate = 0.3684` and
+  `working_set_relevance_score = 0.7742` across the blinded working-set items.
 
 ## Failures And Risks
 
-`Not yet run`.
+- The sample remains small: 8 evidence sufficiency items and 12 working-set
+  context items. Raw agreement counts are reported, but stable agreement
+  statistics are not meaningful at this size.
+- The report is limited to this active Lane B packet. It is not a broader
+  runtime validation result and does not validate H1-H5.
+- Human-derived working-set relevance must be read with omission results,
+  because high relevance among included refs can still hide omitted critical
+  refs.
 
 ## Next Steps
 
-1. Distribute only the frozen primary-labeler-visible packet files and
-   referenced fixture input artifacts to reviewers.
-2. Collect two independent labels per item or record an allowed secondary
-   review substitution.
-3. Freeze primary labels before exposing fixture oracle fields or arm identity
-   mappings.
-4. Complete adjudication records for all required disagreements.
-5. Fill this report with raw labels, adjudicated labels, agreement counts, and
-   interpretation boundaries.
+1. Use the validated import summary as the machine-readable import record for
+   this packet.
+2. Keep future Lane B packets separately named and policy-versioned if broader
+   label coverage is needed.
+3. Keep Context OS, side-effect, runtime approval, and H1-H5 claims routed
+   through later accepted specs, schemas, experiments, and evaluation reports.

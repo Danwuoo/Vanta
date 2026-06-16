@@ -95,6 +95,13 @@ requirements, rollback or compensation status, and journal references before
 any action becomes executable. `IRREVERSIBLE` execution remains blocked until a
 successor gate explicitly accepts the target domain and escalation policy.
 
+The first routed `PS1-G8` planning bundle is
+[Post-Stage-1 Side-Effect Planning Draft Spec](Post_Stage_1_Side_Effect_Planning_Draft_Spec.md).
+It names `commit_fixture_document_candidate` as a fixture-local Document Ops
+`COMMITTABLE` planning placeholder only. The placeholder is not an Execution IR
+action enum, must not appear in task `allowed_actions`, and must not enter the
+runtime execution path in this batch.
+
 ## Open Questions
 
 - What is the minimum dependency graph representation for Stage 1?
@@ -109,5 +116,6 @@ successor gate explicitly accepts the target domain and escalation policy.
 - [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Post-Stage-1 Runtime Scope Proposal](../00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md)
 - [Side-Effect Escalation Gate](../00_manifest/Side_Effect_Escalation_Gate.md)
+- [Post-Stage-1 Side-Effect Planning Draft Spec](Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)

@@ -12,9 +12,15 @@ It prepares artifact packets for:
 - `context_omission_error_rate`
 - `working_set_relevance_score`
 
-It does not contain human labels, secondary-review labels, adjudicated labels,
-or inter-annotator agreement results. Label collection status is
-`Not yet run`.
+The prepared item files remain the frozen primary-labeler-visible packet. The
+packet directory now also contains the first filled primary label result file
+and import summary for this active packet. Label collection status is
+`complete_reported`.
+
+For this packet, `complete_reported` means the primary labels were collected,
+frozen, validated, import-summarized, and reported in the companion Lane B
+label report. It is a packet-local evaluation status only and does not create a
+runtime approval or broader validation claim.
 
 ## Packet Contents
 
@@ -26,8 +32,10 @@ or inter-annotator agreement results. Label collection status is
 | `working_set_context_items.jsonl` | Twelve blinded working-set omission and relevance items: six long-context tasks by two blinded context arms. |
 | `adjudication_placeholders.json` | Empty adjudication record scaffold and trigger rules. |
 | `label_results_template.json` | Packet-local label result import template for `PS1-LB-LABEL-001`; not a core runtime schema. |
+| `label_results_primary_filled.json` | Filled packet-local primary label result file with 40 real raw labels, primary label freeze, raw agreement counts, and no validator-triggered adjudication requirements. |
+| `label_results_import_summary.json` | Machine-readable validation/import summary for the filled primary label result file. |
 | `coordinator_primary_label_packet_freeze.json` | Coordinator-only freeze record for the primary-labeler-visible allowlist. This is not a reviewer-visible artifact and does not freeze primary labels. |
-| `../../Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md` | Report skeleton for recording labels after collection. |
+| `../../Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md` | Filled label report for this active packet. |
 
 ## Source Run
 
@@ -64,9 +72,9 @@ chooses to label that historical run and states why.
 
 | Metric | Review mode | Label collection status |
 | --- | --- | --- |
-| `evidence_sufficiency_score` | `double_human_adjudicated` | `Not yet run` |
-| `context_omission_error_rate` | `double_human_adjudicated` | `Not yet run` |
-| `working_set_relevance_score` | `double_human_adjudicated` | `Not yet run` |
+| `evidence_sufficiency_score` | `double_human_adjudicated` | `complete_reported` |
+| `context_omission_error_rate` | `double_human_adjudicated` | `complete_reported` |
+| `working_set_relevance_score` | `double_human_adjudicated` | `complete_reported` |
 
 Double human annotation is the default for this first active packet. A
 documented secondary review may be used only if a later report records the
@@ -98,13 +106,22 @@ Primary labelers must not see before labels are frozen:
 The primary-labeler-visible packet was frozen for distribution in
 `coordinator_primary_label_packet_freeze.json` on 2026-06-03. This freeze only
 confirms the reviewer-visible allowlist. It does not freeze primary labels,
-does not expose fixture oracle metadata, and does not change label collection
-status from `Not yet run`.
+does not expose fixture oracle metadata, and is separate from the primary label
+freeze recorded in `label_results_primary_filled.json` on 2026-06-05.
 
 Coordinator-only source artifacts, including the original fixture `task.json`
 files, may be used after primary labels are frozen for scoring, secondary
 review, or adjudication. Any exposure during adjudication must be recorded in
 `adjudication_placeholders.json` or its filled successor.
+
+## Post-Freeze Unblind Guard
+
+`mix vanta.post_stage_1_lane_b_packet --mode check` includes an executable
+post-freeze unblind guard over reviewer-visible JSONL, redacted task packets,
+`label_results_template.json`, and any packet-local result scaffold present.
+The guard rejects coordinator-only arm mapping fields, source arm labels, and
+post-freeze memo markers. It does not unblind, rewrite, or expand the frozen
+item files.
 
 ## Candidate Sample
 
@@ -147,7 +164,9 @@ Working-set item labels must fill:
 - confidence
 - rationale
 
-All fields are currently `Not yet run`.
+The filled primary labels are recorded in `label_results_primary_filled.json`.
+The item JSONL records remain the frozen reviewer-visible packet and are not
+edited in place.
 
 ## Label Result Import Path
 
@@ -173,11 +192,19 @@ mix vanta.post_stage_1_lane_b_label_results --mode import-summary --results <fil
 These commands must not be used to treat templates, dry-run fixtures, or
 generated test data as real human labels.
 
+For the first active packet batch, the filled result file validates with:
+
+- 16 `evidence_sufficiency_score` raw labels
+- 24 `working_set_context` raw labels
+- 0 `needs_review` labels
+- 0 adjudication-required triggers
+- 0 unhandled adjudication requirements
+
 ## Interpretation Boundary
 
-This packet may support a future Lane B label report after labels are collected
-and adjudicated. Until then it may only be described as a prepared blinded label
-packet from the accepted Lane A source run. It must not be described as
-human-labeled evidence, H1-H5 validation, full Context OS validation,
-production readiness, a runtime approval path, or new closure acceptance beyond
-the Lane A `20260601_113121` closure.
+This packet now supports the filled Lane B label report for the named
+`20260601_113121` active packet. It may be described only as Lane B labeled
+evaluation evidence for the named packet and metrics. It must not be described
+as H1-H5 validation, full Context OS validation, production readiness, a runtime
+approval path, or new closure acceptance beyond the Lane A `20260601_113121`
+closure.

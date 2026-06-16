@@ -18,7 +18,8 @@ Source Lane A run: `20260601_113121`.
 
 Source Lane A closure status: `accepted_by_closure`.
 
-Lane B label status: `Not yet run`.
+Lane B label status: `complete_reported` for the first active
+`20260601_113121` packet.
 
 Schema decision for this batch: no schema changes.
 
@@ -30,10 +31,12 @@ Implementation status: `Not authorized`.
 current batch does not add runtime behavior, learned retrieval, learned ranking,
 compression, memory governance, or memory writes.
 
-No schema enum changes are justified in this batch. Human or secondary Lane B
-labels have not been collected, so the repository does not yet have enough
-label evidence to specify new context-quality schema contracts beyond the
-existing planning and label-packet artifacts.
+No schema enum changes are justified in this batch. The first active Lane B
+packet now has policy-compliant primary labels, but the packet-local result
+format and import summary are sufficient for this reporting layer. The label
+batch does not yet create a concrete need for new core context-quality schema
+contracts beyond the existing planning, `eval_result`, and label-packet
+artifacts.
 
 ## Current Schema Coverage
 
@@ -44,7 +47,7 @@ existing planning and label-packet artifacts.
 | `verifier_output.schema.json` | Captures verifier decisions and required evidence links. | No change. Context planning does not alter verifier output. |
 | `episode_journal.schema.json` | Captures replay, commit, rollback, and memory-effect audit fields. | No change. Memory-write count remains `0`. |
 | `experiment_run.schema.json` | Captures measured run artifacts and aggregate metrics. | No change for this planning batch. |
-| `eval_result.schema.json` | Captures evaluation outputs and labels when reported. | No change until Lane B labels are collected and reviewed. |
+| `eval_result.schema.json` | Captures evaluation outputs and labels when reported. | No change. The first active Lane B result remains packet-local evaluation evidence and does not require a core schema change. |
 | `benchmark_task.schema.json` | Captures fixture constraints and allowed side-effect classes. | No enum or fixture-contract change in this batch. |
 | `execution_step.schema.json` | Captures action type and side-effect class contracts. | No action or side-effect enum change in this batch. |
 
@@ -57,7 +60,7 @@ existing planning and label-packet artifacts.
 | Side-effect enums | Do not add or enable `MEMORY_WRITE`, `COMMITTABLE`, or `IRREVERSIBLE` classes. |
 | Memory refs | Do not add memory-store read or memory-append schema behavior. |
 | Learned retrieval | Do not add retrieval, ranking, compression, or model-feedback schema fields. |
-| Label packet schemas | Do not introduce a formal label-packet schema until Lane B labels expose a concrete schema need. |
+| Label packet schemas | Do not introduce a formal label-packet schema from the first active packet alone; the packet-local result format is sufficient for this batch. |
 
 ## Lane A Evidence Supporting This Review
 
@@ -78,25 +81,30 @@ boundary:
 These facts are Lane A structural or fixture-oracle evidence. They are not
 human-labeled Context OS evidence.
 
-## Lane B Limits
+## Lane B Label Evidence And Schema Limits
 
-The active blinded Lane B packet for `20260601_113121` is prepared, but:
+The active blinded Lane B packet for `20260601_113121` now has:
 
-- raw labels are `Not yet run`
-- secondary review is `Not yet run`
-- adjudication is `Not yet run`
-- agreement reporting is `Not yet run`
+- 40 real raw primary labels
+- primary label freeze recorded on 2026-06-05
+- zero `needs_review` labels
+- zero validator-triggered adjudication requirements
+- raw agreement counts and import summary
+- a coordinator-only post-freeze context unblind memo for arm mapping and
+  interpretation, outside reviewer-visible packet records
 
 The earlier `20260530_141649` packet remains only as a superseded historical
 packet for its non-accepted source run. It does not create a schema requirement
 for the active Context OS planning bundle.
 
-Because labels are missing, this review cannot justify:
+Because the label evidence is limited to the first active packet, this review
+still cannot justify:
 
 - a new context-quality result schema
 - a new context omission or relevance annotation schema
 - schema fields for learned selection quality
 - schema fields that convert human labels into verifier or runtime approvals
+- schema fields that expose post-freeze arm identity mapping to reviewers
 - full Context OS schema contracts
 
 ## Future Schema Candidates
@@ -131,6 +139,7 @@ A later schema batch may be drafted only when it names:
 - [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 - [Post-Stage-1 Lane A 20260601_113121 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
 - [Post-Stage-1 Lane A 20260601_113121 Closure](../00_manifest/Post_Stage_1_Lane_A_20260601_113121_Closure.md)
-- [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Coordinator-only post-freeze context unblind memo](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_only_post_freeze_context_unblind_memo.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
 - [working_set.schema.json](working_set.schema.json)

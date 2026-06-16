@@ -5,8 +5,8 @@
 Define the minimum evaluation plan for Context OS planning under `PS1-G7`,
 using the `20260601_113121` Lane A closure run as the measured input.
 
-This plan is not an experiment result. It does not run full Context OS, collect
-labels, change schemas, or validate H3.
+This plan is not an experiment result. It does not run full Context OS, change
+schemas, or validate H3.
 
 ## Status
 
@@ -22,7 +22,8 @@ Source threshold status: `pass_acceptance_candidate`.
 
 Closure status: `accepted_by_closure` for the named Lane A Document Ops sample.
 
-Lane B label status: `Not yet run`.
+Lane B label status: `complete_reported` for the first active
+`20260601_113121` packet.
 
 Run status for this plan: `Not yet run`.
 
@@ -38,7 +39,8 @@ This plan uses:
 - `docs/04_experiments/results/post_stage_1_larger_sample/20260601_113121/summary.md`
 - `docs/04_experiments/results/post_stage_1_larger_sample/20260601_113121/fixture_inventory.md`
 - [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
-- [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Coordinator-only post-freeze context unblind memo](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_only_post_freeze_context_unblind_memo.md)
 
 ## Evidence Already Supported By Lane A
 
@@ -62,15 +64,17 @@ The treatment working-set stratum covered six long-context fixtures:
 - `docops_ws_traceability_long_001`
 - `docops_ps1_ws_structured_edit_context_001`
 
-## Evidence Still Not Available
+## Lane B Label Evidence And Remaining Gaps
 
-The following remain unavailable because Lane B labels are `Not yet run`:
+The first active Lane B label report now provides packet-level human-labeled
+context-quality evidence for the blinded working-set items:
 
-| Missing evidence | Required before use |
+| Evidence item | Current status |
 | --- | --- |
-| Human-labeled context omission results | Raw labels, frozen primary labels, adjudication where required, and report completion under `PS1-LB-LABEL-001`. |
-| Human-labeled working-set relevance results | Double human annotation or documented secondary review plus adjudication and agreement reporting. |
-| Broader context-quality interpretation | Complete label source and blinding metadata. |
+| Human-labeled context omission results | Available for the named active packet: `context_omission_error_rate = 0.3684` across blinded working-set items. |
+| Human-labeled working-set relevance results | Available for the named active packet: `working_set_relevance_score = 0.7742` across blinded working-set items. |
+| Post-freeze arm interpretation | Available only in the coordinator-only unblind memo. It maps the blinded arms to the bounded raw-trace context baseline and `Working Set Compiler v0` treatment after primary label freeze, and must not be copied into reviewer-visible packet records. |
+| Broader context-quality interpretation | Limited to the named active packet; raw agreement counts are reported because the sample is small. |
 | Context OS expansion evidence beyond v0 | A later accepted spec, schema decision, fixed arms, and measured run. |
 | H3 validation | Not available from this planning batch. |
 
@@ -159,12 +163,12 @@ A future Context OS evaluation run must not start until:
 
 ## Reporting Labels
 
-Allowed report labels before Lane B labels are collected:
+Allowed report labels after the first active Lane B packet:
 
 - `Context OS planning draft`
 - `context evaluation pilot`
 - `Working Set Compiler v0 result without Context OS claim`
-- `blocked_missing_lane_b_labels`
+- `Lane B packet-level context-quality evidence`
 
 Disallowed report labels in this plan:
 
@@ -174,11 +178,12 @@ Disallowed report labels in this plan:
 - `learned retrieval validated`
 - `memory governance validated`
 - `production ready`
+- reviewer-visible packet records containing post-freeze arm identity mapping
 
 ## Non-goals
 
 - This plan does not run an experiment.
-- This plan does not collect Lane B labels.
+- This plan itself did not collect Lane B labels.
 - This plan does not change schemas.
 - This plan does not implement full Context OS.
 - This plan does not authorize learned retrieval, learned ranking, or
@@ -195,4 +200,5 @@ Disallowed report labels in this plan:
 - [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
 - [Post-Stage-1 Lane A 20260601_113121 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
-- [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Coordinator-only post-freeze context unblind memo](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_only_post_freeze_context_unblind_memo.md)

@@ -99,7 +99,7 @@ This closure does not claim:
 
 | Follow-up | Status |
 | --- | --- |
-| Lane B labels | Human or secondary labels remain `Not yet run`; no broader label claim is created by this closure. |
+| Lane B labels | 2026-06-01 closure-time status: no Lane B labels were accepted by this closure. Post-closure routing now uses the companion Lane B report, whose first primary batch is `complete_reported`; no broader label claim is created by this closure. |
 | Context OS planning | Existing `PS1-G7` planning artifacts may cite the accepted Lane A run as a threshold-governed Document Ops closure, but not as H3 or full Context OS validation. |
 | Side-effect escalation | `PS1-G8` remains planning-only; no runtime side-effect class expansion is authorized. |
 

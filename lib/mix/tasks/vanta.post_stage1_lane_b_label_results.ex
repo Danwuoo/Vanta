@@ -18,6 +18,8 @@ defmodule Mix.Tasks.Vanta.PostStage1LaneBLabelResults do
           run_timestamp: :string,
           packet_dir: :string,
           results: :string,
+          report: :string,
+          import_summary: :string,
           out: :string
         ]
       )
@@ -86,16 +88,36 @@ defmodule Mix.Tasks.Vanta.PostStage1LaneBLabelResults do
             end
         end
 
+      "report-parity" ->
+        results_path = required_results!(opts, mode)
+        report_path = Keyword.get(opts, :report, default_report_path(opts))
+
+        import_summary_path =
+          Keyword.get(opts, :import_summary, default_import_summary_path(opts))
+
+        case Vanta.PostStage1LaneBLabelResults.validate_report_parity(
+               report_path,
+               results_path,
+               import_summary_path,
+               packet_opts
+             ) do
+          {:ok, summary} ->
+            print_report_parity_summary(summary)
+
+          {:error, errors} ->
+            Mix.raise("Lane B label report parity failed:\n#{format_errors(errors)}")
+        end
+
       other ->
         Mix.raise(
-          "Unsupported --mode #{inspect(other)}; expected template, validate, or import-summary"
+          "Unsupported --mode #{inspect(other)}; expected template, validate, import-summary, or report-parity"
         )
     end
   end
 
   defp compact_opts(opts) do
     opts
-    |> Keyword.drop([:mode, :results, :out])
+    |> Keyword.drop([:mode, :results, :report, :import_summary, :out])
     |> Enum.reject(fn {_key, value} -> is_nil(value) end)
   end
 
@@ -107,6 +129,23 @@ defmodule Mix.Tasks.Vanta.PostStage1LaneBLabelResults do
   end
 
   defp default_template_path(opts) do
+    default_packet_dir(opts)
+    |> Path.join("label_results_template.json")
+  end
+
+  defp default_import_summary_path(opts) do
+    default_packet_dir(opts)
+    |> Path.join("label_results_import_summary.json")
+  end
+
+  defp default_report_path(opts) do
+    run_timestamp =
+      Keyword.get(opts, :run_timestamp, Vanta.PostStage1LaneBPacket.default_run_timestamp())
+
+    "docs/05_evaluation/Post_Stage_1_Lane_B_#{run_timestamp}_Label_Report_Skeleton.md"
+  end
+
+  defp default_packet_dir(opts) do
     run_timestamp =
       Keyword.get(opts, :run_timestamp, Vanta.PostStage1LaneBPacket.default_run_timestamp())
 
@@ -115,7 +154,6 @@ defmodule Mix.Tasks.Vanta.PostStage1LaneBLabelResults do
       :packet_dir,
       "docs/05_evaluation/label_packets/post_stage_1_lane_b_#{run_timestamp}"
     )
-    |> Path.join("label_results_template.json")
   end
 
   defp print_summary(title, summary) do
@@ -136,6 +174,25 @@ defmodule Mix.Tasks.Vanta.PostStage1LaneBLabelResults do
 
     Mix.shell().info(
       "Unhandled adjudication required: #{summary["unhandled_adjudication_required_count"]}"
+    )
+  end
+
+  defp print_report_parity_summary(summary) do
+    metric_scores = summary["reported_metric_scores"]
+    omission = metric_scores["context_omission_error_rate"]
+    relevance = metric_scores["working_set_relevance_score"]
+
+    Mix.shell().info("Lane B label report parity passed: #{summary["packet_id"]}")
+    Mix.shell().info("Report: #{summary["report_path"]}")
+    Mix.shell().info("Results: #{summary["result_path"]}")
+    Mix.shell().info("Import summary: #{summary["import_summary_path"]}")
+
+    Mix.shell().info(
+      "Context omission: #{omission["score_4dp"]} (#{omission["omitted_task_critical_ref_count"]} / #{omission["task_critical_candidate_ref_count"]})"
+    )
+
+    Mix.shell().info(
+      "Working-set relevance: #{relevance["score_4dp"]} (#{relevance["relevant_included_ref_count"]} / #{relevance["included_ref_denominator"]})"
     )
   end
 

@@ -35,23 +35,26 @@ Map how documents relate so readers can navigate from theory to implementation w
 27. [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 28. [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
 29. [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
-30. [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+30. [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 31. [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
 32. [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
 33. [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
 34. [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
 35. [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 36. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
-37. [Design Theory](../01_theory/Design_Theory.md)
-38. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-39. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-40. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-41. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-42. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-43. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-44. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-45. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-46. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+37. [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
+38. [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
+39. [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
+40. [Design Theory](../01_theory/Design_Theory.md)
+41. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+42. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+43. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+44. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+45. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+46. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+47. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+48. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+49. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -75,9 +78,9 @@ note-graph configuration, frontmatter, or application-specific link syntax.
 | --- | --- | --- |
 | L0 | `docs/00_manifest/` | [Project Manifest](Project_Manifest.md), [Document Map](Document_Map.md), [Traceability Matrix](Traceability_Matrix.md), [Glossary](Glossary.md), [Decision Log](Decision_Log.md), [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md) |
 | L1 | `docs/01_theory/` | [Design Theory](../01_theory/Design_Theory.md), [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md), [Research Hypotheses](../01_theory/Research_Hypotheses.md), [Alternative Theories](../01_theory/Alternative_Theories.md) |
-| L2 | `docs/02_specs/` | [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md), [Execution IR and Episode Semantics](../02_specs/Execution_IR_and_Episode_Semantics.md), [Evidence Packet and Verifier Runtime](../02_specs/Evidence_Packet_and_Verifier_Runtime.md), [Commit Abort Replay Semantics](../02_specs/Commit_Abort_Replay_Semantics.md), [Failure Taxonomy v0](../02_specs/Failure_Taxonomy_v0.md), [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md), and [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md) |
-| L3 | `docs/03_schemas/` | Runtime, benchmark, and evaluation data contracts under [schema contracts](../03_schemas/), plus [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md) for no-change planning reviews |
-| L4 | `docs/04_experiments/` | [Document Ops Benchmark](../04_experiments/Document_Ops_Benchmark.md), [Benchmark Task Format](../04_experiments/Benchmark_Task_Format.md), [Ablation Plan](../04_experiments/Ablation_Plan.md), Experiment 001 through 005 protocols, post-Stage-1 sample plans, and [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md) |
+| L2 | `docs/02_specs/` | [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md), [Execution IR and Episode Semantics](../02_specs/Execution_IR_and_Episode_Semantics.md), [Evidence Packet and Verifier Runtime](../02_specs/Evidence_Packet_and_Verifier_Runtime.md), [Commit Abort Replay Semantics](../02_specs/Commit_Abort_Replay_Semantics.md), [Failure Taxonomy v0](../02_specs/Failure_Taxonomy_v0.md), [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md), [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md), and [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md) |
+| L3 | `docs/03_schemas/` | Runtime, benchmark, and evaluation data contracts under [schema contracts](../03_schemas/), plus [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md) and [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md) for no-change planning reviews |
+| L4 | `docs/04_experiments/` | [Document Ops Benchmark](../04_experiments/Document_Ops_Benchmark.md), [Benchmark Task Format](../04_experiments/Benchmark_Task_Format.md), [Ablation Plan](../04_experiments/Ablation_Plan.md), Experiment 001 through 005 protocols, post-Stage-1 sample plans, [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md), and [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md) |
 | L5 | `docs/05_evaluation/` | [Metrics Definition](../05_evaluation/Metrics_Definition.md), labeling guides, report templates, measured run reports, and Lane B label packets |
 | L6 | `docs/06_engineering/` | [MVP Architecture](../06_engineering/MVP_Architecture.md), [Repository Structure](../06_engineering/Repository_Structure.md), [Runtime Module Plan](../06_engineering/Runtime_Module_Plan.md), [Implementation Timeline](../06_engineering/Implementation_Timeline.md), [Testing Strategy](../06_engineering/Testing_Strategy.md) |
 
@@ -116,13 +119,16 @@ note-graph configuration, frontmatter, or application-specific link syntax.
 -> [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 -> [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
 -> [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
--> [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+-> [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 -> [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
 -> [Context OS Expansion Gate](Context_OS_Expansion_Gate.md)
 -> [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
 -> [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
 -> [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 -> [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
+-> [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
+-> [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
+-> [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
 
 ## Stage 0 Gate
 
@@ -289,12 +295,17 @@ adjudication rules for Lane B human or secondary labeling.
 is the active Lane B packet extracted from the `20260601_113121` Lane A closure
 run. It includes blinded candidate items and adjudication placeholders for
 `evidence_sufficiency_score`, `context_omission_error_rate`, and
-`working_set_relevance_score`, but human labels remain `Not yet run`.
+`working_set_relevance_score`. The first primary label batch is now collected,
+frozen, validated, import-summarized, and reported in the packet-local result,
+import-summary, and label report files.
 
-[Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
-is the active reporting shell for that packet. It must remain `Not yet run`
-until raw labels, adjudicated labels, agreement information, and fixture-oracle
-exposure metadata are collected.
+[Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+is now the active label report for that packet. It records 40 real raw primary
+labels, primary label freeze, zero validator-triggered adjudication
+requirements, raw agreement counts, and import-summary validation. It is Lane B
+labeled evaluation evidence for the named active packet only, not H1-H5
+validation, full Context OS validation, production readiness, or runtime
+approval.
 
 The `20260530_141649` Lane B packet and skeleton remain historical only. They
 are superseded because their source run was not `accepted_by_closure` and the
@@ -320,8 +331,9 @@ and
 [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 are the first `PS1-G7` planning bundle aligned to the `20260601_113121` Lane A
 closure run. They route measured Lane A working-set metrics into a future
-Context OS planning surface, while recording that Lane B omission and relevance
-labels remain `Not yet run`. The bundle does not implement full Context OS,
+Context OS planning surface. The first active Lane B label report now provides
+packet-level human-labeled omission and relevance evidence for the blinded
+working-set items, but the bundle still does not implement full Context OS,
 change schemas, authorize memory writes or learned retrieval, or validate H3.
 
 [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) is the accepted
@@ -330,6 +342,16 @@ impact review, evaluation planning, and implementation planning only; runtime
 execution of `COMMITTABLE`, `IRREVERSIBLE`, and `MEMORY_WRITE` actions remains
 blocked until later accepted specs, schemas, experiments, labels, and
 implementation batches exist.
+
+[Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md),
+[Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md),
+and
+[Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
+are the first `PS1-G8` planning bundle. They define a fixture-local Document
+Ops `COMMITTABLE` commit-proposal planning surface only. The bundle does not
+add runtime actions, change schemas, collect approvals, run experiments,
+authorize `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` execution, validate
+H5, or approve production readiness.
 
 ## Translation Sources
 

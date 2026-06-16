@@ -13,13 +13,21 @@ defmodule Vanta.PostStage1LaneBLabelResults do
   @not_yet_run "Not yet run"
   @review_mode "double_human_adjudicated"
   @human_label_source "human"
+  @complete_pending_report "complete_pending_report"
+  @complete_reported "complete_reported"
+  @complete_reported_packet_status "active_packet_complete_reported"
+  @reported_from_validated_primary_labels "reported_from_validated_primary_labels"
 
   @collection_statuses [
     @not_yet_run,
     "in_progress",
     "collected_pending_adjudication",
-    "complete_pending_report"
+    @complete_pending_report,
+    @complete_reported
   ]
+
+  @packet_manifest_statuses ["prepared_for_labeling", @complete_reported_packet_status]
+  @packet_manifest_collection_statuses [@not_yet_run, @complete_reported]
 
   @freeze_statuses [@not_yet_run, "open", "frozen"]
   @agreement_statuses [@not_yet_run, "small_sample_raw_counts", "reported"]
@@ -27,6 +35,7 @@ defmodule Vanta.PostStage1LaneBLabelResults do
   @working_context_metric "working_set_context"
   @context_omission_metric "context_omission_error_rate"
   @working_set_relevance_metric "working_set_relevance_score"
+  @relevant_relevance_labels ["task_critical", "supporting"]
 
   @policy_metrics [
     @evidence_metric,
@@ -141,6 +150,45 @@ defmodule Vanta.PostStage1LaneBLabelResults do
     end
   end
 
+  def validate_report_parity(report_path, results_path, import_summary_path, opts \\ []) do
+    cwd = Keyword.get(opts, :cwd, File.cwd!())
+    report_abs = Path.expand(report_path, cwd)
+    results_abs = Path.expand(results_path, cwd)
+    import_summary_abs = Path.expand(import_summary_path, cwd)
+    result_path = display_path(results_abs, cwd)
+
+    with {:ok, packet} <- load_packet(opts),
+         {:ok, results} <- load_json(results_abs),
+         {:ok, generated_summary} <- validate_results(results, packet, result_path),
+         {:ok, saved_summary} <- load_json(import_summary_abs),
+         {:ok, report_text} <- load_text(report_abs) do
+      metric_scores = reported_metric_scores(results, packet)
+
+      errors =
+        []
+        |> validate_import_summary_parity(generated_summary, saved_summary)
+        |> validate_report_text_parity(report_text, generated_summary, metric_scores)
+
+      if errors == [] do
+        {:ok,
+         %{
+           "status" => "ok",
+           "packet_id" => packet.packet_manifest["packet_id"],
+           "report_path" => display_path(report_abs, cwd),
+           "result_path" => result_path,
+           "import_summary_path" => display_path(import_summary_abs, cwd),
+           "raw_label_counts" => generated_summary["raw_label_counts"],
+           "review_coverage" => generated_summary["review_coverage"],
+           "reported_metric_scores" => metric_scores,
+           "claim_boundary" =>
+             "Report parity check only. It locks packet-local reported Lane B numbers against JSON artifacts and does not create runtime approval, full Context OS validation, or an H1-H5 validation claim."
+         }}
+      else
+        {:error, Enum.reverse(errors)}
+      end
+    end
+  end
+
   defp load_packet(opts) do
     config = normalize_opts(opts)
 
@@ -202,12 +250,13 @@ defmodule Vanta.PostStage1LaneBLabelResults do
         manifest["label_policy_version"],
         @label_policy_version
       )
-      |> require_equal("packet_status", manifest["packet_status"], "prepared_for_labeling")
-      |> require_equal(
+      |> require_in("packet_status", manifest["packet_status"], @packet_manifest_statuses)
+      |> require_in(
         "packet label_collection_status",
         manifest["label_collection_status"],
-        @not_yet_run
+        @packet_manifest_collection_statuses
       )
+      |> validate_manifest_lifecycle(manifest)
       |> require_equal(
         "source closure status",
         get_in(manifest, ["source_run", "closure_status"]),
@@ -233,6 +282,34 @@ defmodule Vanta.PostStage1LaneBLabelResults do
       )
 
     if errors == [], do: :ok, else: {:error, Enum.reverse(errors)}
+  end
+
+  defp validate_manifest_lifecycle(
+         errors,
+         %{"label_collection_status" => @complete_reported} = manifest
+       ) do
+    errors
+    |> require_equal("packet_status", manifest["packet_status"], @complete_reported_packet_status)
+    |> require_equal(
+      "report_status",
+      manifest["report_status"],
+      @reported_from_validated_primary_labels
+    )
+    |> require_equal(
+      "label_import_summary.status",
+      get_in(manifest, ["label_import_summary", "status"]),
+      "reported"
+    )
+  end
+
+  defp validate_manifest_lifecycle(errors, manifest) do
+    errors
+    |> require_equal("packet_status", manifest["packet_status"], "prepared_for_labeling")
+    |> require_equal(
+      "packet label_collection_status",
+      manifest["label_collection_status"],
+      @not_yet_run
+    )
   end
 
   defp validate_results(results, packet, result_path) when is_map(results) do
@@ -295,8 +372,10 @@ defmodule Vanta.PostStage1LaneBLabelResults do
          "adjudication_required" => triggers,
          "review_coverage" => coverage,
          "fixture_oracle_exposed_before_freeze" => freeze["fixture_oracle_exposed_before_freeze"],
+         "reported_metric_scores" =>
+           reported_metric_scores(evidence_labels, working_labels, packet),
          "claim_boundary" =>
-           "Import validation summary only. It is not human-labeled broader evaluation evidence until real labels, adjudication, agreement reporting, and the Lane B report are completed under PS1-LB-LABEL-001."
+           "Import validation summary only. It supports the packet-local Lane B label report under PS1-LB-LABEL-001; it is not broad validation, runtime approval, full Context OS validation, or an H1-H5 validation claim."
        }}
     else
       {:error, Enum.reverse(errors)}
@@ -305,6 +384,355 @@ defmodule Vanta.PostStage1LaneBLabelResults do
 
   defp validate_results(_results, _packet, result_path) do
     {:error, ["#{result_path} must contain a JSON object"]}
+  end
+
+  defp reported_metric_scores(results, packet) when is_map(results) do
+    raw_labels = map_field(results, "raw_labels")
+
+    reported_metric_scores(
+      list_field(raw_labels, @evidence_metric),
+      list_field(raw_labels, @working_context_metric),
+      packet
+    )
+  end
+
+  defp reported_metric_scores(evidence_labels, working_labels, packet) do
+    working_item_by_id =
+      packet.working_set_context_items
+      |> Map.new(fn item -> {item["packet_id"], item} end)
+
+    working_item_labels = primary_item_labels(working_labels)
+    omission_counts = count_by_arm(working_item_labels, working_item_by_id, &omission_counts/2)
+    relevance_counts = count_by_arm(working_item_labels, working_item_by_id, &relevance_counts/2)
+
+    %{
+      @evidence_metric => evidence_score(evidence_labels),
+      @context_omission_metric =>
+        score_with_arms(omission_counts, "omitted_task_critical_ref_count",
+          denominator_key: "task_critical_candidate_ref_count"
+        ),
+      @working_set_relevance_metric =>
+        score_with_arms(relevance_counts, "relevant_included_ref_count",
+          denominator_key: "included_ref_denominator"
+        )
+    }
+  end
+
+  defp evidence_score(labels) do
+    numeric_labels =
+      labels
+      |> Enum.map(& &1["raw_label_0_to_4_or_needs_review"])
+      |> Enum.filter(&is_integer/1)
+
+    numerator = Enum.sum(numeric_labels)
+    denominator = length(numeric_labels) * 4
+
+    %{
+      "raw_label_count" => length(labels),
+      "scored_raw_label_count" => length(numeric_labels),
+      "normalized_score_numerator" => numerator,
+      "normalized_score_denominator" => denominator,
+      "score_4dp" => score_4dp(numerator, denominator)
+    }
+  end
+
+  defp primary_item_labels(labels) do
+    labels
+    |> Enum.group_by(& &1["item_id"])
+    |> Enum.map(fn {item_id, item_labels} ->
+      label =
+        item_labels
+        |> Enum.sort_by(&to_string(&1["reviewer_id"]))
+        |> List.first()
+
+      {item_id, label}
+    end)
+    |> Enum.sort_by(fn {item_id, _label} -> item_id end)
+  end
+
+  defp count_by_arm(item_labels, item_by_id, count_fun) do
+    by_arm =
+      item_labels
+      |> Enum.map(fn {item_id, label} ->
+        item = Map.get(item_by_id, item_id, %{})
+        arm = item["blinded_arm"] || "unknown"
+        {arm, count_fun.(label, item)}
+      end)
+      |> Enum.group_by(fn {arm, _counts} -> arm end, fn {_arm, counts} -> counts end)
+      |> Map.new(fn {arm, counts} -> {arm, sum_counts(counts)} end)
+
+    Map.put(by_arm, "Combined", by_arm |> Map.values() |> sum_counts())
+  end
+
+  defp omission_counts(label, _item) do
+    omission = map_field(label, "omission")
+
+    %{
+      numerator: length(list_field(omission, "omitted_task_critical_ref_ids")),
+      denominator: length(list_field(omission, "task_critical_candidate_ref_ids"))
+    }
+  end
+
+  defp relevance_counts(label, item) do
+    selected_ref_ids = list_field(item, "selected_ref_ids")
+
+    relevance_by_ref =
+      label
+      |> list_field("per_ref_relevance_labels")
+      |> Map.new(fn ref_label -> {ref_label["ref_id"], ref_label["relevance_label"]} end)
+
+    numerator =
+      Enum.count(selected_ref_ids, fn ref_id ->
+        Map.get(relevance_by_ref, ref_id) in @relevant_relevance_labels
+      end)
+
+    %{
+      numerator: numerator,
+      denominator: max(length(selected_ref_ids), 1)
+    }
+  end
+
+  defp sum_counts(counts) do
+    Enum.reduce(counts, %{numerator: 0, denominator: 0}, fn counts, acc ->
+      %{
+        numerator: acc.numerator + counts.numerator,
+        denominator: acc.denominator + counts.denominator
+      }
+    end)
+  end
+
+  defp score_with_arms(counts_by_arm, numerator_key, opts) do
+    denominator_key = Keyword.fetch!(opts, :denominator_key)
+    combined = Map.fetch!(counts_by_arm, "Combined")
+
+    %{
+      numerator_key => combined.numerator,
+      denominator_key => combined.denominator,
+      "score_4dp" => score_4dp(combined.numerator, combined.denominator),
+      "by_blinded_arm" =>
+        counts_by_arm
+        |> Map.drop(["Combined"])
+        |> Map.new(fn {arm, counts} ->
+          {arm, ratio_counts(counts, numerator_key, denominator_key)}
+        end)
+        |> Map.put("Combined", ratio_counts(combined, numerator_key, denominator_key))
+    }
+  end
+
+  defp ratio_counts(counts, numerator_key, denominator_key) do
+    %{
+      numerator_key => counts.numerator,
+      denominator_key => counts.denominator,
+      "score_4dp" => score_4dp(counts.numerator, counts.denominator)
+    }
+  end
+
+  defp validate_import_summary_parity(errors, generated_summary, saved_summary) do
+    ~w(
+      status
+      result_path
+      result_format
+      label_policy_version
+      packet_id
+      label_collection_status
+      raw_label_counts
+      secondary_review_count
+      adjudication_record_count
+      needs_review_count
+      adjudication_required_count
+      unhandled_adjudication_required_count
+      adjudication_required
+      review_coverage
+      fixture_oracle_exposed_before_freeze
+      reported_metric_scores
+    )
+    |> Enum.reduce(errors, fn key, errors ->
+      require_equal(
+        errors,
+        "import summary #{key}",
+        saved_summary[key],
+        generated_summary[key]
+      )
+    end)
+  end
+
+  defp validate_report_text_parity(errors, report_text, generated_summary, metric_scores) do
+    metric_rows = report_metric_rows(report_text)
+    arm_rows = report_working_set_arm_rows(report_text)
+
+    evidence_score = metric_scores[@evidence_metric]
+    omission_score = metric_scores[@context_omission_metric]
+    relevance_score = metric_scores[@working_set_relevance_metric]
+
+    errors
+    |> require_report_metric_row(
+      metric_rows,
+      @evidence_metric,
+      generated_summary["raw_label_counts"][@evidence_metric],
+      evidence_score["score_4dp"],
+      nil,
+      nil
+    )
+    |> require_report_metric_row(
+      metric_rows,
+      @context_omission_metric,
+      generated_summary["raw_label_counts"][@working_context_metric],
+      omission_score["score_4dp"],
+      omission_score["omitted_task_critical_ref_count"],
+      omission_score["task_critical_candidate_ref_count"]
+    )
+    |> require_report_metric_row(
+      metric_rows,
+      @working_set_relevance_metric,
+      generated_summary["raw_label_counts"][@working_context_metric],
+      relevance_score["score_4dp"],
+      relevance_score["relevant_included_ref_count"],
+      relevance_score["included_ref_denominator"]
+    )
+    |> require_report_working_set_arm_rows(
+      arm_rows,
+      omission_score["by_blinded_arm"],
+      relevance_score["by_blinded_arm"]
+    )
+    |> require_import_summary_snippets(report_text, generated_summary)
+  end
+
+  defp require_report_metric_row(errors, rows, metric, raw_count, score, numerator, denominator) do
+    case Map.get(rows, metric) do
+      nil ->
+        ["label report is missing Label Results row for #{metric}" | errors]
+
+      row ->
+        errors
+        |> require_equal(
+          "label report #{metric} raw labels",
+          parse_int(row["raw_label_count"]),
+          raw_count
+        )
+        |> require_equal("label report #{metric} score", row["score"], score)
+        |> require_equal(
+          "label report #{metric} needs_review count",
+          parse_int(row["needs_review_count"]),
+          0
+        )
+        |> require_equal("label report #{metric} status", row["status"], @complete_reported)
+        |> maybe_require_fraction(metric, row, numerator, denominator)
+    end
+  end
+
+  defp maybe_require_fraction(errors, _metric, _row, nil, nil), do: errors
+
+  defp maybe_require_fraction(errors, metric, row, numerator, denominator) do
+    errors
+    |> require_equal("label report #{metric} numerator", parse_int(row["numerator"]), numerator)
+    |> require_equal(
+      "label report #{metric} denominator",
+      parse_int(row["denominator"]),
+      denominator
+    )
+  end
+
+  defp require_report_working_set_arm_rows(errors, rows, omission_by_arm, relevance_by_arm) do
+    ["context_arm_A", "context_arm_B", "Combined"]
+    |> Enum.reduce(errors, fn arm, errors ->
+      case Map.get(rows, arm) do
+        nil ->
+          ["label report is missing working-set arm row for #{arm}" | errors]
+
+        row ->
+          omission = Map.fetch!(omission_by_arm, arm)
+          relevance = Map.fetch!(relevance_by_arm, arm)
+
+          errors
+          |> require_equal(
+            "label report #{arm} omission score",
+            row["omission_score"],
+            omission["score_4dp"]
+          )
+          |> require_equal(
+            "label report #{arm} omission numerator",
+            parse_int(row["omission_numerator"]),
+            omission["omitted_task_critical_ref_count"]
+          )
+          |> require_equal(
+            "label report #{arm} omission denominator",
+            parse_int(row["omission_denominator"]),
+            omission["task_critical_candidate_ref_count"]
+          )
+          |> require_equal(
+            "label report #{arm} relevance score",
+            row["relevance_score"],
+            relevance["score_4dp"]
+          )
+          |> require_equal(
+            "label report #{arm} relevance numerator",
+            parse_int(row["relevance_numerator"]),
+            relevance["relevant_included_ref_count"]
+          )
+          |> require_equal(
+            "label report #{arm} relevance denominator",
+            parse_int(row["relevance_denominator"]),
+            relevance["included_ref_denominator"]
+          )
+      end
+    end)
+  end
+
+  defp require_import_summary_snippets(errors, report_text, summary) do
+    coverage = summary["review_coverage"]
+
+    expected_snippets = [
+      "`#{@evidence_metric} = #{summary["raw_label_counts"][@evidence_metric]}`",
+      "`#{@working_context_metric} = #{summary["raw_label_counts"][@working_context_metric]}`"
+    ]
+
+    expected_snippets =
+      expected_snippets ++
+        Enum.map(@policy_metrics, fn metric ->
+          metric_coverage = coverage[metric]
+
+          "`#{metric} = #{metric_coverage["fully_reviewed_item_count"]} / #{metric_coverage["expected_item_count"]}`"
+        end)
+
+    Enum.reduce(expected_snippets, errors, fn snippet, errors ->
+      if String.contains?(report_text, snippet) do
+        errors
+      else
+        ["label report Import Summary is missing #{snippet}" | errors]
+      end
+    end)
+  end
+
+  defp report_metric_rows(report_text) do
+    row_pattern =
+      ~r/^\|\s*`(?<metric>[^`]+)`\s*\|\s*(?<raw_label_count>\d+)\s*\|[^|]*\|\s*`(?<score>[^`]+)`(?:\s*\(`(?<numerator>\d+)\s*\/\s*(?<denominator>\d+)`\))?\s*\|\s*(?<needs_review_count>\d+)\s*\|\s*`(?<status>[^`]+)`\s*\|$/
+
+    report_text
+    |> String.split(~r/\R/)
+    |> Enum.reduce(%{}, fn line, rows ->
+      case Regex.named_captures(row_pattern, line) do
+        nil -> rows
+        row -> Map.put(rows, row["metric"], row)
+      end
+    end)
+  end
+
+  defp report_working_set_arm_rows(report_text) do
+    row_pattern =
+      ~r/^\|\s*(?:`(?<arm>context_arm_[AB])`|(?<plain_arm>Combined))\s*\|\s*`(?<omission_score>[^`]+)`\s*\(`(?<omission_numerator>\d+)\s*\/\s*(?<omission_denominator>\d+)`\)\s*\|\s*`(?<relevance_score>[^`]+)`\s*\(`(?<relevance_numerator>\d+)\s*\/\s*(?<relevance_denominator>\d+)`\)\s*\|$/
+
+    report_text
+    |> String.split(~r/\R/)
+    |> Enum.reduce(%{}, fn line, rows ->
+      case Regex.named_captures(row_pattern, line) do
+        nil ->
+          rows
+
+        row ->
+          arm = if row["arm"] == "", do: row["plain_arm"], else: row["arm"]
+          Map.put(rows, arm, row)
+      end
+    end)
   end
 
   defp validate_top_level(errors, results, packet) do
@@ -586,7 +1014,7 @@ defmodule Vanta.PostStage1LaneBLabelResults do
 
   defp validate_collection_state(
          errors,
-         "complete_pending_report",
+         status,
          _evidence_labels,
          _working_labels,
          _secondary_reviews,
@@ -595,14 +1023,15 @@ defmodule Vanta.PostStage1LaneBLabelResults do
          freeze,
          coverage,
          unhandled_triggers
-       ) do
+       )
+       when status in [@complete_pending_report, @complete_reported] do
     errors
     |> require_equal("primary_label_freeze.status", freeze["status"], "frozen")
-    |> require_full_coverage("complete_pending_report", coverage)
-    |> require_empty_unhandled_triggers(unhandled_triggers)
+    |> require_full_coverage(status, coverage)
+    |> require_empty_unhandled_triggers(status, unhandled_triggers)
     |> then(fn errors ->
       if agreement_report["status"] == @not_yet_run do
-        ["complete_pending_report requires agreement_report.status to be reported" | errors]
+        ["#{status} requires agreement_report.status to be reported" | errors]
       else
         errors
       end
@@ -1358,13 +1787,28 @@ defmodule Vanta.PostStage1LaneBLabelResults do
     end)
   end
 
-  defp require_empty_unhandled_triggers(errors, []), do: errors
+  defp require_empty_unhandled_triggers(errors, _status, []), do: errors
 
-  defp require_empty_unhandled_triggers(errors, unhandled_triggers) do
+  defp require_empty_unhandled_triggers(errors, status, unhandled_triggers) do
     [
-      "complete_pending_report requires adjudication records for triggered items: #{inspect(unhandled_triggers)}"
+      "#{status} requires adjudication records for triggered items: #{inspect(unhandled_triggers)}"
       | errors
     ]
+  end
+
+  defp score_4dp(_numerator, 0), do: @not_yet_run
+
+  defp score_4dp(numerator, denominator) do
+    :erlang.float_to_binary(numerator / denominator, decimals: 4)
+  end
+
+  defp parse_int(value) when is_integer(value), do: value
+
+  defp parse_int(value) do
+    case Integer.parse(to_string(value)) do
+      {integer, ""} -> integer
+      _other -> value
+    end
   end
 
   defp load_json(path) do

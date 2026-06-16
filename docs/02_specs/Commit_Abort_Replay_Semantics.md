@@ -83,6 +83,12 @@ candidate, provenance, retention and scope, deletion or retraction path,
 approval policy, verifier `accept`, and Episode Journal audit refs; memory
 append is not learning.
 
+The first routed `PS1-G8` planning bundle is
+[Post-Stage-1 Side-Effect Planning Draft Spec](Post_Stage_1_Side_Effect_Planning_Draft_Spec.md).
+It defines a fixture-local Document Ops `COMMITTABLE` commit-proposal planning
+surface with required rollback or compensation statements. It does not create a
+commit path, rollback path, approval record, or replayable runtime episode.
+
 ## Open Questions
 
 - Which post-`PS1-G8` side-effect domain should be specified first?
@@ -97,5 +103,6 @@ append is not learning.
 - [Stage 0 Boundary Lock](../00_manifest/Stage_0_Boundary_Lock.md)
 - [Post-Stage-1 Runtime Scope Proposal](../00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md)
 - [Side-Effect Escalation Gate](../00_manifest/Side_Effect_Escalation_Gate.md)
+- [Post-Stage-1 Side-Effect Planning Draft Spec](Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 - [Design Theory](../01_theory/Design_Theory.md)
 - [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)

@@ -26,8 +26,10 @@ closure run is
 [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md),
 and
 [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md).
-It uses measured Lane A working-set metrics for planning only; Lane B labels
-remain `Not yet run`.
+It uses measured Lane A working-set metrics for planning only. A later active
+Lane B report adds packet-level human-labeled context-quality evidence for the
+named `20260601_113121` packet only; it does not change this note into an
+implementation spec or H3 validation.
 
 ## Scope
 

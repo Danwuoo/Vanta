@@ -10,6 +10,32 @@ defmodule Vanta.PostStage1LaneBPacket do
   @sample_frame "PS1-LA-SAMPLE-002"
   @experiment_id "post_stage_1_larger_sample"
   @not_yet_run "Not yet run"
+  @complete_reported "complete_reported"
+  @complete_reported_packet_status "active_packet_complete_reported"
+  @reported_from_validated_primary_labels "reported_from_validated_primary_labels"
+  @completed_no_adjudication_records "completed_no_records_required"
+
+  @post_freeze_unblind_forbidden_patterns [
+    {"raw-trace source arm label",
+     ~r/raw_trace_bounded_openclaw_agent_local\/openai-codex\/[^\s"']+/},
+    {"working-set source arm label",
+     ~r/working_set_compiler_v0_reference_backed_openclaw_agent_local\/openai-codex\/[^\s"']+/},
+    {"literal raw-trace wildcard marker", ~r/raw_trace_\*/},
+    {"literal working-set wildcard marker", ~r/working_set_\*/},
+    {"context arm mapping field", ~r/\bcontext_arm_mapping\b/},
+    {"arm mapping field", ~r/\barm_mapping\b/},
+    {"source arm label field", ~r/\bsource_arm_label\b/},
+    {"true arm field", ~r/\btrue_arm(?:_role)?\b/},
+    {"context artifact prefix field", ~r/\bcontext_artifact_prefix\b/},
+    {"post-freeze coordinator memo marker", ~r/\bcoordinator_only_post_freeze\b/},
+    {"context arm A true-role mapping",
+     ~r/context_arm_A\s*(?:=>|->|=|:)\s*(?:baseline|raw_trace|context baseline)/i},
+    {"context arm B true-role mapping",
+     ~r/context_arm_B\s*(?:=>|->|=|:)\s*(?:treatment|working_set|working set compiler)/i},
+    {"context baseline role phrase", ~r/\bcontext baseline\b/i},
+    {"working-set treatment role phrase", ~r/\bworking set compiler v0 treatment\b/i},
+    {"bounded raw-trace role phrase", ~r/\bbounded raw-trace context baseline\b/i}
+  ]
 
   @evidence_sample [
     {"docops_read_traceability_001", "traceability_extraction"},
@@ -47,6 +73,20 @@ defmodule Vanta.PostStage1LaneBPacket do
 
   def default_run_timestamp, do: @default_run_timestamp
 
+  def post_freeze_unblind_boundary_errors(packet_artifacts) when is_map(packet_artifacts) do
+    packet_artifacts
+    |> post_freeze_unblind_scan_targets()
+    |> Enum.flat_map(fn {artifact, value} ->
+      value
+      |> post_freeze_unblind_hits([])
+      |> Enum.map(fn {path, label} ->
+        "post-freeze unblind guard: #{artifact}#{format_scan_path(path)} contains #{label}"
+      end)
+    end)
+    |> Enum.uniq()
+    |> Enum.sort()
+  end
+
   def build(opts \\ []) do
     config = normalize_opts(opts)
 
@@ -55,13 +95,16 @@ defmodule Vanta.PostStage1LaneBPacket do
          :ok <- validate_run_source(run, config),
          {:ok, redacted_task_packets} <- build_redacted_task_packets(config),
          {:ok, evidence_items} <- build_evidence_items(run, config),
-         {:ok, working_set_items} <- build_working_set_items(run, config) do
-      packet_manifest = packet_manifest(config, run, evidence_items, working_set_items)
+         {:ok, working_set_items} <- build_working_set_items(run, config),
+         {:ok, label_state} <- label_state(config) do
+      packet_manifest =
+        packet_manifest(config, run, evidence_items, working_set_items, label_state)
 
       packet = %{
         opts: config,
+        label_state: label_state,
         packet_manifest: packet_manifest,
-        readme: packet_readme(config),
+        readme: packet_readme(config, label_state),
         redacted_task_packets: redacted_task_packets,
         evidence_sufficiency_items: evidence_items,
         working_set_context_items: working_set_items,
@@ -72,7 +115,7 @@ defmodule Vanta.PostStage1LaneBPacket do
             packet_manifest: packet_manifest,
             packet_dir: config.out_path
           }),
-        label_report_skeleton: label_report_skeleton(config)
+        label_report_skeleton: label_report_skeleton(config, label_state)
       }
 
       {:ok, packet}
@@ -122,6 +165,7 @@ defmodule Vanta.PostStage1LaneBPacket do
        %{
          packet_id: packet.packet_manifest["packet_id"],
          packet_dir: config.out_path,
+         label_report: config.label_report_path,
          label_report_skeleton: config.label_report_path,
          label_results_template: path_join(config.out_path, "label_results_template.json"),
          evidence_item_count: length(packet.evidence_sufficiency_items),
@@ -173,16 +217,13 @@ defmodule Vanta.PostStage1LaneBPacket do
         |> check_required_text(
           "label report skeleton",
           actual.label_report_skeleton,
-          [
-            expected.opts.run_json_path,
-            expected.opts.run_report_path,
-            expected.opts.closure_path,
-            @not_yet_run
-          ]
+          [expected.opts.run_json_path, expected.opts.run_report_path, expected.opts.closure_path]
         )
         |> check_packet_shape(actual)
         |> check_redaction(actual)
+        |> check_post_freeze_unblind_boundary(actual)
         |> check_not_yet_run_labels(actual)
+        |> check_reported_packet_state(actual)
         |> check_selector_repair_item(actual)
 
       if errors == [] do
@@ -228,6 +269,27 @@ defmodule Vanta.PostStage1LaneBPacket do
         "docs/05_evaluation/Post_Stage_1_Lane_B_#{run_timestamp}_Label_Report_Skeleton.md"
       )
 
+    label_results =
+      Keyword.get(
+        opts,
+        :label_results,
+        Path.join(out, "label_results_primary_filled.json")
+      )
+
+    import_summary =
+      Keyword.get(
+        opts,
+        :import_summary,
+        Path.join(out, "label_results_import_summary.json")
+      )
+
+    coordinator_packet_freeze =
+      Keyword.get(
+        opts,
+        :coordinator_packet_freeze,
+        Path.join(out, "coordinator_primary_label_packet_freeze.json")
+      )
+
     %{
       cwd: cwd,
       run_timestamp: run_timestamp,
@@ -251,6 +313,12 @@ defmodule Vanta.PostStage1LaneBPacket do
       closure_path: display_path(closure, cwd),
       label_report_abs: Path.expand(label_report, cwd),
       label_report_path: display_path(label_report, cwd),
+      label_results_abs: Path.expand(label_results, cwd),
+      label_results_path: display_path(label_results, cwd),
+      import_summary_abs: Path.expand(import_summary, cwd),
+      import_summary_path: display_path(import_summary, cwd),
+      coordinator_packet_freeze_abs: Path.expand(coordinator_packet_freeze, cwd),
+      coordinator_packet_freeze_path: display_path(coordinator_packet_freeze, cwd),
       closure_status: closure_status(Path.expand(closure, cwd))
     }
   end
@@ -457,11 +525,85 @@ defmodule Vanta.PostStage1LaneBPacket do
     end
   end
 
-  defp packet_manifest(config, run, evidence_items, working_set_items) do
-    %{
+  defp label_state(config) do
+    if File.exists?(config.import_summary_abs) do
+      with {:ok, summary} <- load_json(config.import_summary_abs),
+           :ok <- validate_reported_import_summary(summary, config) do
+        {:ok,
+         %{
+           kind: :complete_reported,
+           packet_status: @complete_reported_packet_status,
+           label_collection_status: @complete_reported,
+           report_status: @reported_from_validated_primary_labels,
+           metric_label_status: @complete_reported,
+           adjudication_status: adjudication_status_from_summary(summary),
+           import_summary: summary
+         }}
+      end
+    else
+      {:ok,
+       %{
+         kind: :not_yet_run,
+         packet_status: "prepared_for_labeling",
+         label_collection_status: @not_yet_run,
+         report_status: @not_yet_run,
+         metric_label_status: @not_yet_run,
+         adjudication_status: @not_yet_run,
+         import_summary: nil
+       }}
+    end
+  end
+
+  defp validate_reported_import_summary(summary, config) do
+    checks = [
+      {"import summary status", summary["status"], "ok"},
+      {"import summary packet_id", summary["packet_id"], config.packet_id},
+      {"import summary label_policy_version", summary["label_policy_version"],
+       @label_policy_version},
+      {"import summary label_collection_status", summary["label_collection_status"],
+       @complete_reported}
+    ]
+
+    errors =
+      checks
+      |> Enum.reduce([], fn {label, actual, expected}, errors ->
+        if actual == expected do
+          errors
+        else
+          ["#{label} is #{inspect(actual)}, expected #{inspect(expected)}" | errors]
+        end
+      end)
+      |> then(fn errors ->
+        if File.exists?(config.label_results_abs) do
+          errors
+        else
+          [
+            "reported import summary exists but filled label results are missing: #{config.label_results_path}"
+            | errors
+          ]
+        end
+      end)
+
+    if errors == [], do: :ok, else: {:error, Enum.reverse(errors)}
+  end
+
+  defp adjudication_status_from_summary(summary) do
+    if summary["adjudication_required_count"] == 0 and
+         summary["unhandled_adjudication_required_count"] == 0 and
+         summary["adjudication_record_count"] == 0 do
+      @completed_no_adjudication_records
+    else
+      "reported_from_import_summary"
+    end
+  end
+
+  defp packet_manifest(config, run, evidence_items, working_set_items, label_state) do
+    paths = artifact_paths(config, label_state)
+
+    manifest = %{
       "packet_id" => config.packet_id,
-      "packet_status" => "prepared_for_labeling",
-      "label_collection_status" => @not_yet_run,
+      "packet_status" => label_state.packet_status,
+      "label_collection_status" => label_state.label_collection_status,
       "label_policy_version" => @label_policy_version,
       "source_run" => %{
         "experiment_id" => run["experiment_id"],
@@ -477,25 +619,25 @@ defmodule Vanta.PostStage1LaneBPacket do
         "closure_path" => config.closure_path
       },
       "supersedes" => supersedes(config),
-      "artifact_paths" => artifact_paths(config),
+      "artifact_paths" => paths,
       "metric_scope" => %{
         "evidence_sufficiency_score" => %{
           "item_count" => length(evidence_items),
           "review_mode" => "double_human_adjudicated",
           "label_source" => "human",
-          "label_status" => @not_yet_run
+          "label_status" => label_state.metric_label_status
         },
         "context_omission_error_rate" => %{
           "item_count" => length(working_set_items),
           "review_mode" => "double_human_adjudicated",
           "label_source" => "human",
-          "label_status" => @not_yet_run
+          "label_status" => label_state.metric_label_status
         },
         "working_set_relevance_score" => %{
           "item_count" => length(working_set_items),
           "review_mode" => "double_human_adjudicated",
           "label_source" => "human",
-          "label_status" => @not_yet_run
+          "label_status" => label_state.metric_label_status
         }
       },
       "candidate_sample_selection" => %{
@@ -508,8 +650,8 @@ defmodule Vanta.PostStage1LaneBPacket do
       },
       "blinding_boundary" => blinding_boundary(),
       "adjudication" => %{
-        "status" => @not_yet_run,
-        "record_path" => artifact_paths(config)["adjudication_placeholders"],
+        "status" => label_state.adjudication_status,
+        "record_path" => paths["adjudication_placeholders"],
         "required_triggers" => [
           "any reviewer marks needs_review",
           "ordinal labels differ by two or more levels",
@@ -517,23 +659,20 @@ defmodule Vanta.PostStage1LaneBPacket do
           "reviewers disagree on task_critical, critical_omission, harmful, or metric denominator"
         ]
       },
-      "claim_boundary" => %{
-        "allowed_before_labels" =>
-          "prepared blinded Lane B label packet from the accepted Lane A closure run",
-        "disallowed_before_labels" => [
-          "human-labeled broader evaluation evidence",
-          "new accepted_by_closure status beyond the Lane A source closure",
-          "H1-H5 validation",
-          "full Context OS validation",
-          "production readiness",
-          "runtime approval or human-in-the-loop verifier claim"
-        ]
-      }
+      "claim_boundary" => claim_boundary(config, label_state)
     }
+
+    if label_state.kind == :complete_reported do
+      manifest
+      |> Map.put("report_status", label_state.report_status)
+      |> Map.put("label_import_summary", manifest_import_summary(config, label_state))
+    else
+      manifest
+    end
   end
 
-  defp artifact_paths(config) do
-    %{
+  defp artifact_paths(config, label_state) do
+    base = %{
       "packet_readme" => path_join(config.out_path, "README.md"),
       "packet_manifest" => path_join(config.out_path, "packet_manifest.json"),
       "redacted_task_packets" =>
@@ -544,7 +683,74 @@ defmodule Vanta.PostStage1LaneBPacket do
         path_join(config.out_path, "working_set_context_items.jsonl"),
       "adjudication_placeholders" => path_join(config.out_path, "adjudication_placeholders.json"),
       "label_results_template" => path_join(config.out_path, "label_results_template.json"),
+      "label_report" => config.label_report_path,
       "label_report_skeleton" => config.label_report_path
+    }
+
+    if label_state.kind == :complete_reported do
+      base
+      |> Map.put("label_results_primary_filled", config.label_results_path)
+      |> Map.put("label_results_import_summary", config.import_summary_path)
+      |> maybe_put_existing_path(
+        "coordinator_primary_label_packet_freeze",
+        config.coordinator_packet_freeze_abs,
+        config.coordinator_packet_freeze_path
+      )
+    else
+      base
+    end
+  end
+
+  defp maybe_put_existing_path(map, key, abs_path, display_path) do
+    if File.exists?(abs_path), do: Map.put(map, key, display_path), else: map
+  end
+
+  defp manifest_import_summary(config, %{import_summary: summary}) do
+    %{
+      "status" => "reported",
+      "validation_status" => summary["status"],
+      "summary_path" => config.import_summary_path,
+      "result_path" => summary["result_path"] || config.label_results_path,
+      "raw_label_counts" => summary["raw_label_counts"],
+      "review_coverage" => summary["review_coverage"],
+      "needs_review_count" => summary["needs_review_count"],
+      "adjudication_required_count" => summary["adjudication_required_count"],
+      "unhandled_adjudication_required_count" => summary["unhandled_adjudication_required_count"],
+      "adjudication_record_count" => summary["adjudication_record_count"],
+      "fixture_oracle_exposed_before_freeze" => summary["fixture_oracle_exposed_before_freeze"],
+      "claim_boundary" => summary["claim_boundary"]
+    }
+  end
+
+  defp claim_boundary(config, %{kind: :complete_reported}) do
+    %{
+      "allowed_after_report" =>
+        "`#{config.run_timestamp}` active packet Lane B labeled evaluation evidence for the named packet and metrics only",
+      "disallowed_after_report" => [
+        "human-labeled broader evaluation evidence beyond this named packet",
+        "new accepted_by_closure status beyond the Lane A source closure",
+        "H1-H5 validation",
+        "full Context OS validation",
+        "production readiness",
+        "runtime approval or human-in-the-loop verifier claim",
+        "replacing the measured Lane A aggregate metrics with label results",
+        "model-only baseline claims for OpenClaw local harness results"
+      ]
+    }
+  end
+
+  defp claim_boundary(_config, _label_state) do
+    %{
+      "allowed_before_labels" =>
+        "prepared blinded Lane B label packet from the accepted Lane A closure run",
+      "disallowed_before_labels" => [
+        "human-labeled broader evaluation evidence",
+        "new accepted_by_closure status beyond the Lane A source closure",
+        "H1-H5 validation",
+        "full Context OS validation",
+        "production readiness",
+        "runtime approval or human-in-the-loop verifier claim"
+      ]
     }
   end
 
@@ -640,7 +846,15 @@ defmodule Vanta.PostStage1LaneBPacket do
     }
   end
 
-  defp packet_readme(config) do
+  defp packet_readme(config, %{kind: :complete_reported} = label_state) do
+    existing_text_or(
+      Path.join(config.out_abs, "README.md"),
+      [@complete_reported, "label_results_import_summary.json"],
+      fn -> reported_packet_readme(config, label_state) end
+    )
+  end
+
+  defp packet_readme(config, _label_state) do
     """
     # Post-Stage-1 Lane B #{config.run_timestamp} Blinded Label Packet
 
@@ -743,6 +957,15 @@ defmodule Vanta.PostStage1LaneBPacket do
     review, or adjudication. Any exposure during adjudication must be recorded in
     `adjudication_placeholders.json` or its filled successor.
 
+    ## Post-Freeze Unblind Guard
+
+    `mix vanta.post_stage_1_lane_b_packet --mode check` includes an executable
+    post-freeze unblind guard over reviewer-visible JSONL, redacted task packets,
+    `label_results_template.json`, and any packet-local result scaffold present.
+    The guard rejects coordinator-only arm mapping fields, source arm labels, and
+    post-freeze memo markers. It does not unblind, rewrite, or expand the frozen
+    item files.
+
     ## Candidate Sample
 
     The evidence sufficiency batch uses one sampled treatment evidence unit from
@@ -814,7 +1037,120 @@ defmodule Vanta.PostStage1LaneBPacket do
     """
   end
 
-  defp label_report_skeleton(config) do
+  defp reported_packet_readme(config, %{import_summary: summary}) do
+    evidence_count = get_in(summary, ["raw_label_counts", "evidence_sufficiency_score"]) || 0
+    working_count = get_in(summary, ["raw_label_counts", "working_set_context"]) || 0
+
+    """
+    # Post-Stage-1 Lane B #{config.run_timestamp} Blinded Label Packet
+
+    ## Purpose
+
+    This packet is the active blinded Lane B labeling batch prepared from the
+    `#{config.run_timestamp}` Lane A rerun that is `accepted_by_closure` for the named
+    threshold-governed Document Ops Lane A sample.
+
+    The prepared item files remain the frozen primary-labeler-visible packet.
+    The packet directory also contains the filled primary label result file and
+    import summary for this active packet. Label collection status is
+    `#{@complete_reported}`.
+
+    For this packet, `#{@complete_reported}` means the primary labels were collected,
+    frozen, validated, import-summarized, and reported in the companion Lane B
+    label report. It is a packet-local evaluation status only and does not create a
+    runtime approval or broader validation claim.
+
+    ## Packet Contents
+
+    | Artifact | Purpose |
+    | --- | --- |
+    | `packet_manifest.json` | Coordinator manifest, source run linkage, review mode, blinding boundary, supersession note, label status, and artifact paths. |
+    | `redacted_task_packets/` | Primary-labeler task packets with fixture oracle role and description fields removed from `input_artifacts`. |
+    | `evidence_sufficiency_items.jsonl` | Eight blinded evidence sufficiency label items sampled from the accepted run artifact. |
+    | `working_set_context_items.jsonl` | Twelve blinded working-set omission and relevance items: six long-context tasks by two blinded context arms. |
+    | `adjudication_placeholders.json` | Adjudication record scaffold and trigger rules; no records were required by the validator for the reported import summary. |
+    | `label_results_template.json` | Packet-local label result import template for `#{@label_policy_version}`; not a core runtime schema. |
+    | `label_results_primary_filled.json` | Filled packet-local primary label result file. |
+    | `label_results_import_summary.json` | Machine-readable validation/import summary for the filled primary label result file. |
+    | `../../Post_Stage_1_Lane_B_#{config.run_timestamp}_Label_Report_Skeleton.md` | Filled label report for this active packet. |
+
+    ## Source Run
+
+    - Source Lane A run:
+      `#{config.run_json_path}`
+    - Source run report:
+      `#{config.run_report_path}`
+    - Source closure:
+      `#{config.closure_path}`
+    - Label policy version: `#{@label_policy_version}`
+    - Gate policy for context expansion planning: `#{@context_gate_policy_version}`
+    - Source run threshold status: `pass_acceptance_candidate`
+    - Source run closure status: `#{config.closure_status}`
+
+    The source run remains a Lane A measured run. This Lane B packet is an
+    evaluation-labeling artifact only and does not change the measured Lane A
+    metrics or create any new closure status.
+
+    ## Review Modes
+
+    | Metric | Review mode | Label collection status |
+    | --- | --- | --- |
+    | `evidence_sufficiency_score` | `double_human_adjudicated` | `#{@complete_reported}` |
+    | `context_omission_error_rate` | `double_human_adjudicated` | `#{@complete_reported}` |
+    | `working_set_relevance_score` | `double_human_adjudicated` | `#{@complete_reported}` |
+
+    ## Post-Freeze Unblind Guard
+
+    `mix vanta.post_stage_1_lane_b_packet --mode check` includes an executable
+    post-freeze unblind guard over reviewer-visible JSONL, redacted task packets,
+    `label_results_template.json`, and any packet-local result scaffold present.
+    The guard rejects coordinator-only arm mapping fields, source arm labels, and
+    post-freeze memo markers. It does not unblind, rewrite, or expand the frozen
+    item files.
+
+    ## Label Result Import Path
+
+    Validated import summary:
+
+    - Summary path: `#{config.import_summary_path}`
+    - Result path: `#{summary["result_path"] || config.label_results_path}`
+    - Raw label counts:
+      `evidence_sufficiency_score = #{evidence_count}`,
+      `working_set_context = #{working_count}`
+    - Needs review count: #{summary["needs_review_count"]}
+    - Adjudication required count: #{summary["adjudication_required_count"]}
+    - Unhandled adjudication required count:
+      #{summary["unhandled_adjudication_required_count"]}
+    - Fixture oracle exposed before freeze:
+      `#{summary["fixture_oracle_exposed_before_freeze"]}`
+
+    These commands must not be used to treat templates, dry-run fixtures, or
+    generated test data as real human labels.
+
+    ## Interpretation Boundary
+
+    This packet supports the filled Lane B label report for the named
+    `#{config.run_timestamp}` active packet. It may be described only as Lane B
+    labeled evaluation evidence for the named packet and metrics. It must not be
+    described as H1-H5 validation, full Context OS validation, production
+    readiness, a runtime approval path, or new closure acceptance beyond the Lane A
+    `#{config.run_timestamp}` closure.
+    """
+  end
+
+  defp label_report_skeleton(config, %{kind: :complete_reported} = label_state) do
+    existing_text_or(
+      config.label_report_abs,
+      [
+        @complete_reported,
+        @reported_from_validated_primary_labels,
+        "label_results_import_summary.json"
+      ],
+      fn -> reported_label_report(config, label_state) end
+    )
+  end
+
+  defp label_report_skeleton(config, _label_state) do
     """
     # Post-Stage-1 Lane B #{config.run_timestamp} Label Report Skeleton
 
@@ -1029,6 +1365,89 @@ defmodule Vanta.PostStage1LaneBPacket do
     """
   end
 
+  defp reported_label_report(config, %{import_summary: summary}) do
+    evidence_count = get_in(summary, ["raw_label_counts", "evidence_sufficiency_score"]) || 0
+    working_count = get_in(summary, ["raw_label_counts", "working_set_context"]) || 0
+
+    """
+    # Post-Stage-1 Lane B #{config.run_timestamp} Label Report
+
+    ## Experiment
+
+    - Source experiment ID: `#{@experiment_id}`
+    - Source sample frame: `#{@sample_frame}`
+    - Source Lane A run timestamp: `#{config.run_timestamp}`
+    - Source Lane A closure status: `#{config.closure_status}`
+    - Lane B packet ID: `#{config.packet_id}`
+    - Label policy version: `#{@label_policy_version}`
+    - Metric policy version: `#{@metric_policy_version}`
+    - Context gate policy version: `#{@context_gate_policy_version}`
+    - Label collection status: `#{@complete_reported}`
+    - Report status: `#{@reported_from_validated_primary_labels}`
+    - Claim level after labels: `#{config.run_timestamp}` active packet Lane B
+      labeled evaluation evidence only
+
+    For this packet, `#{@complete_reported}` means the primary labels were collected,
+    frozen, validated, import-summarized, and reported in this Lane B label report.
+    It is a packet-local evaluation status only and does not create a runtime
+    approval or broader validation claim.
+
+    ## Source Artifacts
+
+    | Artifact | Path |
+    | --- | --- |
+    | Source run JSON | `#{config.run_json_path}` |
+    | Source run summary | `#{config.summary_path}` |
+    | Source fixture inventory | `#{config.fixture_inventory_path}` |
+    | Lane A run report | `#{config.run_report_path}` |
+    | Lane A closure | `#{config.closure_path}` |
+    | Label packet manifest | `#{path_join(config.out_path, "packet_manifest.json")}` |
+    | Filled primary label results | `#{summary["result_path"] || config.label_results_path}` |
+    | Import summary | `#{config.import_summary_path}` |
+
+    ## Label Results
+
+    | Metric | Raw labels | Status |
+    | --- | ---: | --- |
+    | `evidence_sufficiency_score` | #{evidence_count} | `#{@complete_reported}` |
+    | `context_omission_error_rate` | #{working_count} | `#{@complete_reported}` |
+    | `working_set_relevance_score` | #{working_count} | `#{@complete_reported}` |
+
+    ## Import Summary
+
+    Validated import summary:
+
+    - Summary path: `#{config.import_summary_path}`
+    - Result path: `#{summary["result_path"] || config.label_results_path}`
+    - Needs review count: #{summary["needs_review_count"]}
+    - Adjudication required count: #{summary["adjudication_required_count"]}
+    - Unhandled adjudication required count:
+      #{summary["unhandled_adjudication_required_count"]}
+    - Fixture oracle exposed before freeze:
+      `#{summary["fixture_oracle_exposed_before_freeze"]}`
+
+    ## Interpretation Boundaries
+
+    Allowed after this report:
+
+    - The `#{config.run_timestamp}` Lane A closure run has a completed active Lane B
+      label packet with primary labels, primary label freeze, validation, raw
+      agreement counts, and import summary under `#{@label_policy_version}`.
+    - The labels are Lane B labeled evaluation evidence for the named active
+      packet and the named metrics only.
+
+    Disallowed:
+
+    - new `accepted_by_closure` status beyond the Lane A source closure
+    - H1-H5 validation
+    - full Context OS validation
+    - production readiness
+    - human-in-the-loop verifier or runtime approval claims
+    - replacing the measured Lane A aggregate metrics with label results
+    - model-only baseline claims for OpenClaw local harness results
+    """
+  end
+
   defp evidence_readme_rows(config) do
     @evidence_sample
     |> Enum.with_index(1)
@@ -1216,6 +1635,8 @@ defmodule Vanta.PostStage1LaneBPacket do
       working_set_context_items: Path.join(config.out_abs, "working_set_context_items.jsonl"),
       adjudication_placeholders: Path.join(config.out_abs, "adjudication_placeholders.json"),
       label_results_template: Path.join(config.out_abs, "label_results_template.json"),
+      label_results_primary_filled:
+        Path.join(config.out_abs, "label_results_primary_filled.json"),
       label_report_skeleton: config.label_report_abs
     }
 
@@ -1246,6 +1667,8 @@ defmodule Vanta.PostStage1LaneBPacket do
            {:ok, working_set} <- load_jsonl(paths.working_set_context_items),
            {:ok, adjudication} <- load_json(paths.adjudication_placeholders),
            {:ok, label_results_template} <- load_json(paths.label_results_template),
+           {:ok, label_results_primary_filled} <-
+             load_optional_json(paths.label_results_primary_filled),
            {:ok, report} <- load_text(paths.label_report_skeleton),
            {:ok, redacted} <- load_redacted_packets(config, task_ids) do
         {:ok,
@@ -1256,6 +1679,7 @@ defmodule Vanta.PostStage1LaneBPacket do
            working_set_context_items: working_set,
            adjudication_placeholders: adjudication,
            label_results_template: label_results_template,
+           label_results_primary_filled: label_results_primary_filled,
            label_report_skeleton: report,
            redacted_task_packets: redacted
          }}
@@ -1335,11 +1759,68 @@ defmodule Vanta.PostStage1LaneBPacket do
     Enum.reduce(redacted_errors ++ context_errors, errors, &[&1 | &2])
   end
 
+  defp check_post_freeze_unblind_boundary(errors, actual) do
+    actual
+    |> post_freeze_unblind_boundary_errors()
+    |> Enum.reduce(errors, &[&1 | &2])
+  end
+
+  defp post_freeze_unblind_scan_targets(artifacts) do
+    [
+      {"evidence_sufficiency_items.jsonl",
+       artifact_value(artifacts, :evidence_sufficiency_items)},
+      {"working_set_context_items.jsonl", artifact_value(artifacts, :working_set_context_items)},
+      {"redacted_task_packets", artifact_value(artifacts, :redacted_task_packets)},
+      {"label_results_template.json", artifact_value(artifacts, :label_results_template)},
+      {"label_results_primary_filled.json",
+       artifact_value(artifacts, :label_results_primary_filled)}
+    ]
+    |> Enum.reject(fn {_label, value} -> is_nil(value) end)
+  end
+
+  defp artifact_value(map, key) when is_map(map) do
+    Map.get(map, key) || Map.get(map, Atom.to_string(key))
+  end
+
+  defp post_freeze_unblind_hits(value, path) when is_map(value) do
+    Enum.flat_map(value, fn {key, nested_value} ->
+      key_path = path ++ [key]
+
+      post_freeze_unblind_string_hits(to_string(key), key_path) ++
+        post_freeze_unblind_hits(nested_value, key_path)
+    end)
+  end
+
+  defp post_freeze_unblind_hits(value, path) when is_list(value) do
+    value
+    |> Enum.with_index()
+    |> Enum.flat_map(fn {item, index} -> post_freeze_unblind_hits(item, path ++ [index]) end)
+  end
+
+  defp post_freeze_unblind_hits(value, path) when is_binary(value) do
+    post_freeze_unblind_string_hits(value, path)
+  end
+
+  defp post_freeze_unblind_hits(_value, _path), do: []
+
+  defp post_freeze_unblind_string_hits(value, path) do
+    @post_freeze_unblind_forbidden_patterns
+    |> Enum.filter(fn {_label, pattern} -> Regex.match?(pattern, value) end)
+    |> Enum.map(fn {label, _pattern} -> {path, label} end)
+  end
+
+  defp format_scan_path([]), do: ""
+
+  defp format_scan_path(path) do
+    Enum.map_join(path, "", fn
+      index when is_integer(index) -> "[#{index}]"
+      key -> ".#{key}"
+    end)
+  end
+
   defp check_not_yet_run_labels(errors, actual) do
     label_errors =
       [
-        actual.packet_manifest["label_collection_status"],
-        get_in(actual.packet_manifest, ["adjudication", "status"]),
         actual.adjudication_placeholders["status"],
         actual.label_results_template["label_collection_status"],
         get_in(actual.label_results_template, ["primary_label_freeze", "status"]),
@@ -1373,6 +1854,110 @@ defmodule Vanta.PostStage1LaneBPacket do
       end)
 
     Enum.reduce(label_errors ++ item_errors, errors, &[&1 | &2])
+  end
+
+  defp check_reported_packet_state(errors, actual) do
+    case actual.packet_manifest["label_collection_status"] do
+      @complete_reported ->
+        errors
+        |> require_equal(
+          "packet_status",
+          actual.packet_manifest["packet_status"],
+          @complete_reported_packet_status
+        )
+        |> require_equal(
+          "report_status",
+          actual.packet_manifest["report_status"],
+          @reported_from_validated_primary_labels
+        )
+        |> require_equal(
+          "label_import_summary.status",
+          get_in(actual.packet_manifest, ["label_import_summary", "status"]),
+          "reported"
+        )
+        |> require_present_path(
+          "label_results_import_summary path",
+          get_in(actual.packet_manifest, ["artifact_paths", "label_results_import_summary"]),
+          "label_results_import_summary.json"
+        )
+        |> check_metric_label_status(actual, @complete_reported)
+        |> check_required_text(
+          "README.md",
+          actual.readme,
+          [@complete_reported, "label_results_import_summary.json"]
+        )
+        |> check_required_text(
+          "label report",
+          actual.label_report_skeleton,
+          [
+            @complete_reported,
+            @reported_from_validated_primary_labels,
+            "label_results_import_summary.json"
+          ]
+        )
+        |> reject_text(
+          "README.md",
+          actual.readme,
+          [
+            "It does not contain human labels",
+            "Label collection status is\n`Not yet run`",
+            "All fields are currently `Not yet run`"
+          ]
+        )
+        |> reject_text(
+          "label report",
+          actual.label_report_skeleton,
+          [
+            "Human labels have not been collected",
+            "Label collection remains `Not yet run`",
+            "Claim level before labels"
+          ]
+        )
+
+      @not_yet_run ->
+        errors
+        |> require_equal(
+          "packet_status",
+          actual.packet_manifest["packet_status"],
+          "prepared_for_labeling"
+        )
+        |> require_equal(
+          "packet adjudication status",
+          get_in(actual.packet_manifest, ["adjudication", "status"]),
+          @not_yet_run
+        )
+        |> check_metric_label_status(actual, @not_yet_run)
+
+      other ->
+        [
+          "packet label_collection_status is #{inspect(other)}, expected a known packet state"
+          | errors
+        ]
+    end
+  end
+
+  defp check_metric_label_status(errors, actual, expected_status) do
+    metric_status_errors =
+      actual.packet_manifest
+      |> get_in(["metric_scope"])
+      |> case do
+        metric_scope when is_map(metric_scope) ->
+          metric_scope
+          |> Enum.flat_map(fn {metric, scope} ->
+            if scope["label_status"] == expected_status do
+              []
+            else
+              [
+                "#{metric} label_status is #{inspect(scope["label_status"])}, expected #{inspect(expected_status)}"
+              ]
+            end
+          end)
+
+        _other ->
+          ["packet manifest metric_scope must be an object"]
+      end
+
+    Enum.reduce(metric_status_errors, errors, &[&1 | &2])
   end
 
   defp check_selector_repair_item(errors, actual) do
@@ -1483,6 +2068,30 @@ defmodule Vanta.PostStage1LaneBPacket do
     |> Enum.reduce(errors, fn missing, acc ->
       ["#{label} does not contain #{inspect(missing)}" | acc]
     end)
+  end
+
+  defp reject_text(errors, label, text, rejected_strings) do
+    rejected_strings
+    |> Enum.filter(&String.contains?(text, &1))
+    |> Enum.reduce(errors, fn rejected, acc ->
+      ["#{label} contains stale pre-label text #{inspect(rejected)}" | acc]
+    end)
+  end
+
+  defp require_present_path(errors, label, value, expected_suffix) do
+    cond do
+      not is_binary(value) or String.trim(value) == "" ->
+        ["#{label} must be a non-empty path" | errors]
+
+      not String.ends_with?(value, expected_suffix) ->
+        [
+          "#{label} is #{inspect(value)}, expected to end with #{inspect(expected_suffix)}"
+          | errors
+        ]
+
+      true ->
+        errors
+    end
   end
 
   defp require_count(errors, label, list, expected_count) do
@@ -1624,6 +2233,20 @@ defmodule Vanta.PostStage1LaneBPacket do
     end
   end
 
+  defp existing_text_or(path, required_markers, fallback_fun) do
+    case load_text(path) do
+      {:ok, text} ->
+        if Enum.all?(required_markers, &String.contains?(text, &1)) do
+          text
+        else
+          fallback_fun.()
+        end
+
+      {:error, _errors} ->
+        fallback_fun.()
+    end
+  end
+
   defp load_json(path) do
     with {:ok, text} <- load_text(path),
          {:ok, json} <- Jason.decode(text) do
@@ -1634,6 +2257,14 @@ defmodule Vanta.PostStage1LaneBPacket do
 
       {:error, %Jason.DecodeError{} = error} ->
         {:error, ["failed to decode JSON #{path}: #{Exception.message(error)}"]}
+    end
+  end
+
+  defp load_optional_json(path) do
+    if File.exists?(path) do
+      load_json(path)
+    else
+      {:ok, nil}
     end
   end
 

@@ -153,12 +153,23 @@ does not authorize broader runtime validation claims. `PS1-G7` is accepted
 by [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) for Context OS
 specification and evaluation planning only. It does not implement full Context
 OS, change schemas, authorize learned retrieval or compression, approve memory
-governance, collect labels, run experiments, or validate H3. `PS1-G8` is
+governance, run experiments, or validate H3. The first active Lane B packet now
+adds reported packet-level human labels for the named `20260601_113121` packet
+only.
+`PS1-G8` is
 accepted by [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) for
 side-effect specification, schema impact review, evaluation planning, and
 implementation planning only. It does not authorize runtime execution of
 `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` actions, change schemas,
 collect labels, run experiments, approve production deployment, or validate H5.
+The first `PS1-G8` planning bundle is now routed through
+[Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md),
+[Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md),
+and
+[Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md).
+It defines a fixture-local Document Ops `COMMITTABLE` commit-proposal planning
+surface only and does not authorize execution, approval collection, schema
+changes, H5 validation, or production readiness.
 
 Lane A has an accepted threshold-governed larger-sample closure for the
 `20260601_113121` measured `PS1-LA-SAMPLE-002` run. The
@@ -176,15 +187,16 @@ emit `run.json`, `summary.md`, and `fixture_inventory.md`. The runner may report
 `pass_acceptance_candidate` when `PS1-G2` passes, but it may not report
 `accepted_by_closure`.
 
-Lane B is open for human or secondary labeling after labels are collected under
+Lane B is open for human or secondary labeling under
 [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
-The active prepared packet is
+The active packet is
 [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md),
-with report shell
-[Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md).
-No post-Stage-1 human or secondary labels have been collected yet, and a future
-report must still include packet, blinding, review, adjudication, agreement,
-and interpretation-boundary metadata before using broader label claims.
+with active label report
+[Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md).
+The first primary label batch has been collected, frozen, validated, and
+reported with packet, blinding, review, adjudication, agreement, and
+interpretation-boundary metadata. This is Lane B labeled evaluation evidence
+for the named active packet only, not broader validation.
 
 Lane C has a local implementation of `Document Ops Structured Edit Action
 Surface v0` under
@@ -204,10 +216,10 @@ closure run in
 [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md),
 and
 [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md).
-It routes the measured working-set metrics into planning artifacts only. Lane B
-labels remain `Not yet run`, so this bundle does not authorize implementation,
-schema changes, memory writes, learned retrieval, full Context OS validation,
-or H3 validation.
+It routes measured Lane A working-set metrics and the first active Lane B
+packet-level context-quality labels into planning artifacts only. This bundle
+does not authorize implementation, schema changes, memory writes, learned
+retrieval, full Context OS validation, or H3 validation.
 
 The earlier `20260530_141649` Lane B packet and Context OS planning input are
 historical only. They were prepared before the selector-repair closure and must
@@ -218,6 +230,11 @@ Lane C is also open for side-effect specification and evaluation planning under
 `PS1-G8` scope remains planning-only. `COMMITTABLE`, `IRREVERSIBLE`, and
 `MEMORY_WRITE` execution still requires later accepted specs, schemas,
 fixtures, runtime code, tests, and evaluation artifacts.
+
+The first routed `PS1-G8` bundle defines only the fixture-local
+`COMMITTABLE` Document Ops commit-proposal planning surface. It keeps
+`IRREVERSIBLE` and `MEMORY_WRITE` out of scope and does not add runtime action
+enums, approval records, fixtures, tests, or measured results.
 
 ## Gate Inventory Boundary
 
@@ -276,12 +293,15 @@ claim`.
 - [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
 - [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 - [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
+- [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
+- [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
+- [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
 - [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)
 - [Metrics Definition](../05_evaluation/Metrics_Definition.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
-- [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 - [Ablation Plan](../04_experiments/Ablation_Plan.md)
 - [Implementation Timeline](../06_engineering/Implementation_Timeline.md)

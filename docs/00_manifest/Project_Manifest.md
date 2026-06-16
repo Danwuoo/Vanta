@@ -51,24 +51,33 @@ acceptance.
 Lane B labeling policy has accepted `PS1-G3` and `PS1-G4`: evidence
 sufficiency labels use the `PS1-LB-LABEL-001` five-level scale, and subjective
 or oracle-sensitive labels require the documented review and adjudication path.
-No post-Stage-1 human or secondary labels have been collected yet.
+The first active post-Stage-1 human label batch has been collected for the
+`20260601_113121` Lane B packet.
 
-The active blinded Lane B packet is prepared from the `20260601_113121` Lane A
+The active blinded Lane B packet was prepared from the `20260601_113121` Lane A
 closure run:
 [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md),
 with a companion
-[label report skeleton](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md).
+[label report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md).
 It covers candidate artifacts for `evidence_sufficiency_score`,
-`context_omission_error_rate`, and `working_set_relevance_score`. Human labels,
-secondary review, adjudication, and agreement reporting remain `Not yet run`.
-The packet is not broader evaluation evidence until labels are collected and
-reported under `PS1-LB-LABEL-001`. A packet-local label result template and
-validator/import-summary task now provide a collection, import, validation, and
-report-filling path for real labels; this is evaluation tooling only and does
-not expand runtime behavior, core schemas, or approval paths.
+`context_omission_error_rate`, and `working_set_relevance_score`. The reported
+first primary label batch contains 40 real raw labels: 16
+`evidence_sufficiency_score` labels and 24 `working_set_context` labels. The
+primary labels were frozen on 2026-06-05 before fixture oracle metadata,
+`task.json` oracle fields, arm identity mapping, Lane A item results, or
+post-run repair notes were exposed. The filled result file validates with zero
+`needs_review` labels, zero adjudication-required triggers, and zero unhandled
+adjudication requirements, and an import summary is available in the packet
+directory. The labels are reported in the companion label report. This is
+`20260601_113121` active packet Lane B labeled evaluation
+evidence only; it does not validate H1-H5, authorize full Context OS, approve
+production readiness, create runtime approval, or expand core schemas.
+Packet-local result and validator/import-summary tooling remain evaluation
+tooling only and do not expand runtime behavior, core schemas, or approval
+paths.
 The primary-labeler-visible allowlist for this packet was frozen on
-2026-06-03 in the packet-local coordinator freeze record; primary labels have
-not been collected or frozen, and fixture oracle metadata remains withheld.
+2026-06-03 in the packet-local coordinator freeze record; this allowlist freeze
+is separate from the 2026-06-05 primary label freeze.
 
 The earlier `20260530_141649` Lane B packet remains only as a superseded
 historical packet for a non-accepted source run whose selector-missing item
@@ -172,10 +181,15 @@ and
 [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md).
 The bundle records that Lane A working-set metrics support planning-level
 budget, provenance, omission, relevance, stability, and process-integrity
-statements for the measured run. It also records that Lane B labels remain
-`Not yet run`, so human-labeled context quality, H3, learned retrieval, memory
-governance, schema changes, runtime implementation, and full Context OS
-validation remain blocked.
+statements for the measured run. The first active Lane B packet now adds
+human-labeled context-quality evidence for the named `20260601_113121` packet:
+combined `context_omission_error_rate = 0.3684` and
+`working_set_relevance_score = 0.7742` across blinded working-set items, with
+raw agreement counts reported because the sample is small. This updates the
+planning evidence surface only; H3, learned retrieval, memory governance,
+schema changes, runtime implementation, and full Context OS validation remain
+blocked until later accepted specs, schemas, experiments, labels, and
+implementation batches exist.
 
 Lane C has accepted `PS1-G8` for side-effect specification and evaluation
 planning only:
@@ -184,6 +198,17 @@ conditions for planning beyond Stage 1 side-effect allowances. It does not
 authorize runtime execution of `COMMITTABLE`, `IRREVERSIBLE`, or
 `MEMORY_WRITE` actions, change schemas, collect labels, run experiments,
 approve production deployment, or validate H5.
+
+The first `PS1-G8` side-effect planning bundle is now routed through
+[Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md),
+[Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md),
+and
+[Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md).
+It defines a fixture-local Document Ops `COMMITTABLE` commit-proposal planning
+surface only. The bundle does not add runtime actions, change schemas, execute
+`COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` effects, collect approvals,
+run experiments, validate H5, approve production readiness, or create a runtime
+approval path.
 
 ## Source Documents
 

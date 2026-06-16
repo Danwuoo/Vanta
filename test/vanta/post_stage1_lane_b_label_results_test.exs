@@ -17,6 +17,10 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     packet_dir: "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121"
   ]
 
+  @filled_results_path "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_primary_filled.json"
+  @import_summary_path "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_import_summary.json"
+  @label_report_path "docs/05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md"
+
   test "template is a Not yet run packet-local result scaffold" do
     assert {:ok, template} = PostStage1LaneBLabelResults.template(@label_opts)
 
@@ -38,6 +42,8 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     assert summary["raw_label_counts"]["evidence_sufficiency_score"] == 0
     assert summary["raw_label_counts"]["working_set_context"] == 0
     assert summary["adjudication_required_count"] == 0
+    assert String.contains?(summary["claim_boundary"], "packet-local Lane B label report")
+    refute String.contains?(summary["claim_boundary"], "until real labels")
   end
 
   test "validates in-progress dry-run raw labels and reports pending triggers" do
@@ -60,6 +66,95 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     assert summary["needs_review_count"] == 1
     assert summary["adjudication_required_count"] == 1
     assert summary["unhandled_adjudication_required_count"] == 1
+    assert String.contains?(summary["claim_boundary"], "not broad validation")
+  end
+
+  test "validates reported primary labels without requiring the old pending-report status" do
+    assert {:ok, summary} =
+             PostStage1LaneBLabelResults.validate_file(@filled_results_path, @label_opts)
+
+    assert summary["label_collection_status"] == "complete_reported"
+    assert summary["raw_label_counts"]["evidence_sufficiency_score"] == 16
+    assert summary["raw_label_counts"]["working_set_context"] == 24
+    assert summary["needs_review_count"] == 0
+    assert summary["adjudication_required_count"] == 0
+    assert summary["unhandled_adjudication_required_count"] == 0
+
+    assert get_in(summary, [
+             "reported_metric_scores",
+             "context_omission_error_rate",
+             "score_4dp"
+           ]) == "0.3684"
+
+    assert get_in(summary, [
+             "reported_metric_scores",
+             "working_set_relevance_score",
+             "score_4dp"
+           ]) == "0.7742"
+  end
+
+  test "validates active label report parity against filled labels and import summary" do
+    assert {:ok, summary} =
+             PostStage1LaneBLabelResults.validate_report_parity(
+               @label_report_path,
+               @filled_results_path,
+               @import_summary_path,
+               @label_opts
+             )
+
+    assert summary["status"] == "ok"
+
+    assert summary["raw_label_counts"] == %{
+             "evidence_sufficiency_score" => 16,
+             "working_set_context" => 24
+           }
+
+    assert get_in(summary, [
+             "reported_metric_scores",
+             "context_omission_error_rate",
+             "omitted_task_critical_ref_count"
+           ]) == 14
+
+    assert get_in(summary, [
+             "reported_metric_scores",
+             "context_omission_error_rate",
+             "task_critical_candidate_ref_count"
+           ]) == 38
+
+    assert get_in(summary, [
+             "reported_metric_scores",
+             "working_set_relevance_score",
+             "relevant_included_ref_count"
+           ]) == 24
+
+    assert get_in(summary, [
+             "reported_metric_scores",
+             "working_set_relevance_score",
+             "included_ref_denominator"
+           ]) == 31
+  end
+
+  test "report parity rejects drifted markdown omission metrics" do
+    report_text =
+      @label_report_path
+      |> File.read!()
+      |> String.replace(
+        "| `context_omission_error_rate` | 24 | No adjudication required; exact matching primary labels retained | `0.3684` (`14 / 38`) | 0 | `complete_reported` |",
+        "| `context_omission_error_rate` | 24 | No adjudication required; exact matching primary labels retained | `0.9999` (`99 / 99`) | 0 | `complete_reported` |",
+        global: false
+      )
+
+    path = write_temp_text(report_text)
+
+    assert {:error, errors} =
+             PostStage1LaneBLabelResults.validate_report_parity(
+               path,
+               @filled_results_path,
+               @import_summary_path,
+               @label_opts
+             )
+
+    assert Enum.any?(errors, &String.contains?(&1, "context_omission_error_rate"))
   end
 
   test "rejects labels outside the PS1-LB-LABEL-001 evidence scale" do
@@ -161,6 +256,18 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
       )
 
     File.write!(path, Jason.encode!(data, pretty: true))
+    on_exit(fn -> File.rm(path) end)
+    path
+  end
+
+  defp write_temp_text(text) do
+    path =
+      Path.join(
+        System.tmp_dir!(),
+        "vanta_lane_b_label_report_#{System.unique_integer([:positive])}.md"
+      )
+
+    File.write!(path, text)
     on_exit(fn -> File.rm(path) end)
     path
   end

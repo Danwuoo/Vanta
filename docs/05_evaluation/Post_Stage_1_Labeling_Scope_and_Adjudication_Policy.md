@@ -20,13 +20,19 @@ Policy ID: `PS1-LB-LABEL-001`.
 Status: `Accepted as PS1-G3 and PS1-G4 labeling-policy artifact` on
 2026-05-10.
 
-Label collection status: `Not yet run`.
+Label collection status: first active packet primary label batch complete for
+`PS1-LB-PACKET-20260601-113121-BATCH-001`.
 
 Prepared packet status: the active blinded Lane B packet for the
 `20260601_113121` Lane A closure run is available at
 `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/`.
-It contains candidate items and adjudication placeholders only; raw labels,
-secondary review, adjudication, and agreement reporting remain `Not yet run`.
+It contains candidate items and adjudication placeholders. A packet-local filled
+result file and import summary now record 40 real raw primary labels, primary
+label freeze on 2026-06-05, zero `needs_review` labels, zero validator-triggered
+adjudication requirements, and raw agreement counts. These labels are Lane B
+labeled evaluation evidence for the named active packet only; they do not
+validate H1-H5, authorize full Context OS, approve production readiness, or
+create runtime approval.
 
 The earlier `20260530_141649` packet remains only as a superseded historical
 packet for its non-accepted source run.
@@ -236,7 +242,7 @@ Any report using labels under this policy must include:
 - [Post-Stage-1 Gate Inventory](../00_manifest/Post_Stage_1_Gate_Inventory.md)
 - [Post-Stage-1 Metric Policy](Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](label_packets/post_stage_1_lane_b_20260601_113121/README.md)
-- [Post-Stage-1 Lane B 20260601_113121 Label Report Skeleton](Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
+- [Post-Stage-1 Lane B 20260601_113121 Label Report](Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 - [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
 - [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 - [Metrics Definition](Metrics_Definition.md)

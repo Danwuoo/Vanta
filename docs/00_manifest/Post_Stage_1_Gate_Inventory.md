@@ -40,12 +40,12 @@ successor manifest gate that explicitly supersedes it.
 | `PS1-G0` | All lanes prerequisite | `Accepted` | Closure docs 001 through 005 and linked run reports | Existing closure docs and run reports | Stage 1 closure docs 001 through 005 | Post-Stage-1 planning can be routed through `PS1-G1` through `PS1-G8` | The five local smoke closures are not broad validation. |
 | `PS1-G1` | Larger Controlled Samples | `Accepted` | [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md); G6-aware execution successor [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md) | `docs/04_experiments/Post_Stage_1_Larger_Sample_Plan.md`; `docs/04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md` | `PS1-G0`; Document Ops benchmark; closure reports 001 through 005; `PS1-G6` local structured edit implementation | Larger controlled sample execution through `Vanta.PostStage1LargerSample`; input to `PS1-G2` | Acceptance claims require the accepted metric policy, measured results, and closure acceptance. |
 | `PS1-G2` | Larger Controlled Samples | `Accepted` | [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md) | `docs/05_evaluation/Post_Stage_1_Metric_Policy.md` | `PS1-G1`; `PS1-G5`; metrics definition; closure reports 001 through 005 | Threshold-governed acceptance candidates for larger controlled samples | Passing thresholds is not broad validation and still requires measured run reports plus closure acceptance. |
-| `PS1-G3` | Human or Secondary Labeling | `Accepted` | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; Evidence Packet spec; Metrics Definition; labeling guides | Evidence sufficiency labeling can begin under the fixed `PS1-LB-LABEL-001` scale | Evidence sufficiency labels have not been collected; no broad label claim exists yet. |
-| `PS1-G4` | Human or Secondary Labeling | `Accepted` | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; `PS1-G3`; labeling guides | Broader subjective label claims can use the accepted review and adjudication policy after labels are collected; the active blinded packet is prepared at `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/` | Subjective metrics cannot support broad claims without policy-compliant packets, review, and adjudication records. |
+| `PS1-G3` | Human or Secondary Labeling | `Accepted` | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; Evidence Packet spec; Metrics Definition; labeling guides | Evidence sufficiency labeling can proceed under the fixed `PS1-LB-LABEL-001` scale; the first active `20260601_113121` packet now has frozen, validated, import-summarized, and reported primary evidence sufficiency labels | Evidence sufficiency labels for one active packet are not broad validation and do not validate H1-H5. |
+| `PS1-G4` | Human or Secondary Labeling | `Accepted` | [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md) | `docs/05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md` | `PS1-G0`; `PS1-G3`; labeling guides | Broader subjective label claims can use the accepted review and adjudication policy after labels are collected; the first active `20260601_113121` packet now has frozen, validated, import-summarized, and reported primary labels at `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/` | Subjective metrics cannot support broad claims without policy-compliant packets, review, adjudication handling, and claim boundaries. |
 | `PS1-G5` | Larger Controlled Samples | `Accepted` | [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md) | `docs/04_experiments/Baseline_Identity_Plan.md` | `PS1-G0`; OpenClaw local harness closure notes; Experiment 001 baseline records | Baseline arm naming for larger controlled samples; input to `PS1-G2` | OpenClaw harness results are not promoted to pure model-only baseline results. |
 | `PS1-G6` | Broader Runtime Scope | `Accepted` | [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md) | `docs/00_manifest/Post_Stage_1_Runtime_Scope_Proposal.md` | `PS1-G0`; Stage 1 scope boundaries; Execution IR, Evidence Packet, Commit/Abort/Replay specs | Local schema-backed implementation of `Document Ops Structured Edit Action Surface v0` | Local implementation and tests do not validate H1-H5 or authorize broader side-effect classes. |
-| `PS1-G7` | Broader Runtime Scope | `Accepted` | [Context OS Expansion Gate](Context_OS_Expansion_Gate.md); draft planning bundle [spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md), [schema impact review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md), and [evaluation plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md) | `docs/00_manifest/Context_OS_Expansion_Gate.md`; `docs/02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md`; `docs/03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md`; `docs/04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md` | `PS1-G0`; Phase 5 gate; Experiment 005 closure; Working Set Compiler note; `PS1-G1` through `PS1-G5` policies; `20260601_113121` accepted Lane A closure run; active Lane B packet prepared but labels `Not yet run` | Context OS specification and evaluation planning only | Runtime implementation, schema changes, full Context OS validation, learned retrieval, compression, memory governance, and H3 validation are not authorized. |
-| `PS1-G8` | Broader Runtime Scope | `Accepted` | [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) | `docs/00_manifest/Side_Effect_Escalation_Gate.md` | `PS1-G0`; Stage 1 side-effect allowances; Commit Abort Replay Semantics; Evidence Packet and Verifier Runtime | Side-effect specification, schema impact review, evaluation planning, and implementation planning | Runtime execution of `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` actions is not authorized; rollback must not be assumed. |
+| `PS1-G7` | Broader Runtime Scope | `Accepted` | [Context OS Expansion Gate](Context_OS_Expansion_Gate.md); draft planning bundle [spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md), [schema impact review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md), and [evaluation plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md) | `docs/00_manifest/Context_OS_Expansion_Gate.md`; `docs/02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md`; `docs/03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md`; `docs/04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md` | `PS1-G0`; Phase 5 gate; Experiment 005 closure; Working Set Compiler note; `PS1-G1` through `PS1-G5` policies; `20260601_113121` accepted Lane A closure run; active Lane B packet-level human labels | Context OS specification and evaluation planning only | Runtime implementation, schema changes, full Context OS validation, learned retrieval, compression, memory governance, and H3 validation are not authorized. |
+| `PS1-G8` | Broader Runtime Scope | `Accepted` | [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md); first planning bundle [spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md), [schema impact review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md), and [evaluation plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md) | `docs/00_manifest/Side_Effect_Escalation_Gate.md`; `docs/02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md`; `docs/03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md`; `docs/04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md` | `PS1-G0`; Stage 1 side-effect allowances; Commit Abort Replay Semantics; Evidence Packet and Verifier Runtime | Side-effect specification, schema impact review, evaluation planning, and implementation planning for the first fixture-local Document Ops `COMMITTABLE` planning surface | Runtime execution of `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` actions is not authorized; rollback must not be assumed; planning labels and fixture oracles are not runtime approvals. |
 
 ## Dependency Order
 
@@ -125,20 +125,22 @@ successor manifest gate that explicitly supersedes it.
   sample. It does not validate H1-H5.
 - `PS1-G3` and `PS1-G4` are accepted by
   [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
-  Label collection remains `Not yet run`.
+  The first active Lane B primary label batch has been collected, frozen,
+  validated, import-summarized, and reported for the `20260601_113121` packet.
 - The active blinded Lane B packet for the `20260601_113121` Lane A closure run
   is prepared at
   `docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/`,
-  with a report skeleton at
+  with a label report at
   `docs/05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md`.
   It covers `evidence_sufficiency_score`, `context_omission_error_rate`, and
-  `working_set_relevance_score` candidates. Human labels, secondary review,
-  adjudication, and agreement reporting remain `Not yet run`, so no broad label
-  claim exists yet. The packet now includes a packet-local
-  `label_results_template.json`, and `Vanta.PostStage1LaneBLabelResults`
-  provides validation and import-summary tooling for real future label files;
-  this tooling does not create labels, expand core schemas, authorize runtime
-  approvals, or change the `Not yet run` label status.
+  `working_set_relevance_score` candidates. The first filled result file
+  contains 40 real primary labels, records primary label freeze on 2026-06-05,
+  validates with zero `needs_review` labels, zero adjudication triggers, and
+  zero unhandled adjudication requirements, and has an import summary in the
+  packet directory. This is Lane B labeled evaluation evidence for the named
+  packet only; it does not validate H1-H5, authorize full Context OS, approve
+  production readiness, or create runtime approval. Packet-local tooling remains
+  evaluation tooling only and does not expand core schemas or runtime behavior.
 - The earlier `20260530_141649` Lane B packet remains as a superseded
   historical packet only. It is not the current accepted-run Lane B source
   because the source run was not `accepted_by_closure` and its
@@ -160,16 +162,26 @@ successor manifest gate that explicitly supersedes it.
   and
   [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md).
   Lane A working-set metrics support planning-level budget, provenance,
-  omission, relevance, stability, and process-integrity statements. Lane B
-  omission and relevance labels remain `Not yet run`, so the bundle remains a
-  planning draft and does not authorize implementation, schema changes, learned
-  retrieval, memory writes, full Context OS validation, or H3 validation.
+  omission, relevance, stability, and process-integrity statements. The first
+  active Lane B packet now adds human-labeled omission and relevance evidence
+  for the named packet, but the bundle remains planning-only and does not
+  authorize implementation, schema changes, learned retrieval, memory writes,
+  full Context OS validation, or H3 validation.
 - `PS1-G8` is accepted by
   [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) for
   side-effect specification and evaluation planning only. Runtime execution of
   `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` actions still requires later
   accepted specs, schemas, fixtures, runtime code, tests, and evaluation
   artifacts.
+- The first `PS1-G8` side-effect planning bundle is routed through
+  [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md),
+  [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md),
+  and
+  [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md).
+  It defines a fixture-local Document Ops `COMMITTABLE` commit-proposal
+  planning surface only and does not authorize runtime execution, schema
+  changes, approval collection, labels, experiments, production readiness, or
+  H5 validation.
 
 ## Routing Rules
 

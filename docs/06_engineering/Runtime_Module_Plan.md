@@ -65,6 +65,12 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
   components. They must not change the `Vanta.Runtime.run_task/3` commit path.
 - Phase 5 must not introduce memory writes, full Context OS, learned retrieval,
   compression, full memory dumps, or raw tool log dumps as working sets.
+- The first `PS1-G8` side-effect planning bundle defines only a fixture-local
+  Document Ops `COMMITTABLE` commit-proposal planning surface. It must not be
+  wired into the Planner Adapter, Execution IR Compiler, Action Executor,
+  Verifier Runtime, Commit Controller, or Episode Journal as executable runtime
+  behavior without a later accepted schema, implementation, fixture, test, and
+  evaluation batch.
 
 ## Post-Stage-1 Open Questions
 
@@ -73,3 +79,5 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
 - What benchmark size is required before moving beyond Stage 1 smoke checks?
 - What measured threshold, after a real LLM baseline run, is sufficient to move
   beyond local Document Ops fixtures?
+- Which later implementation gate, if any, should turn the `PS1-G8`
+  `COMMITTABLE` planning surface into executable fixture-local runtime behavior?

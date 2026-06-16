@@ -16,7 +16,23 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 
     assert packet.packet_manifest["packet_id"] == "PS1-LB-PACKET-20260601-113121-BATCH-001"
-    assert packet.packet_manifest["label_collection_status"] == "Not yet run"
+    assert packet.packet_manifest["packet_status"] == "active_packet_complete_reported"
+    assert packet.packet_manifest["label_collection_status"] == "complete_reported"
+    assert packet.packet_manifest["report_status"] == "reported_from_validated_primary_labels"
+    assert get_in(packet.packet_manifest, ["label_import_summary", "status"]) == "reported"
+
+    assert get_in(packet.packet_manifest, ["label_import_summary", "raw_label_counts"]) == %{
+             "evidence_sufficiency_score" => 16,
+             "working_set_context" => 24
+           }
+
+    assert get_in(packet.packet_manifest, ["artifact_paths", "label_report"]) ==
+             "docs/05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md"
+
+    assert Enum.all?(
+             packet.packet_manifest["metric_scope"],
+             fn {_metric, scope} -> scope["label_status"] == "complete_reported" end
+           )
 
     assert get_in(packet.packet_manifest, ["source_run", "closure_status"]) ==
              "accepted_by_closure"
@@ -48,7 +64,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     end)
   end
 
-  test "keeps all generated label fields Not yet run" do
+  test "keeps reviewer-visible item label fields as Not yet run scaffolds" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 
     items = packet.evidence_sufficiency_items ++ packet.working_set_context_items
@@ -58,6 +74,26 @@ defmodule Vanta.PostStage1LaneBPacketTest do
       assert item["adjudication_status"] == "Not yet run"
       assert Enum.all?(Map.values(item["primary_label_fields"]), &(&1 == "Not yet run"))
     end)
+  end
+
+  test "active reported packet generation paths do not regress to pre-label narrative" do
+    assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
+
+    assert String.contains?(packet.readme, "complete_reported")
+    assert String.contains?(packet.readme, "label_results_import_summary.json")
+    refute String.contains?(packet.readme, "It does not contain human labels")
+    refute String.contains?(packet.readme, "All fields are currently `Not yet run`")
+
+    assert String.contains?(packet.label_report_skeleton, "complete_reported")
+
+    assert String.contains?(
+             packet.label_report_skeleton,
+             "reported_from_validated_primary_labels"
+           )
+
+    assert String.contains?(packet.label_report_skeleton, "label_results_import_summary.json")
+    refute String.contains?(packet.label_report_skeleton, "Human labels have not been collected")
+    refute String.contains?(packet.label_report_skeleton, "Claim level before labels")
   end
 
   test "working-set context items use blinded arms without arm identity mapping" do
@@ -71,6 +107,43 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     encoded = Jason.encode!(packet.working_set_context_items)
     refute String.contains?(encoded, "\"baseline\"")
     refute String.contains?(encoded, "\"treatment\"")
+  end
+
+  test "post-freeze unblind guard accepts packet artifacts without coordinator-only source labels" do
+    assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
+
+    artifacts = %{
+      evidence_sufficiency_items: packet.evidence_sufficiency_items,
+      working_set_context_items: packet.working_set_context_items,
+      redacted_task_packets: packet.redacted_task_packets,
+      label_results_template: packet.label_results_template
+    }
+
+    assert PostStage1LaneBPacket.post_freeze_unblind_boundary_errors(artifacts) == []
+  end
+
+  test "packet check rejects post-freeze unblind source labels in result scaffolds" do
+    opts = temp_packet_opts("post_freeze_unblind_guard")
+    assert {:ok, _result} = PostStage1LaneBPacket.generate(opts)
+
+    opts
+    |> Keyword.fetch!(:label_results)
+    |> File.write!(
+      Jason.encode!(
+        %{
+          "result_format" => "PS1-LB-LABEL-RESULT-LOCAL-001",
+          "source_arm_label" => "raw_trace_*"
+        },
+        pretty: true
+      )
+    )
+
+    assert {:error, errors} = PostStage1LaneBPacket.check(opts)
+
+    assert Enum.any?(errors, fn error ->
+             String.contains?(error, "post-freeze unblind guard") and
+               String.contains?(error, "source arm label")
+           end)
   end
 
   test "selector-missing evidence item comes from repaired rejection artifact" do
@@ -101,4 +174,23 @@ defmodule Vanta.PostStage1LaneBPacketTest do
   end
 
   defp has_key_recursive?(_value, _key), do: false
+
+  defp temp_packet_opts(name) do
+    base_dir =
+      Path.join(
+        System.tmp_dir!(),
+        "vanta_lane_b_packet_#{name}_#{System.unique_integer([:positive])}"
+      )
+
+    on_exit(fn -> File.rm_rf!(base_dir) end)
+
+    Keyword.merge(@opts,
+      out: Path.join(base_dir, "packet"),
+      label_report: Path.join(base_dir, "Post_Stage_1_Lane_B_20260601_113121_Label_Report.md"),
+      label_results: Path.join([base_dir, "packet", "label_results_primary_filled.json"]),
+      import_summary: Path.join([base_dir, "packet", "label_results_import_summary.json"]),
+      coordinator_packet_freeze:
+        Path.join([base_dir, "packet", "coordinator_primary_label_packet_freeze.json"])
+    )
+  end
 end
