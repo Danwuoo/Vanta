@@ -79,9 +79,9 @@ note-graph configuration, frontmatter, or application-specific link syntax.
 | L0 | `docs/00_manifest/` | [Project Manifest](Project_Manifest.md), [Document Map](Document_Map.md), [Traceability Matrix](Traceability_Matrix.md), [Glossary](Glossary.md), [Decision Log](Decision_Log.md), [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md) |
 | L1 | `docs/01_theory/` | [Design Theory](../01_theory/Design_Theory.md), [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md), [Research Hypotheses](../01_theory/Research_Hypotheses.md), [Alternative Theories](../01_theory/Alternative_Theories.md) |
 | L2 | `docs/02_specs/` | [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md), [Execution IR and Episode Semantics](../02_specs/Execution_IR_and_Episode_Semantics.md), [Evidence Packet and Verifier Runtime](../02_specs/Evidence_Packet_and_Verifier_Runtime.md), [Commit Abort Replay Semantics](../02_specs/Commit_Abort_Replay_Semantics.md), [Failure Taxonomy v0](../02_specs/Failure_Taxonomy_v0.md), [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md), [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md), and [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md) |
-| L3 | `docs/03_schemas/` | Runtime, benchmark, and evaluation data contracts under [schema contracts](../03_schemas/), plus [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md) and [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md) for no-change planning reviews |
-| L4 | `docs/04_experiments/` | [Document Ops Benchmark](../04_experiments/Document_Ops_Benchmark.md), [Benchmark Task Format](../04_experiments/Benchmark_Task_Format.md), [Ablation Plan](../04_experiments/Ablation_Plan.md), Experiment 001 through 005 protocols, post-Stage-1 sample plans, [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md), and [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md) |
-| L5 | `docs/05_evaluation/` | [Metrics Definition](../05_evaluation/Metrics_Definition.md), labeling guides, report templates, measured run reports, and Lane B label packets |
+| L3 | `docs/03_schemas/` | Runtime, benchmark, and evaluation data contracts under [Schemas Index](../03_schemas/Schemas_Index.md), plus [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md) and [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md) for no-change planning reviews |
+| L4 | `docs/04_experiments/` | [Document Ops Benchmark](../04_experiments/Document_Ops_Benchmark.md), [Benchmark Task Format](../04_experiments/Benchmark_Task_Format.md), [Ablation Plan](../04_experiments/Ablation_Plan.md), Experiment 001 through 005 protocols, post-Stage-1 sample plans, [Experiment Results README](../04_experiments/results/README.md), [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md), and [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md) |
+| L5 | `docs/05_evaluation/` | [Metrics Definition](../05_evaluation/Metrics_Definition.md), labeling guides, report templates, measured run reports, and [Label Packets README](../05_evaluation/label_packets/README.md) |
 | L6 | `docs/06_engineering/` | [MVP Architecture](../06_engineering/MVP_Architecture.md), [Repository Structure](../06_engineering/Repository_Structure.md), [Runtime Module Plan](../06_engineering/Runtime_Module_Plan.md), [Implementation Timeline](../06_engineering/Implementation_Timeline.md), [Testing Strategy](../06_engineering/Testing_Strategy.md) |
 
 ### Primary Flow
@@ -89,7 +89,7 @@ note-graph configuration, frontmatter, or application-specific link syntax.
 [Project Manifest](Project_Manifest.md)
 -> [Design Theory](../01_theory/Design_Theory.md)
 -> [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
--> [schema contracts](../03_schemas/)
+-> [Schemas Index](../03_schemas/Schemas_Index.md)
 -> [Document Ops Benchmark](../04_experiments/Document_Ops_Benchmark.md)
 -> [Metrics Definition](../05_evaluation/Metrics_Definition.md)
 -> [MVP Architecture](../06_engineering/MVP_Architecture.md)
@@ -114,10 +114,12 @@ note-graph configuration, frontmatter, or application-specific link syntax.
 -> [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md)
 -> [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 -> [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+-> [Experiment Results README](../04_experiments/results/README.md)
 -> [Post-Stage-1 Lane A 20260601_113121 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
 -> [Post-Stage-1 Lane A 20260601_113121 Closure](Post_Stage_1_Lane_A_20260601_113121_Closure.md)
 -> [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 -> [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+-> [Label Packets README](../05_evaluation/label_packets/README.md)
 -> [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
 -> [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 -> [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md)
@@ -205,6 +207,11 @@ keeps the 48-fixture, 8-stratum frame, fixes the structured-edit fixture
 routing, and names the `Vanta.PostStage1LargerSample` runner artifact contract.
 It does not report measured results or create closure acceptance.
 
+[Experiment Results README](../04_experiments/results/README.md)
+is the L4 results navigation entry. It lists result families, active versus
+historical status, measured versus planning-only boundaries, and provenance
+retention rules for failed, superseded, timeout, and partial run directories.
+
 [Post-Stage-1 Lane A 20260519_232854 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260519_232854_Run_Report.md)
 records the first measured `PS1-LA-SAMPLE-002` run. The run completed and
 produced `run.json`, `summary.md`, and `fixture_inventory.md`, but its threshold
@@ -290,6 +297,11 @@ thresholds, no-regression checks, hard gates, and report labels for the first
 is the accepted `PS1-G3` and `PS1-G4` labeling-policy artifact. It fixes the
 evidence sufficiency scale, label scope matrix, double-review requirements, and
 adjudication rules for Lane B human or secondary labeling.
+
+[Label Packets README](../05_evaluation/label_packets/README.md)
+is the L5 label packet navigation entry. It identifies the active reported
+`20260601_113121` packet, the superseded historical `20260530_141649` packet,
+and the boundary that packet artifacts are evaluation artifacts only.
 
 [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
 is the active Lane B packet extracted from the `20260601_113121` Lane A closure

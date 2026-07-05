@@ -28,6 +28,26 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 | Working Set Compiler | Compile schema-valid, reference-backed `WorkingSet` artifacts from explicit candidate refs under a fixed budget. | Implemented and exercised by Experiment 005 local smoke |
 | Raw Trace Context Builder | Build bounded raw-trace baseline context under the same budget as treatment. | Implemented and exercised by Experiment 005 baseline local smoke |
 | OpenClaw Context Planner Adapter | Ask OpenClaw for JSON action sequences using embedded baseline or working-set context only. | Implemented and exercised by Experiment 005 local smoke |
+| Side-Effect Planning Scaffold Generator | Write the `PS1-G8` planning-only artifact contract under `docs/04_experiments/results/side_effect_planning/<timestamp>/`. | Implemented as rerunnable artifact generator only; not wired into runtime execution |
+
+## Source Layout
+
+The implementation is grouped under `lib/vanta/` by engineering responsibility
+while preserving existing `Vanta.*` module names. This layout split is not a
+module rename, schema change, runtime behavior change, or side-effect expansion.
+
+| Area | Path | Contents |
+| --- | --- | --- |
+| Runtime commit path | `lib/vanta/runtime/` | State, Execution IR compilation, action execution, evidence, verifier, commit, journal, runtime orchestrator, and replay runner modules. |
+| Adapters | `lib/vanta/adapters/` | Planner adapter behavior and OpenAI/OpenClaw harness adapters. |
+| Document Ops surface | `lib/vanta/document_ops/` | Structured edit implementation and fixture-specific acceptance checks. |
+| Experiments and evaluation tooling | `lib/vanta/experiments/` | Experiment 001 through 005 runners, baseline/blind retry runners, recovery runner/policy, evaluation harness, working-set compiler, and raw-trace context builder. |
+| Post-Stage-1 tooling | `lib/vanta/post_stage1/` | Larger-sample runner, Lane B packet/result tooling, and side-effect planning scaffold generator. |
+| Support | `lib/vanta/support/` | Hashing, path guard, and JSON Schema helpers. |
+
+Vanta Mix task source files are grouped under `lib/mix/tasks/vanta/`. This
+preserves existing `Mix.Tasks.Vanta.*` module names, public `mix vanta.*` task
+names, and compatibility aliases in `mix.exs`; it is not a behavior change.
 
 ## Planner Adapter Notes
 
@@ -71,6 +91,10 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
   Verifier Runtime, Commit Controller, or Episode Journal as executable runtime
   behavior without a later accepted schema, implementation, fixture, test, and
   evaluation batch.
+- `Vanta.PostStage1SideEffectPlanning` is only a scaffold generator for the
+  future artifact contract. It writes planning files and zero-count process
+  floors, but it must not call `Vanta.Runtime.run_task/3`, add action enums,
+  collect approvals, produce label packets, validate H5, or approve deployment.
 
 ## Post-Stage-1 Open Questions
 

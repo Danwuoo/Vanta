@@ -139,6 +139,36 @@ G6-aware execution frame. The dedicated runner is `Vanta.PostStage1LargerSample`
 and writes Lane A results under
 `docs/04_experiments/results/post_stage_1_larger_sample/<timestamp>/`.
 
+### Results and Label Packet Navigation
+
+Lane A result artifacts are preserved under:
+
+```text
+docs/04_experiments/results/post_stage_1_larger_sample/<timestamp>/
+```
+
+The `accepted_by_closure` Lane A closure run for the named threshold-governed
+Document Ops larger controlled sample is:
+
+```text
+docs/04_experiments/results/post_stage_1_larger_sample/20260601_113121/
+```
+
+Earlier Lane A result directories remain historical provenance records,
+including failed runs, threshold-passing candidates that were not accepted by
+closure, and timed-out or superseded attempts.
+
+Lane B label packets are evaluation artifacts under:
+
+```text
+docs/05_evaluation/label_packets/
+```
+
+The active reported packet is
+`post_stage_1_lane_b_20260601_113121/`. The
+`post_stage_1_lane_b_20260530_141649/` packet remains superseded historical
+provenance because its source run was not `accepted_by_closure`.
+
 ## Status
 
 Fixture set prepared with deterministic acceptance recipes and exercised by:
@@ -152,9 +182,18 @@ Fixture set prepared with deterministic acceptance recipes and exercised by:
 The current status is local smoke support for Stage 1 plus measured Phase 4
 targeted recovery smoke coverage on three controlled recovery fixtures and
 measured Phase 5 working-set smoke coverage on five controlled long-context
-fixtures. The post-Stage-1 larger-sample frame is implemented as a 48-fixture
-controlled sample with a dedicated runner, but no measured Lane A closure has
-been accepted. This is not broad benchmark coverage or statistical validation.
+fixtures.
+
+The post-Stage-1 larger-sample frame is implemented as a 48-fixture controlled
+sample with a dedicated runner. The `20260601_113121` Lane A larger controlled
+sample is `accepted_by_closure` for the named threshold-governed Document Ops
+Lane A sample after full-run coverage of the
+`docops_struct_selector_missing_001` repair.
+
+This acceptance is limited to that named threshold-governed Document Ops Lane A
+sample. It does not validate H1-H5, authorize full Context OS, authorize memory
+writes or irreversible effects, approve production readiness, or promote local
+harness results to pure model-only baselines.
 
 ## Related Documents
 
@@ -169,5 +208,8 @@ been accepted. This is not broad benchmark coverage or statistical validation.
 - [Stage 1 Experiment 005 Closure](../00_manifest/Stage_1_Experiment_005_Closure.md)
 - [Post-Stage-1 Larger Sample Plan](Post_Stage_1_Larger_Sample_Plan.md)
 - [Post-Stage-1 Larger Sample G6 Successor Plan](Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
+- [Post-Stage-1 Lane A 20260601_113121 Run Report](../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
+- [Post-Stage-1 Lane A 20260601_113121 Closure](../00_manifest/Post_Stage_1_Lane_A_20260601_113121_Closure.md)
+- [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
 - [Baseline Identity Plan](Baseline_Identity_Plan.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
