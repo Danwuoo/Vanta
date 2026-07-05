@@ -29,7 +29,10 @@ defmodule Vanta.MixProject do
     [
       "vanta.post_stage_1_larger_sample": ["vanta.post_stage1_larger_sample"],
       "vanta.post_stage_1_lane_b_packet": ["vanta.post_stage1_lane_b_packet"],
-      "vanta.post_stage_1_lane_b_label_results": ["vanta.post_stage1_lane_b_label_results"]
+      "vanta.post_stage_1_lane_b_label_results": ["vanta.post_stage1_lane_b_label_results"],
+      "vanta.post_stage_1_side_effect_planning": [
+        "vanta.post_stage1_side_effect_planning"
+      ]
     ]
   end
 end

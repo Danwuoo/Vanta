@@ -5,4 +5,5 @@ docs/04_experiments/results/experiment_001/*/raw/
 docs/04_experiments/results/*/*/*.json
 !docs/04_experiments/results/experiment_004/20260506_231941/run.json
 !docs/04_experiments/results/experiment_005/20260507_105950/run.json
+!docs/04_experiments/results/side_effect_planning/*/run.json
 /chatgpt_docs

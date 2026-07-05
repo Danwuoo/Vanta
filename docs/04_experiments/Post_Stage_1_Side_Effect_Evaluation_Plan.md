@@ -97,6 +97,22 @@ No artifact path in this section authorizes runtime execution. `run.json` for a
 planning pilot must report execution counts for `COMMITTABLE`, `IRREVERSIBLE`,
 and `MEMORY_WRITE` as `0`.
 
+## Planning-Only Scaffold Generator
+
+`Vanta.PostStage1SideEffectPlanning` and
+`mix vanta.post_stage_1_side_effect_planning` implement the first rerunnable
+artifact-contract scaffold for this plan. The generator writes the required
+planning files and locks executed `COMMITTABLE`, `IRREVERSIBLE`, and
+`MEMORY_WRITE` counts to `0`.
+
+The first generated scaffold artifact set is
+`docs/04_experiments/results/side_effect_planning/20260701_201804/`.
+
+This scaffold is not a runtime implementation, not a planning-pilot result, and
+not an experiment result. It does not add action enums, modify runtime
+allowlists, call `Vanta.Runtime.run_task/3`, collect approvals, create label
+packets, validate H5, or approve deployment.
+
 ## Process-Integrity Floors
 
 A future planning pilot may be reviewed only if all floors below are met.
