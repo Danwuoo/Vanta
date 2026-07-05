@@ -3,7 +3,7 @@ defmodule Vanta.Schema do
   JSON Schema validation against the Stage 1 contracts in docs/03_schemas.
   """
 
-  @schema_dir Path.expand("../../docs/03_schemas", __DIR__)
+  @schema_dir Path.expand("../../../docs/03_schemas", __DIR__)
 
   @schemas %{
     "benchmark_task" => "benchmark_task.schema.json",
