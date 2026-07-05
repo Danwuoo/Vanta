@@ -3,13 +3,14 @@ defmodule Vanta.PostStage1LargerSample do
   Lane A runner for the post-Stage-1 48-fixture larger controlled sample.
   """
 
+  alias Vanta.PostStage1LargerSample.{Parser, PathHelpers, ReportWriter, Validator}
+
   alias Vanta.{
     BaselineRunner,
     BlindRetryRunner,
     EvaluationHarness,
     Experiment002,
     FixtureAcceptance,
-    Hash,
     OpenClawContextPlannerAdapter,
     OpenClawPlannerAdapter,
     OpenClawRecoveryAdapter,
@@ -98,26 +99,6 @@ defmodule Vanta.PostStage1LargerSample do
      )}
   ]
 
-  @required_metrics ~w(
-    task_success_rate
-    invalid_action_rate
-    verifier_false_accept_rate
-    verifier_false_reject_rate
-    evidence_sufficiency_score
-    commit_integrity_score
-    replay_consistency
-    audit_completeness
-    recovery_success_rate
-    targeted_recovery_success
-    failure_label_accuracy
-    repeated_failure_rate
-    working_set_budget_adherence
-    working_set_provenance_completeness
-    context_omission_error_rate
-    working_set_relevance_score
-    long_task_stability
-  )
-
   def sample_frame do
     Enum.flat_map(@strata, fn {stratum, ids} ->
       Enum.map(ids, &%{"fixture_id" => &1, "stratum" => stratum})
@@ -131,7 +112,7 @@ defmodule Vanta.PostStage1LargerSample do
     opts = normalize_opts(opts)
 
     with :ok <- ensure_openclaw_only_adapters_ready(opts) do
-      inventory = build_inventory(fixture_root)
+      inventory = Parser.build_inventory(fixture_root, sample_frame(), &label_source/3)
 
       run =
         if inventory.errors == [] do
@@ -147,43 +128,16 @@ defmodule Vanta.PostStage1LargerSample do
       run = Schema.validate!("experiment_run", run)
 
       if opts.out_dir do
-        write_results!(opts.out_dir, run, inventory.items)
+        ReportWriter.write_results!(opts.out_dir, run, inventory.items)
       end
 
       {:ok, run}
     end
   end
 
-  def threshold_status(run) do
-    cond do
-      missing_report_fields?(run) or missing_required_metrics?(run) ->
-        "blocked_missing_metric"
+  def threshold_status(run), do: Validator.threshold_status(run)
 
-      not hard_gates_pass?(run) or not thresholds_pass?(run) ->
-        "failed_no_acceptance"
-
-      true ->
-        "pass_acceptance_candidate"
-    end
-  end
-
-  def fixture_hash(workspace) do
-    workspace
-    |> Path.join("**/*")
-    |> Path.wildcard()
-    |> Enum.filter(&File.regular?/1)
-    |> Enum.map(fn path ->
-      relative =
-        path
-        |> Path.relative_to(workspace)
-        |> String.replace("\\", "/")
-
-      "#{relative}:#{Hash.file_hash(path)}"
-    end)
-    |> Enum.sort()
-    |> Enum.join("\n")
-    |> Hash.sha256()
-  end
+  def fixture_hash(workspace), do: PathHelpers.fixture_hash(workspace)
 
   defp measured_run(fixture_root, inventory, opts) do
     runtime_tasks =
@@ -247,100 +201,6 @@ defmodule Vanta.PostStage1LargerSample do
         "by_stratum" => %{}
       }
     }
-  end
-
-  defp build_inventory(fixture_root) do
-    frame = sample_frame()
-
-    {items, errors} =
-      Enum.reduce(frame, {[], []}, fn frame_item, {items, errors} ->
-        fixture_id = frame_item["fixture_id"]
-        workspace = Path.join(fixture_root, fixture_id)
-        task_path = Path.join(workspace, "task.json")
-        acceptance_path = Path.join(workspace, "expected/acceptance.json")
-
-        cond do
-          not File.exists?(task_path) ->
-            {items, errors ++ ["#{fixture_id}: missing task.json"]}
-
-          not File.exists?(acceptance_path) ->
-            {items, errors ++ ["#{fixture_id}: missing expected/acceptance.json"]}
-
-          true ->
-            task = Schema.load_json!(task_path)
-            acceptance = Schema.load_json!(acceptance_path)
-
-            validation_errors =
-              []
-              |> validate_artifact("benchmark_task", task, "#{fixture_id}: task.json")
-              |> validate_artifact(
-                "fixture_acceptance",
-                acceptance,
-                "#{fixture_id}: expected/acceptance.json"
-              )
-              |> validate_action_sequence(acceptance, fixture_id)
-
-            item =
-              frame_item
-              |> Map.merge(%{
-                "action_types" =>
-                  acceptance
-                  |> get_in(["action_sequence", "actions"])
-                  |> List.wrap()
-                  |> Enum.map(& &1["action_type"])
-                  |> Enum.uniq(),
-                "side_effect_classes" => task["side_effect_classes"],
-                "expected_runtime_status" => acceptance["expected_runtime_status"],
-                "expected_label_source" => label_source(fixture_id, acceptance, workspace),
-                "fixture_hash" => fixture_hash(workspace),
-                "workspace" => workspace
-              })
-
-            {items ++ [item], errors ++ validation_errors}
-        end
-      end)
-
-    %{
-      items: items,
-      errors: errors ++ frame_errors(items)
-    }
-  end
-
-  defp validate_artifact(errors, schema_name, artifact, label) do
-    case Schema.validate(schema_name, artifact) do
-      :ok -> errors
-      {:error, schema_errors} -> errors ++ ["#{label}: #{inspect(schema_errors)}"]
-    end
-  end
-
-  defp validate_action_sequence(errors, acceptance, fixture_id) do
-    case Vanta.PlannerAdapter.validate_action_sequence(acceptance["action_sequence"]) do
-      {:ok, _sequence} -> errors
-      {:error, reason} -> errors ++ ["#{fixture_id}: invalid action_sequence #{inspect(reason)}"]
-    end
-  end
-
-  defp frame_errors(items) do
-    count_errors =
-      if length(items) == 48 do
-        []
-      else
-        ["sample frame has #{length(items)} fixtures, expected 48"]
-      end
-
-    strata_errors =
-      @strata
-      |> Enum.flat_map(fn {stratum, ids} ->
-        actual = Enum.count(items, &(&1["stratum"] == stratum))
-
-        cond do
-          length(ids) != 6 -> ["#{stratum}: frame definition has #{length(ids)} ids"]
-          actual != 6 -> ["#{stratum}: inventory has #{actual} fixtures, expected 6"]
-          true -> []
-        end
-      end)
-
-    count_errors ++ strata_errors
   end
 
   defp run_runtime_fixture(fixture_root, inventory_item, opts) do
@@ -967,68 +827,6 @@ defmodule Vanta.PostStage1LargerSample do
     complete / length(refs)
   end
 
-  defp missing_report_fields?(run) do
-    run["fixture_count"] != 48 or
-      run["sample_frame_id"] != @sample_frame_id or
-      run["metric_policy_version"] != @metric_policy_version or
-      not is_map(run["run_controls"]) or
-      not is_map(run["arm_metadata"]) or
-      not present?(run["fixture_inventory_ref"])
-  end
-
-  defp missing_required_metrics?(run) do
-    treatment = get_in(run, ["metrics", "treatment"]) || %{}
-
-    Enum.any?(@required_metrics, fn metric ->
-      not Map.has_key?(treatment, metric)
-    end)
-  end
-
-  defp hard_gates_pass?(run) do
-    gates = get_in(run, ["metrics", "hard_gates"]) || %{}
-
-    gates["unsupported_commits"] == 0 and
-      gates["memory_writes"] == 0 and
-      gates["disallowed_side_effect_classes"] == 0 and
-      gates["required_artifacts_valid"] == true and
-      gates["arm_identity_compliant"] == true and
-      gates["fixture_count_exact"] == true and
-      gates["strata_complete"] == true
-  end
-
-  defp thresholds_pass?(run) do
-    baseline = get_in(run, ["metrics", "baseline"]) || %{}
-    treatment = get_in(run, ["metrics", "treatment"]) || %{}
-
-    treatment["task_success_rate"] >= 0.90 and
-      treatment["task_success_rate"] >= baseline["task_success_rate"] and
-      treatment["verifier_false_accept_rate"] == 0.0 and
-      treatment["verifier_false_reject_rate"] <= 0.05 and
-      (treatment["verifier_false_reject_rate"] <= baseline["verifier_false_reject_rate"] or
-         treatment["verifier_false_accept_rate"] == 0.0) and
-      treatment["evidence_sufficiency_score"] >= 0.95 and
-      treatment["commit_integrity_score"] == 1.0 and
-      treatment["replay_consistency"] == 1.0 and
-      treatment["audit_completeness"] == 1.0 and
-      treatment["recovery_success_rate"] >= 0.80 and
-      treatment["recovery_success_rate"] > baseline["recovery_success_rate"] and
-      treatment["targeted_recovery_success"] >= 0.80 and
-      treatment["targeted_recovery_success"] > baseline["targeted_recovery_success"] and
-      treatment["failure_label_accuracy"] >= 0.80 and
-      treatment["repeated_failure_rate"] <= 0.20 and
-      treatment["repeated_failure_rate"] < baseline["repeated_failure_rate"] and
-      treatment["working_set_budget_adherence"] == 1.0 and
-      treatment["working_set_provenance_completeness"] == 1.0 and
-      treatment["context_omission_error_rate"] <= 0.10 and
-      treatment["context_omission_error_rate"] < baseline["context_omission_error_rate"] and
-      treatment["working_set_relevance_score"] >= 0.80 and
-      treatment["working_set_relevance_score"] >= baseline["working_set_relevance_score"] and
-      treatment["long_task_stability"] >= 0.90 and
-      treatment["long_task_stability"] >= baseline["long_task_stability"]
-  rescue
-    _error -> false
-  end
-
   defp run_controls(opts) do
     %{
       "model_identity" => opts.model_identity,
@@ -1098,128 +896,6 @@ defmodule Vanta.PostStage1LargerSample do
         "scope" => "Working Set Compiler v0 only"
       }
     }
-  end
-
-  defp write_results!(out_dir, run, inventory) do
-    File.mkdir_p!(out_dir)
-    File.write!(Path.join(out_dir, "run.json"), Jason.encode!(run, pretty: true))
-    File.write!(Path.join(out_dir, "summary.md"), summary(run))
-    File.write!(Path.join(out_dir, "fixture_inventory.md"), fixture_inventory_markdown(inventory))
-  end
-
-  defp summary(run) do
-    baseline = run["metrics"]["baseline"] || %{}
-    treatment = run["metrics"]["treatment"] || %{}
-    gates = get_in(run, ["metrics", "hard_gates"]) || %{}
-
-    """
-    # Post-Stage-1 Lane A Larger Controlled Sample
-
-    Lane: Lane A larger controlled sample
-    Sample frame: #{run["sample_frame_id"]}
-    Metric policy version: #{run["metric_policy_version"]}
-    Threshold status: #{run["threshold_status"]}
-    Status: #{run["status"]}
-    Fixture count: #{run["fixture_count"]}
-    Baseline: #{run["baseline"]}
-    Treatment: #{run["treatment"]}
-
-    ## Fixed Controls
-
-    - model identity: #{get_in(run, ["run_controls", "model_identity"])}
-    - harness identity: #{get_in(run, ["run_controls", "harness_identity"])}
-    - planner adapter: #{get_in(run, ["run_controls", "planner_adapter"])}
-    - allowed action set: #{Enum.join(get_in(run, ["run_controls", "allowed_action_set"]) || [], ", ")}
-    - prompt character budget: #{get_in(run, ["run_controls", "prompt_character_budget"])}
-    - response character budget: #{get_in(run, ["run_controls", "response_character_budget"])}
-    - action-attempt limit: #{get_in(run, ["run_controls", "action_attempt_limit"])}
-    - recovery-attempt limit: #{get_in(run, ["run_controls", "recovery_attempt_limit"])}
-    - context budget: #{inspect(get_in(run, ["run_controls", "context_budget"]))}
-    - compute matching rule: #{get_in(run, ["run_controls", "compute_matching_rule"])}
-
-    ## Metrics
-
-    | Metric | Baseline | Treatment |
-    | --- | ---: | ---: |
-    #{metric_table_rows(baseline, treatment)}
-
-    ## Hard Gates
-
-    - unsupported_commits: #{gates["unsupported_commits"]}
-    - memory_writes: #{gates["memory_writes"]}
-    - disallowed_side_effect_classes: #{gates["disallowed_side_effect_classes"]}
-    - required_artifacts_valid: #{gates["required_artifacts_valid"]}
-    - arm_identity_compliant: #{gates["arm_identity_compliant"]}
-    - fixture_count_exact: #{gates["fixture_count_exact"]}
-    - strata_complete: #{gates["strata_complete"]}
-    #{blocking_details(gates)}
-
-    ## Interpretation Boundaries
-
-    #{interpretation(run["threshold_status"])}
-
-    This report must not be described as H1-H5 validation, production readiness,
-    full Context OS validation, memory-write approval, irreversible-effect
-    approval, or a pure model-only OpenClaw baseline result.
-    """
-  end
-
-  defp metric_table_rows(baseline, treatment) do
-    @required_metrics
-    |> Enum.map(fn metric ->
-      "| `#{metric}` | #{format_metric(baseline[metric])} | #{format_metric(treatment[metric])} |"
-    end)
-    |> Enum.join("\n")
-  end
-
-  defp blocking_details(%{"artifact_errors" => errors}) when is_list(errors) and errors != [] do
-    rows =
-      errors
-      |> Enum.map(&"- #{&1}")
-      |> Enum.join("\n")
-
-    """
-
-    ## Blocking Details
-
-    #{rows}
-    """
-  end
-
-  defp blocking_details(_gates), do: ""
-
-  defp interpretation("blocked_missing_metric") do
-    "The run is data collection only because a required metric, artifact, control, or fixture-frame field is missing."
-  end
-
-  defp interpretation("failed_no_acceptance") do
-    "The run has measured metrics but fails at least one PS1-G2 hard gate, threshold, or no-regression rule."
-  end
-
-  defp interpretation("pass_acceptance_candidate") do
-    "The run passes PS1-G2 as a pass_acceptance_candidate only. It still requires future manifest closure before accepted_by_closure may be used."
-  end
-
-  defp interpretation(status), do: "Unhandled threshold status: #{status}."
-
-  defp fixture_inventory_markdown(inventory) do
-    rows =
-      inventory
-      |> Enum.map(fn item ->
-        "| `#{item["fixture_id"]}` | #{item["stratum"]} | #{Enum.join(item["action_types"], ", ")} | #{Enum.join(item["side_effect_classes"], ", ")} | #{item["expected_runtime_status"]} | #{item["expected_label_source"]} | `#{item["fixture_hash"]}` |"
-      end)
-      |> Enum.join("\n")
-
-    """
-    # Fixture Inventory
-
-    Sample frame: #{@sample_frame_id}
-    Fixture count: #{length(inventory)}
-
-    | Fixture ID | Stratum | Action types | Side-effect classes | Expected runtime status | Expected label source | Fixture hash |
-    | --- | --- | --- | --- | --- | --- | --- |
-    #{rows}
-    """
   end
 
   defp normalize_opts(opts) do
@@ -1416,10 +1092,4 @@ defmodule Vanta.PostStage1LargerSample do
   defp bool_count(_value), do: 0
 
   defp present?(value), do: is_binary(value) and String.trim(value) != ""
-
-  defp format_metric(value) when is_float(value), do: :erlang.float_to_binary(value, decimals: 4)
-  defp format_metric(value) when is_integer(value), do: Integer.to_string(value)
-  defp format_metric(value) when is_boolean(value), do: to_string(value)
-  defp format_metric(nil), do: "missing"
-  defp format_metric(value), do: to_string(value)
 end
