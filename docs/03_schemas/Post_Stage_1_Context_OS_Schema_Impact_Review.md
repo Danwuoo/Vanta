@@ -89,6 +89,9 @@ The active blinded Lane B packet for `20260601_113121` now has:
 - primary label freeze recorded on 2026-06-05
 - zero `needs_review` labels
 - zero validator-triggered adjudication requirements
+- combined human-derived context metrics:
+  `context_omission_error_rate = 0.3684` (`14 / 38`) and
+  `working_set_relevance_score = 0.7742` (`24 / 31`)
 - raw agreement counts and import summary
 - a coordinator-only post-freeze context unblind memo for arm mapping and
   interpretation, outside reviewer-visible packet records

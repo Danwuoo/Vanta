@@ -71,8 +71,8 @@ context-quality evidence for the blinded working-set items:
 
 | Evidence item | Current status |
 | --- | --- |
-| Human-labeled context omission results | Available for the named active packet: `context_omission_error_rate = 0.3684` across blinded working-set items. |
-| Human-labeled working-set relevance results | Available for the named active packet: `working_set_relevance_score = 0.7742` across blinded working-set items. |
+| Human-labeled context omission results | Available for the named active packet: `context_omission_error_rate = 0.3684` (`14 / 38`) across blinded working-set items. |
+| Human-labeled working-set relevance results | Available for the named active packet: `working_set_relevance_score = 0.7742` (`24 / 31`) across blinded working-set items. |
 | Post-freeze arm interpretation | Available only in the coordinator-only unblind memo. It maps the blinded arms to the bounded raw-trace context baseline and `Working Set Compiler v0` treatment after primary label freeze, and must not be copied into reviewer-visible packet records. |
 | Broader context-quality interpretation | Limited to the named active packet; raw agreement counts are reported because the sample is small. |
 | Context OS expansion evidence beyond v0 | A later accepted spec, schema decision, fixed arms, and measured run. |

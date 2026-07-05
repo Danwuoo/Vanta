@@ -142,8 +142,8 @@ context-quality evidence for the blinded working-set items:
 
 | Item | Current status |
 | --- | --- |
-| Human-labeled omission evidence | Available for the named active packet: `context_omission_error_rate = 0.3684` across blinded working-set items. |
-| Human-labeled relevance evidence | Available for the named active packet: `working_set_relevance_score = 0.7742` across blinded working-set items. |
+| Human-labeled omission evidence | Available for the named active packet: `context_omission_error_rate = 0.3684` (`14 / 38`) across blinded working-set items. |
+| Human-labeled relevance evidence | Available for the named active packet: `working_set_relevance_score = 0.7742` (`24 / 31`) across blinded working-set items. |
 | Post-freeze arm interpretation | Available only in the coordinator-only unblind memo. It maps blinded arms to the PS1-G5 compliant bounded raw-trace baseline and `Working Set Compiler v0` treatment after primary label freeze, and must not be copied into reviewer-visible packet records. |
 | Broader context-quality claim | Limited to the named active packet; raw agreement counts are reported because the sample is small. |
 | H3 interpretation | Still blocked. The source run is accepted only for the named Lane A threshold-governed sample, and Context OS implementation plus Context OS evaluation remain missing. |

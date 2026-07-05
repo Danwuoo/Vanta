@@ -37,6 +37,25 @@ defmodule Vanta.PostStage1LaneBLabelResults do
   @working_set_relevance_metric "working_set_relevance_score"
   @relevant_relevance_labels ["task_critical", "supporting"]
 
+  @ps1_g7_context_metric_expectations [
+    %{
+      metric: @context_omission_metric,
+      score: "0.3684",
+      numerator_key: "omitted_task_critical_ref_count",
+      numerator: 14,
+      denominator_key: "task_critical_candidate_ref_count",
+      denominator: 38
+    },
+    %{
+      metric: @working_set_relevance_metric,
+      score: "0.7742",
+      numerator_key: "relevant_included_ref_count",
+      numerator: 24,
+      denominator_key: "included_ref_denominator",
+      denominator: 31
+    }
+  ]
+
   @policy_metrics [
     @evidence_metric,
     @context_omission_metric,
@@ -60,6 +79,16 @@ defmodule Vanta.PostStage1LaneBLabelResults do
   @exposure_timings ["not_exposed", "after_primary_label_freeze"]
 
   def result_format, do: @result_format
+
+  def ps1_g7_context_metric_surface_paths(_run_timestamp \\ @default_run_timestamp) do
+    [
+      "docs/00_manifest/Project_Manifest.md",
+      "docs/00_manifest/Traceability_Matrix.md",
+      "docs/02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md",
+      "docs/03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md",
+      "docs/04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md"
+    ]
+  end
 
   def template(opts \\ []) do
     with {:ok, packet} <- load_packet(opts) do
@@ -189,6 +218,52 @@ defmodule Vanta.PostStage1LaneBLabelResults do
     end
   end
 
+  def validate_ps1_g7_context_metric_parity(results_path, import_summary_path, opts \\ []) do
+    cwd = Keyword.get(opts, :cwd, File.cwd!())
+    run_timestamp = Keyword.get(opts, :run_timestamp, @default_run_timestamp)
+    report_path = Keyword.get(opts, :report, default_label_report_path(run_timestamp))
+    surface_paths = Keyword.get(opts, :surface_paths, ps1_g7_context_metric_surface_paths())
+
+    report_abs = Path.expand(report_path, cwd)
+    results_abs = Path.expand(results_path, cwd)
+    import_summary_abs = Path.expand(import_summary_path, cwd)
+    result_path = display_path(results_abs, cwd)
+
+    with {:ok, packet} <- load_packet(opts),
+         {:ok, results} <- load_json(results_abs),
+         {:ok, generated_summary} <- validate_results(results, packet, result_path),
+         {:ok, saved_summary} <- load_json(import_summary_abs),
+         {:ok, report_text} <- load_text(report_abs),
+         {:ok, surfaces} <- load_surface_texts(surface_paths, cwd) do
+      metric_scores = reported_metric_scores(results, packet)
+
+      errors =
+        []
+        |> validate_import_summary_parity(generated_summary, saved_summary)
+        |> validate_locked_context_metric_values(metric_scores)
+        |> validate_report_text_parity(report_text, generated_summary, metric_scores)
+        |> validate_context_metric_surfaces(surfaces)
+
+      if errors == [] do
+        {:ok,
+         %{
+           "status" => "ok",
+           "packet_id" => packet.packet_manifest["packet_id"],
+           "result_path" => result_path,
+           "import_summary_path" => display_path(import_summary_abs, cwd),
+           "report_path" => display_path(report_abs, cwd),
+           "surface_paths" => Enum.map(surfaces, fn {path, _text} -> path end),
+           "reported_metric_scores" => metric_scores,
+           "locked_context_metrics" => locked_context_metric_summary(metric_scores),
+           "claim_boundary" =>
+             "PS1-G7 context metric parity check only. It locks packet-local Lane B omission and relevance numbers against JSON artifacts, the label report, and planning/traceability documentation; it does not create runtime approval, schema change, full Context OS validation, or an H1-H5 validation claim."
+         }}
+      else
+        {:error, Enum.reverse(errors)}
+      end
+    end
+  end
+
   defp load_packet(opts) do
     config = normalize_opts(opts)
 
@@ -240,6 +315,10 @@ defmodule Vanta.PostStage1LaneBLabelResults do
 
   defp default_packet_dir(run_timestamp) do
     "docs/05_evaluation/label_packets/post_stage_1_lane_b_#{run_timestamp}"
+  end
+
+  defp default_label_report_path(run_timestamp) do
+    "docs/05_evaluation/Post_Stage_1_Lane_B_#{run_timestamp}_Label_Report_Skeleton.md"
   end
 
   defp validate_packet_inputs(manifest, evidence_items, working_set_items, adjudication) do
@@ -556,6 +635,42 @@ defmodule Vanta.PostStage1LaneBLabelResults do
     end)
   end
 
+  defp validate_locked_context_metric_values(errors, metric_scores) do
+    Enum.reduce(@ps1_g7_context_metric_expectations, errors, fn expected, errors ->
+      metric_score = Map.get(metric_scores, expected.metric, %{})
+
+      errors
+      |> require_equal(
+        "PS1-G7 #{expected.metric} score",
+        metric_score["score_4dp"],
+        expected.score
+      )
+      |> require_equal(
+        "PS1-G7 #{expected.metric} numerator",
+        metric_score[expected.numerator_key],
+        expected.numerator
+      )
+      |> require_equal(
+        "PS1-G7 #{expected.metric} denominator",
+        metric_score[expected.denominator_key],
+        expected.denominator
+      )
+    end)
+  end
+
+  defp locked_context_metric_summary(metric_scores) do
+    Map.new(@ps1_g7_context_metric_expectations, fn expected ->
+      metric_score = Map.fetch!(metric_scores, expected.metric)
+
+      {expected.metric,
+       %{
+         "score_4dp" => metric_score["score_4dp"],
+         expected.numerator_key => metric_score[expected.numerator_key],
+         expected.denominator_key => metric_score[expected.denominator_key]
+       }}
+    end)
+  end
+
   defp validate_report_text_parity(errors, report_text, generated_summary, metric_scores) do
     metric_rows = report_metric_rows(report_text)
     arm_rows = report_working_set_arm_rows(report_text)
@@ -701,6 +816,45 @@ defmodule Vanta.PostStage1LaneBLabelResults do
         ["label report Import Summary is missing #{snippet}" | errors]
       end
     end)
+  end
+
+  defp load_surface_texts(surface_paths, cwd) do
+    surface_paths
+    |> List.wrap()
+    |> Enum.reduce_while({:ok, []}, fn path, {:ok, surfaces} ->
+      path_abs = Path.expand(path, cwd)
+
+      case load_text(path_abs) do
+        {:ok, text} ->
+          {:cont, {:ok, surfaces ++ [{display_path(path_abs, cwd), text}]}}
+
+        {:error, errors} ->
+          {:halt, {:error, errors}}
+      end
+    end)
+  end
+
+  defp validate_context_metric_surfaces(errors, surfaces) do
+    Enum.reduce(surfaces, errors, fn {path, text}, errors ->
+      Enum.reduce(@ps1_g7_context_metric_expectations, errors, fn expected, errors ->
+        pattern = context_metric_surface_pattern(expected)
+
+        if Regex.match?(pattern, text) do
+          errors
+        else
+          [
+            "#{path} is missing locked #{expected.metric} = #{expected.score} (#{expected.numerator} / #{expected.denominator})"
+            | errors
+          ]
+        end
+      end)
+    end)
+  end
+
+  defp context_metric_surface_pattern(expected) do
+    Regex.compile!(
+      "#{Regex.escape(expected.metric)}\\s*=\\s*`?#{Regex.escape(expected.score)}`?[\\s`\\(]*#{expected.numerator}\\s*/\\s*#{expected.denominator}"
+    )
   end
 
   defp report_metric_rows(report_text) do

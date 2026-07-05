@@ -20,6 +20,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
   @filled_results_path "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_primary_filled.json"
   @import_summary_path "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/label_results_import_summary.json"
   @label_report_path "docs/05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md"
+  @context_os_eval_plan_path "docs/04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md"
 
   test "template is a Not yet run packet-local result scaffold" do
     assert {:ok, template} = PostStage1LaneBLabelResults.template(@label_opts)
@@ -155,6 +156,83 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
              )
 
     assert Enum.any?(errors, &String.contains?(&1, "context_omission_error_rate"))
+  end
+
+  test "validates PS1-G7 planning and traceability parity for locked context metrics" do
+    assert {:ok, summary} =
+             PostStage1LaneBLabelResults.validate_ps1_g7_context_metric_parity(
+               @filled_results_path,
+               @import_summary_path,
+               Keyword.put(@label_opts, :report, @label_report_path)
+             )
+
+    assert summary["status"] == "ok"
+
+    assert get_in(summary, [
+             "locked_context_metrics",
+             "context_omission_error_rate",
+             "score_4dp"
+           ]) == "0.3684"
+
+    assert get_in(summary, [
+             "locked_context_metrics",
+             "context_omission_error_rate",
+             "omitted_task_critical_ref_count"
+           ]) == 14
+
+    assert get_in(summary, [
+             "locked_context_metrics",
+             "context_omission_error_rate",
+             "task_critical_candidate_ref_count"
+           ]) == 38
+
+    assert get_in(summary, [
+             "locked_context_metrics",
+             "working_set_relevance_score",
+             "score_4dp"
+           ]) == "0.7742"
+
+    assert get_in(summary, [
+             "locked_context_metrics",
+             "working_set_relevance_score",
+             "relevant_included_ref_count"
+           ]) == 24
+
+    assert get_in(summary, [
+             "locked_context_metrics",
+             "working_set_relevance_score",
+             "included_ref_denominator"
+           ]) == 31
+
+    assert "docs/00_manifest/Traceability_Matrix.md" in summary["surface_paths"]
+
+    assert "docs/02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md" in summary[
+             "surface_paths"
+           ]
+  end
+
+  test "PS1-G7 parity rejects drifted planning surface fractions" do
+    drifted_plan =
+      @context_os_eval_plan_path
+      |> File.read!()
+      |> String.replace(
+        "`working_set_relevance_score = 0.7742` (`24 / 31`)",
+        "`working_set_relevance_score = 0.7742` (`23 / 31`)",
+        global: false
+      )
+
+    path = write_temp_text(drifted_plan)
+
+    assert {:error, errors} =
+             PostStage1LaneBLabelResults.validate_ps1_g7_context_metric_parity(
+               @filled_results_path,
+               @import_summary_path,
+               @label_opts
+               |> Keyword.put(:report, @label_report_path)
+               |> Keyword.put(:surface_paths, [path])
+             )
+
+    assert Enum.any?(errors, &String.contains?(&1, "working_set_relevance_score"))
   end
 
   test "rejects labels outside the PS1-LB-LABEL-001 evidence scale" do

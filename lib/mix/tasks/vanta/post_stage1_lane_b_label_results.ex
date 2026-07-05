@@ -108,9 +108,28 @@ defmodule Mix.Tasks.Vanta.PostStage1LaneBLabelResults do
             Mix.raise("Lane B label report parity failed:\n#{format_errors(errors)}")
         end
 
+      "ps1-g7-parity" ->
+        results_path = required_results!(opts, mode)
+        report_path = Keyword.get(opts, :report, default_report_path(opts))
+
+        import_summary_path =
+          Keyword.get(opts, :import_summary, default_import_summary_path(opts))
+
+        case Vanta.PostStage1LaneBLabelResults.validate_ps1_g7_context_metric_parity(
+               results_path,
+               import_summary_path,
+               Keyword.put(packet_opts, :report, report_path)
+             ) do
+          {:ok, summary} ->
+            print_ps1_g7_parity_summary(summary)
+
+          {:error, errors} ->
+            Mix.raise("PS1-G7 context metric parity failed:\n#{format_errors(errors)}")
+        end
+
       other ->
         Mix.raise(
-          "Unsupported --mode #{inspect(other)}; expected template, validate, import-summary, or report-parity"
+          "Unsupported --mode #{inspect(other)}; expected template, validate, import-summary, report-parity, or ps1-g7-parity"
         )
     end
   end
@@ -194,6 +213,12 @@ defmodule Mix.Tasks.Vanta.PostStage1LaneBLabelResults do
     Mix.shell().info(
       "Working-set relevance: #{relevance["score_4dp"]} (#{relevance["relevant_included_ref_count"]} / #{relevance["included_ref_denominator"]})"
     )
+  end
+
+  defp print_ps1_g7_parity_summary(summary) do
+    print_report_parity_summary(summary)
+    Mix.shell().info("PS1-G7 surface count: #{length(summary["surface_paths"])}")
+    Mix.shell().info("Claim boundary: #{summary["claim_boundary"]}")
   end
 
   defp format_errors(errors) do

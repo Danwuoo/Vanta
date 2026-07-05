@@ -183,8 +183,8 @@ The bundle records that Lane A working-set metrics support planning-level
 budget, provenance, omission, relevance, stability, and process-integrity
 statements for the measured run. The first active Lane B packet now adds
 human-labeled context-quality evidence for the named `20260601_113121` packet:
-combined `context_omission_error_rate = 0.3684` and
-`working_set_relevance_score = 0.7742` across blinded working-set items, with
+combined `context_omission_error_rate = 0.3684` (`14 / 38`) and
+`working_set_relevance_score = 0.7742` (`24 / 31`) across blinded working-set items, with
 raw agreement counts reported because the sample is small. This updates the
 planning evidence surface only; H3, learned retrieval, memory governance,
 schema changes, runtime implementation, and full Context OS validation remain
