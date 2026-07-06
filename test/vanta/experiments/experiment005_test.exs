@@ -9,7 +9,7 @@ defmodule Vanta.Experiment005Test do
     WorkingSetCompiler
   }
 
-  @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @fixture_root Path.expand("../../fixtures/document_ops", __DIR__)
   @phase5_fixtures ~w(
     docops_ws_evidence_packet_001
     docops_ws_irrelevant_context_001
@@ -18,6 +18,7 @@ defmodule Vanta.Experiment005Test do
     docops_ws_traceability_long_001
   )
 
+  @tag :fast_unit
   test "working set compiler emits schema-valid required-first artifacts" do
     {input, workspace} = context_input("docops_ws_traceability_long_001")
 
@@ -38,6 +39,7 @@ defmodule Vanta.Experiment005Test do
            )
   end
 
+  @tag :fast_unit
   test "working set compiler records budget overflow as omitted context" do
     {input, workspace} = context_input("docops_ws_evidence_packet_001")
     input = put_in(input, ["budget", "max_context_chars"], 20)
@@ -47,6 +49,7 @@ defmodule Vanta.Experiment005Test do
     assert result.working_set["omitted_context_notes"] != []
   end
 
+  @tag :fast_unit
   test "working set compiler rejects raw logs, full memory dumps, and memory writes" do
     input = %{
       "task_id" => "bad_refs",
@@ -88,6 +91,7 @@ defmodule Vanta.Experiment005Test do
     assert refs == ["memory:dump", "memory:write", "raw:tool_log"]
   end
 
+  @tag :fast_unit
   test "raw trace baseline truncates before late required refs" do
     {input, workspace} = context_input("docops_ws_omission_trap_001")
     artifact = RawTraceContextBuilder.build(input, workspace: workspace)
@@ -100,6 +104,7 @@ defmodule Vanta.Experiment005Test do
     assert artifact["budget_adhered"] == true
   end
 
+  @tag :fast_unit
   test "openclaw context planner parses JSON fences and rejects malformed output" do
     task = task("docops_ws_irrelevant_context_001")
     context_artifact = %{"arm" => "raw_trace_bounded", "context_text" => "path: inputs/source.md"}
@@ -146,6 +151,7 @@ defmodule Vanta.Experiment005Test do
              )
   end
 
+  @tag :integration
   test "experiment005 mock run emits working-set metrics and gate result" do
     out_dir =
       Path.join(System.tmp_dir!(), "vanta_experiment005_#{System.unique_integer([:positive])}")

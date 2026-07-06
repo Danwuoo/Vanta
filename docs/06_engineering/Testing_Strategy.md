@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Define how implementation should be tested once runtime code exists.
+Define how the current Post-Stage-1 implementation, documentation contracts,
+and generated artifacts are tested without converting local smoke or planning
+evidence into validation claims.
 
 ## Test Layers
 
@@ -11,6 +13,46 @@ Define how implementation should be tested once runtime code exists.
 - Integration tests for `state -> plan -> action -> evidence -> verify -> commit / abort`.
 - Replay tests using controlled fixtures.
 - Regression tests for invalid actions, false accepts, audit gaps, and rollback failures.
+- Documentation consistency tests for routing, closure status, fixture mirrors,
+  and ChatGPT Project Knowledge export parity where applicable.
+- Generated artifact and tooling tests for packet builders, label-result
+  validators, scaffold generators, and Mix task wrappers.
+- Schema source tests that validate runtime artifacts against
+  `docs/03_schemas/*.schema.json`; this batch does not test packaged runtime
+  schema assets because no such asset path is accepted.
+
+## Test Tags and Commands
+
+`mix test` remains the complete local test command. `test/test_helper.exs` must
+not globally exclude any tag; all tagged tests still run in the full suite by
+default.
+
+| Tag | Intended scope |
+| --- | --- |
+| `:fast_unit` | Deterministic unit, schema, parser, adapter, guard, and small contract tests suitable for quick local feedback. |
+| `:integration` | Fixture loops, replay paths, experiment runners, Lane A artifact generation, and other tests that exercise the closed-loop runtime or measured-run machinery. |
+| `:docs_consistency` | Fixture mirror checks, documentation routing, closure status, traceability, manifest/map parity, and mirrored export consistency. |
+| `:generated_artifact_tooling` | Packet generation, label-result validation/import tooling, planning scaffolds, and Mix task rerun checks. |
+
+| Command | Coverage |
+| --- | --- |
+| `mix test.fast` | `:fast_unit` only. |
+| `mix test.docs` | `:docs_consistency` only. |
+| `mix test.tooling` | `:generated_artifact_tooling` only. |
+| `mix test.integration` | `:integration` only. |
+| `mix test.smoke` | `:fast_unit` plus `:docs_consistency`; this is the quick smoke gate. |
+| `mix test.full` | Alias for full `mix test`. |
+
+## CI Layering
+
+GitHub Actions runs two ordered jobs:
+
+- `smoke`: installs dependencies and runs `mix test.smoke`.
+- `full`: runs after `smoke` and executes `mix test.full`.
+
+The smoke job is an early feedback gate only. The full job remains the final
+CI test gate because it includes integration and generated-artifact/tooling
+coverage.
 
 ## Required Fixtures
 
@@ -24,6 +66,9 @@ Define how implementation should be tested once runtime code exists.
 ## Acceptance Criteria
 
 - Runtime artifacts validate against schemas.
+- Runtime schema validation continues to load contracts from
+  `docs/03_schemas/*.schema.json`; any packaged schema asset path requires a
+  later migration test batch.
 - Episode journal contains required audit fields.
 - Verifier cannot commit missing-evidence actions in controlled tests.
 - Replay succeeds in deterministic fixtures.
@@ -52,6 +97,19 @@ Define how implementation should be tested once runtime code exists.
   preservation, reversible backup metadata and rollback, selector rejection,
   path escape rejection, wrong diff rejection, replay consistency, and fixture
   mirror synchronization.
+- Post-Stage-1 Lane A tests and docs checks cover required artifact generation,
+  threshold-status reporting, replay consistency, audit completeness,
+  process-integrity hard gates, and the boundary that `accepted_by_closure` for
+  `20260601_113121` is not H1-H5 validation or production readiness.
+- Lane B packet and label-result tooling tests cover packet generation,
+  validator/import-summary behavior, reported label metrics, source-run routing,
+  and mirror parity without creating runtime approval or schema changes.
+- PS1-G7 planning checks must keep Context OS work planning-only: no full
+  Context OS implementation, learned retrieval, compression, memory governance,
+  memory writes, or H3 validation.
+- PS1-G8 planning checks must keep side-effect work planning-only: no executable
+  `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` behavior, no approval
+  collection, no production readiness, and no H5 validation.
 
 ## Open Questions
 

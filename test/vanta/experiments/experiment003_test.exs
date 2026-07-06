@@ -3,8 +3,9 @@ defmodule Vanta.Experiment003Test do
 
   alias Vanta.{Experiment003, Schema}
 
-  @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @fixture_root Path.expand("../../fixtures/document_ops", __DIR__)
 
+  @tag :integration
   test "experiment003 runner writes journal audit and replay smoke results" do
     out_dir =
       Path.join(System.tmp_dir!(), "vanta_experiment003_#{System.unique_integer([:positive])}")

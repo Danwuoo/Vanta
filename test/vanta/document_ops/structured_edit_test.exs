@@ -11,8 +11,9 @@ defmodule Vanta.StructuredEditTest do
     VerifierRuntime
   }
 
-  @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @fixture_root Path.expand("../../fixtures/document_ops", __DIR__)
 
+  @tag :fast_unit
   test "inspect_document_structure resolves heading and section selectors" do
     {task, workspace} = load_fixture("docops_struct_inspect_001")
     {:ok, sequence} = Vanta.FixtureAcceptance.action_sequence(workspace)
@@ -34,6 +35,7 @@ defmodule Vanta.StructuredEditTest do
     assert get_in(observation, ["structure", "headings"]) |> length() == 3
   end
 
+  @tag :fast_unit
   test "contract validation records pass and fail observations without mutation" do
     {pass_task, pass_workspace} = load_fixture("docops_struct_contract_pass_001")
     {:ok, pass_sequence} = Vanta.FixtureAcceptance.action_sequence(pass_workspace)
@@ -68,6 +70,7 @@ defmodule Vanta.StructuredEditTest do
     assert [%{"code" => "required_heading_missing"}] = fail_observation["failures"]
   end
 
+  @tag :fast_unit
   test "structured edit simulation supports line ranges and JSON paths without source mutation" do
     workspace = fixture_path("docops_struct_simulate_md_001")
     source_path = Path.join(workspace, "inputs/notes.md")
@@ -108,6 +111,7 @@ defmodule Vanta.StructuredEditTest do
     assert json_observation["source_hash_after_simulation"] == json_observation["before_hash"]
   end
 
+  @tag :integration
   test "insert_before and insert_after fixtures execute through the runtime" do
     Enum.each(~w(docops_struct_insert_before_001 docops_struct_insert_after_001), fn fixture_id ->
       {task, workspace} = load_fixture(fixture_id)
@@ -123,6 +127,7 @@ defmodule Vanta.StructuredEditTest do
     end)
   end
 
+  @tag :fast_unit
   test "reversible structured edit writes backup metadata and rollback restores source" do
     workspace = copy_fixture("docops_struct_apply_reversible_001")
     task = Schema.load_json!(Path.join(workspace, "task.json"))
@@ -152,6 +157,7 @@ defmodule Vanta.StructuredEditTest do
     assert File.read!(source_path) == original
   end
 
+  @tag :integration
   test "verifier rejects missing selectors, ambiguous selectors, simulation mutation, missing backup metadata, and wrong diffs" do
     expectations = %{
       "docops_struct_selector_missing_001" => "structured_selector_missing",
@@ -173,6 +179,7 @@ defmodule Vanta.StructuredEditTest do
     end)
   end
 
+  @tag :integration
   test "missing-selector fixture rejects substituted resolvable line ranges" do
     {task, workspace} = load_fixture("docops_struct_selector_missing_001")
 
@@ -205,6 +212,7 @@ defmodule Vanta.StructuredEditTest do
     assert "structured_selector_missing" in verifier_output["violated_constraints"]
   end
 
+  @tag :integration
   test "structured runtime episodes are audit-complete and replay-consistent with artifacts" do
     {task, workspace} = load_fixture("docops_struct_simulate_md_001")
 
@@ -225,6 +233,7 @@ defmodule Vanta.StructuredEditTest do
     assert replay.observation_match?
   end
 
+  @tag :fast_unit
   test "structured verifier requests evidence when candidate content is missing" do
     {task, workspace} = load_fixture("docops_struct_simulate_md_001")
     state = StateManager.from_task(task)

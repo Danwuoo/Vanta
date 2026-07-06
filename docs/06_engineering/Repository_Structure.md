@@ -14,6 +14,7 @@ source files.
   docs/             Documentation source, schemas, protocols, results, reports
   lib/              Elixir runtime, adapters, runners, and Mix tasks
   test/             ExUnit tests and executable fixture mirror
+  .github/          GitHub Actions CI configuration
   chatgpt_docs/     ChatGPT Project Knowledge export mirror, capped at 25 files
   deps/             Mix dependency checkout, generated/local artifact
   _build/           Mix build output, generated/local artifact
@@ -23,17 +24,17 @@ source files.
   AGENTS.md
 ```
 
-`docs/`, `lib/`, `test/`, and `chatgpt_docs/` are the relevant authored or
-curated trees. `deps/`, `_build/`, and `.elixir_ls/` are local generated
-artifacts and are not documentation, schema, experiment, evaluation, or runtime
-source-of-truth paths.
+`docs/`, `lib/`, `test/`, `.github/`, and `chatgpt_docs/` are the relevant
+authored or curated trees. `deps/`, `_build/`, and `.elixir_ls/` are local
+generated artifacts and are not documentation, schema, experiment, evaluation,
+runtime, or CI source-of-truth paths.
 
 ## Artifact Classes
 
 | Class | Current path | Navigation rule |
 | --- | --- | --- |
 | Documentation source | `docs/00_manifest/`, `docs/01_theory/`, `docs/02_specs/`, `docs/04_experiments/*.md`, `docs/05_evaluation/*.md`, `docs/06_engineering/` | Follow [Document Map](../00_manifest/Document_Map.md) and manifest precedence before treating downstream material as authoritative. |
-| Schemas | `docs/03_schemas/*.schema.json` | Use [Schemas Index](../03_schemas/Schemas_Index.md) as the L3 navigation entry. Schema files define data contracts. |
+| Schemas | `docs/03_schemas/*.schema.json` | Use [Schemas Index](../03_schemas/Schemas_Index.md) as the L3 navigation entry. Schema files define data contracts and remain the current runtime validation source. |
 | Schema impact reviews | `docs/03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md`, `docs/03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md` | Review documents only. They record no-change decisions and do not add schema enum behavior. |
 | Experiment protocols | `docs/04_experiments/*.md` outside `fixtures/` and `results/` | Protocols, plans, and benchmark definitions. They do not report results unless a measured run artifact or evaluation report is linked. |
 | Experiment results | `docs/04_experiments/results/<experiment>/<timestamp>/` | Use [Experiment Results README](../04_experiments/results/README.md) as the L4 result navigation entry. Preserve historical, failed, superseded, timeout, partial, measured, and planning-only result directories as provenance. |
@@ -41,6 +42,7 @@ source-of-truth paths.
 | Label packets | `docs/05_evaluation/label_packets/<packet>/` | Use [Label Packets README](../05_evaluation/label_packets/README.md) as the L5 packet navigation entry. Lane B packet artifacts, blinded items, packet-local templates, filled labels, and import summaries are evaluation artifacts, not runtime schemas or approvals. |
 | Runtime code | `lib/vanta/**/*.ex`, `lib/mix/tasks/vanta/*.ex` | Current Elixir implementation and CLI entry points. Runtime modules and Mix task modules are grouped by engineering responsibility while preserving existing module names and CLI task names. |
 | Executable fixtures | `test/fixtures/document_ops/` | ExUnit-consumed fixture mirror. Must stay byte-for-byte synchronized with `docs/04_experiments/fixtures/document_ops/`. |
+| CI configuration | `.github/workflows/ci.yml` | GitHub Actions entry point for test layering. It runs the fast smoke alias before the full test alias and does not replace local `mix test` as the complete suite. |
 | ChatGPT Project Knowledge export | `chatgpt_docs/docs/` | Curated mirror of selected source docs. It is not the source of truth and must remain at 25 files or fewer unless the cap changes. |
 
 ## Documentation Tree
@@ -96,7 +98,7 @@ paths.
 | Artifact class | Retention rule | Tracking boundary |
 | --- | --- | --- |
 | Tracked source docs | Keep authored governance, theory, spec, experiment, evaluation, and engineering Markdown under `docs/`. Source docs remain the source of truth over ChatGPT export mirrors. | Tracked unless explicitly generated/local. |
-| Tracked schemas | Keep `docs/03_schemas/*.schema.json` and schema navigation documents under L3. Schemas define data contracts; schema impact reviews are review documents only. | Tracked. Do not add enum behavior through retention changes. |
+| Tracked schemas | Keep `docs/03_schemas/*.schema.json` and schema navigation documents under L3. Schemas define data contracts; schema impact reviews are review documents only. The current runtime loads schemas from this docs-local path. | Tracked. Do not add enum behavior, duplicate schema authority, or packaged runtime assets through retention changes. |
 | Tracked summary, closure, and report Markdown | Keep run `summary.md`, `fixture_inventory.md`, evaluation reports, label reports, closure documents, and closure candidates in place, including failed or superseded records. | Tracked when part of result/report provenance. Do not rewrite historical results to create new claims. |
 | Tracked required compact run artifacts | Keep compact machine-readable artifacts that are already tracked or explicitly required by a report or closure, such as selected `run.json` files and label packet JSON/JSONL records. | Tracked only when intentionally included. Existing tracked files remain tracked even when a broad ignore pattern would ignore new untracked peers. |
 | Ignored raw logs and scratch artifacts | Keep bulky raw traces, scratch JSON, and one-off local run byproducts out of source control unless a later report explicitly elevates a compact artifact. Historical tracked `_logs/` remain provenance and should not be deleted or moved during cleanup. | Ignored/local by default where `.gitignore` applies; do not broaden tracking accidentally. |
@@ -120,6 +122,9 @@ Retention boundaries:
 
 - Historical, failed, superseded, timeout, and partial run directories are
   provenance. Do not delete, rename, or move them during source-tree cleanup.
+- Schemas remain documentation-local under `docs/03_schemas/*.schema.json` for
+  the current Post-Stage-1 runtime. Future runtime asset packaging requires a
+  separate accepted migration gate with loader, package, and test changes.
 - Side-effect planning results remain planning-only artifacts. Retention does
   not authorize runtime execution of `COMMITTABLE`, `IRREVERSIBLE`, or
   `MEMORY_WRITE` actions.
@@ -213,6 +218,18 @@ No remaining source-layout follow-up should move
 `test/fixtures/`, or `docs/05_evaluation/label_packets/` unless a later
 accepted repository migration plan explicitly changes provenance path policy.
 
+## Schema Packaging Decision
+
+The accepted 2026-07-06 schema packaging decision keeps schema files under
+`docs/03_schemas/*.schema.json` for the current Post-Stage-1 runtime.
+`Vanta.Schema` continues to load validation contracts from this docs-local path.
+This batch does not copy schemas into a runtime asset directory, change Mix
+packaging, or introduce a second schema authority.
+
+Runtime asset packaging is a future migration, not an implicit source-layout
+cleanup. It requires a later accepted decision plus coordinated loader, package,
+schema-distribution, and test updates.
+
 ## Rules
 
 - Theory changes should not directly mutate implementation behavior.
@@ -225,8 +242,3 @@ accepted repository migration plan explicitly changes provenance path policy.
 - Generated artifacts should remain clearly separated from authored source.
 - ChatGPT Project Knowledge export files must be synchronized byte-for-byte when
   their source file is included in `chatgpt_docs/`.
-
-## Open Questions
-
-- Should schema files remain documentation-local, or become a packaged runtime
-  asset after a later accepted schema governance decision?

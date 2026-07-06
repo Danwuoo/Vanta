@@ -20,7 +20,7 @@ defmodule Vanta.RuntimeFlowTest do
     VerifierRuntime
   }
 
-  @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @fixture_root Path.expand("../../fixtures/document_ops", __DIR__)
   @ps1_fix_007_expected_rejected_fixtures ~w(
     docops_ps1_invalid_reversible_in_readonly_001
     docops_struct_simulation_mutation_001
@@ -45,6 +45,7 @@ defmodule Vanta.RuntimeFlowTest do
     docops_ws_recovery_context_001
   )
 
+  @tag :fast_unit
   test "verifier requests extra evidence when required evidence is missing" do
     {task, workspace} = load_fixture("docops_simulate_patch_001")
     state = StateManager.from_task(task)
@@ -69,6 +70,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert "observation" in verifier_output["required_extra_evidence"]
   end
 
+  @tag :fast_unit
   test "forbidden side-effect classes cannot enter the commit path" do
     {task, workspace} = load_fixture("docops_simulate_patch_001")
     state = StateManager.from_task(task)
@@ -91,6 +93,7 @@ defmodule Vanta.RuntimeFlowTest do
              CommitController.commit(state, forbidden_step, evidence, verifier_output)
   end
 
+  @tag :fast_unit
   test "commit controller only commits verifier accept decisions" do
     {task, workspace} = load_fixture("docops_simulate_patch_001")
     state = StateManager.from_task(task)
@@ -119,6 +122,7 @@ defmodule Vanta.RuntimeFlowTest do
              CommitController.commit(state, step, evidence, rejected_output)
   end
 
+  @tag :fast_unit
   test "reversible edit writes backup metadata and can rollback in a fixture workspace" do
     workspace = copy_fixture("docops_reversible_edit_001")
     task = Schema.load_json!(Path.join(workspace, "task.json"))
@@ -144,6 +148,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert File.read!(target) == original
   end
 
+  @tag :fast_unit
   test "episode journal records state, evidence, verifier, commit, and rollback status" do
     {task, workspace} = load_fixture("docops_simulate_patch_001")
     state = StateManager.from_task(task)
@@ -185,6 +190,7 @@ defmodule Vanta.RuntimeFlowTest do
            }) == false
   end
 
+  @tag :integration
   test "runtime runs positive fixtures end-to-end and replay is consistent" do
     Enum.each(
       ~w(
@@ -231,6 +237,7 @@ defmodule Vanta.RuntimeFlowTest do
     )
   end
 
+  @tag :integration
   test "runtime records every step in the expanded multi-step commit fixture" do
     {task, workspace} = load_fixture("docops_multistep_commit_001")
 
@@ -270,6 +277,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert replay.consistent?
   end
 
+  @tag :integration
   test "runtime preserves audit refs for repeated action types in one episode" do
     {task, workspace} = load_fixture("docops_detect_terms_001")
 
@@ -306,6 +314,7 @@ defmodule Vanta.RuntimeFlowTest do
            })
   end
 
+  @tag :integration
   test "multistep compute_diff accepts LF candidate content against CRLF source files" do
     workspace = copy_fixture("docops_multistep_commit_001")
     target = Path.join(workspace, "inputs/workflow.md")
@@ -331,6 +340,7 @@ defmodule Vanta.RuntimeFlowTest do
              "-Verifier gate: TODO.\n+Verifier gate: Evidence Packet reviewed before commit."
   end
 
+  @tag :integration
   test "runtime rejects negative fixtures and records invalid action paths" do
     Enum.each(
       ~w(
@@ -367,6 +377,7 @@ defmodule Vanta.RuntimeFlowTest do
     )
   end
 
+  @tag :fast_unit
   test "compile reject path records auditable evidence without accepted state update" do
     {task, workspace} = load_fixture("docops_action_not_allowed_001")
     initial_state = StateManager.from_task(task)
@@ -398,6 +409,7 @@ defmodule Vanta.RuntimeFlowTest do
            })
   end
 
+  @tag :fast_unit
   test "audit checklist detects missing refs and reversible rollback metadata gaps" do
     {task, workspace} = load_fixture("docops_reversible_edit_001")
 
@@ -449,6 +461,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert "commit_audit" in missing_rollback_metadata["missing"]
   end
 
+  @tag :fast_unit
   test "verifier rejects simulated observations that mutate source state" do
     {task, workspace} = load_fixture("docops_simulate_patch_001")
     state = StateManager.from_task(task)
@@ -469,6 +482,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert "simulated_action_mutated" in verifier_output["violated_constraints"]
   end
 
+  @tag :fast_unit
   test "verifier enforces task action and side-effect allowlists" do
     {task, workspace} = load_fixture("docops_action_not_allowed_001")
     state = StateManager.from_task(task)
@@ -510,6 +524,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert "side_effect_class_not_allowed_by_task" in verifier_output["violated_constraints"]
   end
 
+  @tag :fast_unit
   test "verifier rejects action side-effect class mismatches" do
     {task, workspace} = load_fixture("docops_simulate_patch_001")
     state = StateManager.from_task(task)
@@ -533,6 +548,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert "action_side_effect_class_mismatch" in verifier_output["violated_constraints"]
   end
 
+  @tag :fast_unit
   test "verifier rejects workspace path escapes before LLM review" do
     {task, workspace} = load_fixture("docops_path_escape_001")
     state = StateManager.from_task(task)
@@ -559,6 +575,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert "provenance_path_escapes_workspace" in verifier_output["violated_constraints"]
   end
 
+  @tag :fast_unit
   test "baseline direct execution records invalid actions without governance artifacts" do
     {task, workspace} = load_fixture("docops_wrong_diff_001")
     {:ok, action_sequence} = FixtureAcceptance.action_sequence(workspace)
@@ -572,6 +589,7 @@ defmodule Vanta.RuntimeFlowTest do
     refute Map.has_key?(result, :evidence_packets)
   end
 
+  @tag :fast_unit
   test "openai planner adapter parses mock structured output" do
     {task, workspace} = load_fixture("docops_read_traceability_001")
 
@@ -606,6 +624,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert [%{"action_type" => "validate_artifact"}] = action_sequence["actions"]
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter parses mock agent payload text" do
     {task, workspace} = load_fixture("docops_read_traceability_001")
 
@@ -646,6 +665,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert [%{"action_type" => "validate_artifact"}] = action_sequence["actions"]
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter uses compact prompts for Lane A overflow fixtures" do
     Enum.each(
       ~w(
@@ -686,6 +706,7 @@ defmodule Vanta.RuntimeFlowTest do
     )
   end
 
+  @tag :integration
   test "Lane A overflow fixture action sequences produce governance artifacts" do
     Enum.each(
       ~w(
@@ -721,6 +742,7 @@ defmodule Vanta.RuntimeFlowTest do
     )
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter uses compact rejection prompts for PS1-LA-FIX-007 fixtures" do
     Enum.each(@ps1_fix_007_expected_rejected_fixtures, fn fixture_id ->
       {task, workspace} = load_fixture(fixture_id)
@@ -759,6 +781,7 @@ defmodule Vanta.RuntimeFlowTest do
     end)
   end
 
+  @tag :integration
   test "PS1-LA-FIX-007 expected-rejected fixtures produce complete governance artifacts" do
     Enum.each(@ps1_fix_007_expected_rejected_fixtures, fn fixture_id ->
       {task, workspace} = load_fixture(fixture_id)
@@ -816,6 +839,7 @@ defmodule Vanta.RuntimeFlowTest do
     end)
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter uses compact rejection prompts for PS1-LA-FIX-008 structured fixtures" do
     Enum.each(@ps1_fix_008_expected_rejected_fixtures, fn fixture_id ->
       {task, workspace} = load_fixture(fixture_id)
@@ -855,6 +879,7 @@ defmodule Vanta.RuntimeFlowTest do
     end)
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter preserves missing-selector rejection fixture action" do
     {task, workspace} = load_fixture("docops_struct_selector_missing_001")
     {:ok, expected_sequence} = FixtureAcceptance.action_sequence(workspace)
@@ -883,6 +908,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert action_sequence == expected_sequence
   end
 
+  @tag :integration
   test "PS1-LA-FIX-008 structured expected-rejected fixtures produce complete governance artifacts" do
     Enum.each(@ps1_fix_008_expected_rejected_fixtures, fn fixture_id ->
       {task, workspace} = load_fixture(fixture_id)
@@ -941,6 +967,7 @@ defmodule Vanta.RuntimeFlowTest do
     end)
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter uses compact acceptance prompts for PS1-LA-FIX-006 fixtures" do
     Enum.each(@ps1_fix_006_positive_fixtures, fn fixture_id ->
       {task, workspace} = load_fixture(fixture_id)
@@ -973,6 +1000,7 @@ defmodule Vanta.RuntimeFlowTest do
     end)
   end
 
+  @tag :integration
   test "PS1-LA-FIX-006 positive fixtures produce complete governance artifacts" do
     Enum.each(@ps1_fix_006_positive_fixtures, fn fixture_id ->
       {task, workspace} = load_fixture(fixture_id)
@@ -1009,6 +1037,7 @@ defmodule Vanta.RuntimeFlowTest do
     end)
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter rejects prompt budget overflow before runner call" do
     {task, workspace} = load_fixture("docops_read_traceability_001")
 
@@ -1025,6 +1054,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert prompt_chars > 10
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter rejects response budget overflow before JSON decode" do
     {task, workspace} = load_fixture("docops_read_traceability_001")
 
@@ -1041,6 +1071,7 @@ defmodule Vanta.RuntimeFlowTest do
              )
   end
 
+  @tag :fast_unit
   test "openclaw planner adapter classifies context overflow text explicitly" do
     {task, workspace} = load_fixture("docops_read_traceability_001")
 
@@ -1063,6 +1094,7 @@ defmodule Vanta.RuntimeFlowTest do
     assert message =~ "maximum context length exceeded"
   end
 
+  @tag :fast_unit
   test "malformed action sequence is rejected before execution" do
     assert {:error, {:invalid_action_sequence, _errors}} =
              Vanta.PlannerAdapter.validate_action_sequence(%{
@@ -1070,6 +1102,7 @@ defmodule Vanta.RuntimeFlowTest do
              })
   end
 
+  @tag :integration
   test "experiment runner writes compact mock run results" do
     out_dir =
       Path.join(System.tmp_dir!(), "vanta_experiment001_#{System.unique_integer([:positive])}")

@@ -22,6 +22,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
   @label_report_path "docs/05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md"
   @context_os_eval_plan_path "docs/04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md"
 
+  @tag :generated_artifact_tooling
   test "template is a Not yet run packet-local result scaffold" do
     assert {:ok, template} = PostStage1LaneBLabelResults.template(@label_opts)
 
@@ -34,6 +35,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     assert get_in(template, ["agreement_report", "status"]) == "Not yet run"
   end
 
+  @tag :generated_artifact_tooling
   test "validates template file without treating it as collected labels" do
     assert {:ok, template} = PostStage1LaneBLabelResults.template(@label_opts)
     path = write_temp_json(template)
@@ -47,6 +49,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     refute String.contains?(summary["claim_boundary"], "until real labels")
   end
 
+  @tag :generated_artifact_tooling
   test "validates in-progress dry-run raw labels and reports pending triggers" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@packet_opts)
     assert {:ok, result} = in_progress_result(packet)
@@ -70,6 +73,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     assert String.contains?(summary["claim_boundary"], "not broad validation")
   end
 
+  @tag :generated_artifact_tooling
   test "validates reported primary labels without requiring the old pending-report status" do
     assert {:ok, summary} =
              PostStage1LaneBLabelResults.validate_file(@filled_results_path, @label_opts)
@@ -94,6 +98,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
            ]) == "0.7742"
   end
 
+  @tag :generated_artifact_tooling
   test "validates active label report parity against filled labels and import summary" do
     assert {:ok, summary} =
              PostStage1LaneBLabelResults.validate_report_parity(
@@ -135,6 +140,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
            ]) == 31
   end
 
+  @tag :generated_artifact_tooling
   test "report parity rejects drifted markdown omission metrics" do
     report_text =
       @label_report_path
@@ -158,6 +164,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     assert Enum.any?(errors, &String.contains?(&1, "context_omission_error_rate"))
   end
 
+  @tag :docs_consistency
   test "validates PS1-G7 planning and traceability parity for locked context metrics" do
     assert {:ok, summary} =
              PostStage1LaneBLabelResults.validate_ps1_g7_context_metric_parity(
@@ -211,6 +218,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
            ]
   end
 
+  @tag :docs_consistency
   test "PS1-G7 parity rejects drifted planning surface fractions" do
     drifted_plan =
       @context_os_eval_plan_path
@@ -235,6 +243,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     assert Enum.any?(errors, &String.contains?(&1, "working_set_relevance_score"))
   end
 
+  @tag :generated_artifact_tooling
   test "rejects labels outside the PS1-LB-LABEL-001 evidence scale" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@packet_opts)
     assert {:ok, result} = in_progress_result(packet)
@@ -252,6 +261,7 @@ defmodule Vanta.PostStage1LaneBLabelResultsTest do
     assert Enum.any?(errors, &String.contains?(&1, "integer 0-4 or needs_review"))
   end
 
+  @tag :generated_artifact_tooling
   test "rejects unknown referenced artifact IDs" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@packet_opts)
     assert {:ok, result} = in_progress_result(packet)

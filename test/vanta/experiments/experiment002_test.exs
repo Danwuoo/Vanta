@@ -3,8 +3,9 @@ defmodule Vanta.Experiment002Test do
 
   alias Vanta.{Experiment002, FixtureAcceptance, OpenClawVerifierAdapter, Schema}
 
-  @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @fixture_root Path.expand("../../fixtures/document_ops", __DIR__)
 
+  @tag :fast_unit
   test "openclaw verifier adapter parses schema-valid payload text" do
     review_item = review_item("adapter_valid")
 
@@ -43,6 +44,7 @@ defmodule Vanta.Experiment002Test do
     assert :ok = Schema.validate("verifier_output", verifier_output)
   end
 
+  @tag :fast_unit
   test "openclaw verifier adapter parses JSON fences and normalizes needs_more_evidence" do
     review_item = review_item("adapter_fence")
 
@@ -81,6 +83,7 @@ defmodule Vanta.Experiment002Test do
     assert :ok = Schema.validate("verifier_output", verifier_output)
   end
 
+  @tag :fast_unit
   test "openclaw verifier adapter normalizes parse failure to abstain" do
     review_item = review_item("adapter_parse_failure")
 
@@ -101,6 +104,7 @@ defmodule Vanta.Experiment002Test do
     assert :ok = Schema.validate("verifier_output", verifier_output)
   end
 
+  @tag :fast_unit
   test "openclaw verifier adapter generates short automatic session ids" do
     long_review_item =
       review_item(
@@ -117,6 +121,7 @@ defmodule Vanta.Experiment002Test do
     assert String.starts_with?(env.session_id, "vexp002-docops-action-not-allowed-")
   end
 
+  @tag :integration
   test "experiment002 runner computes three-arm strict verifier metrics" do
     out_dir =
       Path.join(System.tmp_dir!(), "vanta_experiment002_#{System.unique_integer([:positive])}")
@@ -147,6 +152,7 @@ defmodule Vanta.Experiment002Test do
     assert run["metrics"]["structured_evidence_packet"]["evidence_sufficiency_score"] == 1.0
   end
 
+  @tag :integration
   test "structured evidence gate rejects invalid fixtures before LLM verifier" do
     assert {:ok, run} =
              Experiment002.run(@fixture_root,
@@ -177,6 +183,7 @@ defmodule Vanta.Experiment002Test do
            |> length() == length(valid_structured)
   end
 
+  @tag :integration
   test "experiment002 review items cover compile rejects, execution rejects, wrong diffs, and reversible evidence" do
     review_items = Experiment002.build_review_items(@fixture_root)
 

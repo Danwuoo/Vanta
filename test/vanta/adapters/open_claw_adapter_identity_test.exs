@@ -1,6 +1,8 @@
 defmodule Vanta.OpenClawAdapterIdentityTest do
   use ExUnit.Case, async: true
 
+  @moduletag :fast_unit
+
   alias Vanta.{
     OpenClawContextPlannerAdapter,
     OpenClawPlannerAdapter,

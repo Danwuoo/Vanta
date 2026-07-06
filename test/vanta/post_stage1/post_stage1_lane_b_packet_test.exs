@@ -12,6 +12,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     out: "docs/05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121"
   ]
 
+  @tag :generated_artifact_tooling
   test "builds active Lane B packet item counts and source linkage" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 
@@ -46,6 +47,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     assert packet.label_results_template["label_collection_status"] == "Not yet run"
   end
 
+  @tag :generated_artifact_tooling
   test "redacts oracle-sensitive task fields for primary labeler packets" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 
@@ -64,6 +66,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     end)
   end
 
+  @tag :generated_artifact_tooling
   test "keeps reviewer-visible item label fields as Not yet run scaffolds" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 
@@ -76,6 +79,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     end)
   end
 
+  @tag :generated_artifact_tooling
   test "active reported packet generation paths do not regress to pre-label narrative" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 
@@ -96,6 +100,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     refute String.contains?(packet.label_report_skeleton, "Claim level before labels")
   end
 
+  @tag :generated_artifact_tooling
   test "working-set context items use blinded arms without arm identity mapping" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 
@@ -109,6 +114,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     refute String.contains?(encoded, "\"treatment\"")
   end
 
+  @tag :generated_artifact_tooling
   test "post-freeze unblind guard accepts packet artifacts without coordinator-only source labels" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 
@@ -122,6 +128,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
     assert PostStage1LaneBPacket.post_freeze_unblind_boundary_errors(artifacts) == []
   end
 
+  @tag :generated_artifact_tooling
   test "packet check rejects post-freeze unblind source labels in result scaffolds" do
     opts = temp_packet_opts("post_freeze_unblind_guard")
     assert {:ok, _result} = PostStage1LaneBPacket.generate(opts)
@@ -146,6 +153,7 @@ defmodule Vanta.PostStage1LaneBPacketTest do
            end)
   end
 
+  @tag :generated_artifact_tooling
   test "selector-missing evidence item comes from repaired rejection artifact" do
     assert {:ok, packet} = PostStage1LaneBPacket.build(@opts)
 

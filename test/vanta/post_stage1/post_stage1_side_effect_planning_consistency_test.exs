@@ -1,8 +1,8 @@
 defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
   use ExUnit.Case, async: true
 
-  @docs_root Path.expand("../../docs", __DIR__)
-  @chatgpt_docs_root Path.expand("../../chatgpt_docs/docs", __DIR__)
+  @docs_root Path.expand("../../../docs", __DIR__)
+  @chatgpt_docs_root Path.expand("../../../chatgpt_docs/docs", __DIR__)
   @chatgpt_docs_export_cap 25
 
   @planning_bundle_file_names [
@@ -39,6 +39,7 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
   @surface_id "PS1-LC-SIDEFX-COMMITTABLE-DOCOPS-001"
   @placeholder_action "commit_fixture_document_candidate"
 
+  @tag :docs_consistency
   test "PS1-G8 planning bundle stays routed through manifest, map, traceability, and gate inventory" do
     Enum.each(@routing_docs, fn relative_path ->
       text = read_doc(relative_path)
@@ -82,6 +83,7 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
     )
   end
 
+  @tag :docs_consistency
   test "PS1-LC-SIDEFX-GATE-001 wording and Not authorized boundary stay aligned" do
     gate = read_doc("00_manifest/Side_Effect_Escalation_Gate.md")
     spec = read_doc("02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md")
@@ -160,6 +162,7 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
     )
   end
 
+  @tag :fast_unit
   test "COMMITTABLE planning placeholder remains outside runtime schemas and module wiring" do
     runtime_plan = read_doc("06_engineering/Runtime_Module_Plan.md")
     spec = read_doc("02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md")
@@ -202,6 +205,7 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
     )
   end
 
+  @tag :docs_consistency
   test "future side-effect planning artifact contract remains non-executing and future-only" do
     evaluation_plan = read_doc("04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md")
     traceability = read_doc("00_manifest/Traceability_Matrix.md")
@@ -252,6 +256,7 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
     )
   end
 
+  @tag :docs_consistency
   test "PS1-G8 mirror export stays capped and byte-for-byte synchronized" do
     mirrored_docs = mirrored_doc_paths()
 

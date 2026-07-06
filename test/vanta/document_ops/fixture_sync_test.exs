@@ -1,8 +1,10 @@
 defmodule Vanta.FixtureSyncTest do
   use ExUnit.Case, async: true
 
-  @docs_root Path.expand("../../docs/04_experiments/fixtures/document_ops", __DIR__)
-  @test_root Path.expand("../fixtures/document_ops", __DIR__)
+  @moduletag :docs_consistency
+
+  @docs_root Path.expand("../../../docs/04_experiments/fixtures/document_ops", __DIR__)
+  @test_root Path.expand("../../fixtures/document_ops", __DIR__)
 
   test "document ops docs fixtures and test fixtures remain byte-for-byte synchronized" do
     docs_files = relative_files(@docs_root)

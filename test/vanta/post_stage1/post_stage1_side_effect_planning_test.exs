@@ -16,6 +16,7 @@ defmodule Vanta.PostStage1SideEffectPlanningTest do
 
   @placeholder_action "commit_fixture_document_candidate"
 
+  @tag :generated_artifact_tooling
   test "generator writes the PS1-G8 planning-only artifact contract" do
     out_dir = tmp_dir("sidefx_contract")
 
@@ -46,6 +47,7 @@ defmodule Vanta.PostStage1SideEffectPlanningTest do
     assert summary =~ "Runtime execution status: Not authorized"
   end
 
+  @tag :generated_artifact_tooling
   test "run.json locks high-risk executed effect counts to zero" do
     out_dir = tmp_dir("sidefx_counts")
 
@@ -74,6 +76,7 @@ defmodule Vanta.PostStage1SideEffectPlanningTest do
     assert floors["runtime_action_added_count"] == 0
   end
 
+  @tag :generated_artifact_tooling
   test "generated artifacts keep disallowed claim boundary out of report text" do
     out_dir = tmp_dir("sidefx_claims")
 
@@ -110,6 +113,7 @@ defmodule Vanta.PostStage1SideEffectPlanningTest do
     )
   end
 
+  @tag :fast_unit
   test "planning placeholder remains outside runtime schemas and dispatch path" do
     assert @placeholder_action not in Vanta.action_types()
 
@@ -139,6 +143,7 @@ defmodule Vanta.PostStage1SideEffectPlanningTest do
     refute source =~ "CommitController"
   end
 
+  @tag :generated_artifact_tooling
   test "mix task can rerun the scaffold generator" do
     aliases = Mix.Project.config()[:aliases]
 

@@ -1,8 +1,10 @@
 defmodule Vanta.DocumentationClosureConsistencyTest do
   use ExUnit.Case, async: true
 
-  @docs_root Path.expand("../../docs", __DIR__)
-  @chatgpt_docs_root Path.expand("../../chatgpt_docs/docs", __DIR__)
+  @moduletag :docs_consistency
+
+  @docs_root Path.expand("../../../docs", __DIR__)
+  @chatgpt_docs_root Path.expand("../../../chatgpt_docs/docs", __DIR__)
   @closure_doc Path.join(@docs_root, "00_manifest/Stage_1_Experiment_005_Closure.md")
 
   @phase5_status_docs [

@@ -24,6 +24,7 @@ This manifest defines the documentation system and prevents theory documents fro
 - `Validation_and_Refutation_Report.md` is an evidence and risk review, not proof of validation.
 - Engineering work must be justified by specs, schemas, and tests, not by theory prose alone.
 - Experimental claims must remain `TODO`, `Not yet run`, or `Open Questions` until measured.
+- Cross-document open questions route through [Open Questions Index](Open_Questions_Index.md); the index classifies blockers but does not replace source documents, gates, decisions, specs, schemas, or evaluation reports.
 - Changes to core concepts must update the traceability matrix and decision log.
 
 ## MVP Positioning

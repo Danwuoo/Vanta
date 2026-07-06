@@ -2,12 +2,15 @@
 
 ## Purpose
 
-Define a staged engineering path that follows the research priorities and avoids building the full architecture before measurement.
+Define the staged engineering path and current Post-Stage-1 status while
+avoiding architecture, validation, or production-readiness claims that have not
+passed through measured results and closure documents.
 
 ## Phase 0: Documentation And Contracts
 
 - Complete source translations.
-- Freeze schema skeletons.
+- Freeze schema skeletons, then promote Stage 1 runtime schemas to required-field
+  contracts before execution.
 - Define metric and label guides.
 - Select first benchmark domain.
 
@@ -73,3 +76,33 @@ Post-Stage-1 advancement is governed by
   [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md).
   Acceptance still requires a measured run, threshold pass, and manifest or
   closure acceptance.
+- The `20260601_113121` Lane A larger controlled sample is
+  `accepted_by_closure` for the named threshold-governed Document Ops sample
+  only. It does not validate H1-H5, approve production readiness, authorize full
+  Context OS, authorize memory writes, or authorize irreversible effects.
+
+## Current Engineering Position
+
+- `PS1-G6` is locally implemented as `Document Ops Structured Edit Action
+  Surface v0` with fixture-local `READ_ONLY`, `SIMULATED`, and `REVERSIBLE`
+  actions, schemas, fixtures, runtime code, and tests.
+- `PS1-G7` Context OS work is planning-only: draft spec, schema impact review,
+  and evaluation plan. It does not implement full Context OS, learned retrieval,
+  compression, memory governance, memory writes, or H3 validation.
+- `PS1-G8` side-effect work is planning-only for fixture-local Document Ops
+  `COMMITTABLE` commit proposals. It does not execute `COMMITTABLE`,
+  `IRREVERSIBLE`, or `MEMORY_WRITE` effects and does not create runtime
+  approval or H5 validation.
+- The 2026-07-06 schema packaging decision keeps schema files under
+  `docs/03_schemas/*.schema.json` for the current runtime. Packaged runtime
+  schema assets require a later accepted migration gate with loader, package,
+  and test changes.
+
+## Next Implementation Gates
+
+- Define the next accepted storage or persistence gate before replacing
+  fixture-local in-memory/file artifacts.
+- Define any executable `COMMITTABLE` behavior through a later accepted schema,
+  implementation, fixture, test, and evaluation batch.
+- Define any full Context OS implementation through later accepted specs,
+  schemas, evaluation plans, labels, and measured runs.

@@ -1,6 +1,8 @@
 defmodule Vanta.OpenClawHarnessTest do
   use ExUnit.Case, async: true
 
+  @moduletag :fast_unit
+
   @env %{
     openclaw_dir: "~/openclaw",
     agent: "main",

@@ -26,7 +26,10 @@ Trace concepts from theory through specs, schemas, experiments, evaluation, and 
 
 ## Open Questions
 
-- Which subsequent Lane B packets are needed beyond the active blinded
-  `20260601_113121` batch before broader label claims are reported?
-- Which traceability rows need automated checks? Track through post-Stage-1
-  artifact-contract work before larger controlled samples.
+- Cross-document open questions are routed through
+  [Open Questions Index](Open_Questions_Index.md).
+- Traceability-local questions remain:
+  - Which subsequent Lane B packets are needed beyond the active blinded
+    `20260601_113121` batch before broader label claims are reported?
+  - Which traceability rows need automated checks? Track through post-Stage-1
+    artifact-contract work before larger controlled samples.

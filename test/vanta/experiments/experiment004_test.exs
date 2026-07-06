@@ -9,13 +9,14 @@ defmodule Vanta.Experiment004Test do
     Schema
   }
 
-  @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @fixture_root Path.expand("../../fixtures/document_ops", __DIR__)
   @phase4_fixtures ~w(
     docops_audit_gap_001
     docops_compensable_action_001
     docops_rollback_failure_001
   )
 
+  @tag :fast_unit
   test "openclaw recovery adapter parses schema-valid payload text and records budget" do
     input = recovery_input("docops_rollback_failure_001")
 
@@ -58,6 +59,7 @@ defmodule Vanta.Experiment004Test do
     assert :ok = Schema.validate("recovery_decision", decision)
   end
 
+  @tag :fast_unit
   test "openclaw recovery adapter parses JSON fences and normalizes malformed output to no recovery" do
     fenced_runner = fn _prompt, _env ->
       {:ok,
@@ -109,6 +111,7 @@ defmodule Vanta.Experiment004Test do
     assert :ok = Schema.validate("recovery_decision", malformed)
   end
 
+  @tag :integration
   test "targeted recovery policies repair the three Phase 4 fixtures" do
     Enum.each(@phase4_fixtures, fn fixture_id ->
       {task, workspace} = load_fixture(fixture_id)
@@ -130,6 +133,7 @@ defmodule Vanta.Experiment004Test do
     end)
   end
 
+  @tag :integration
   test "experiment004 mock run emits matched-budget blind retry and targeted metrics" do
     out_dir =
       Path.join(System.tmp_dir!(), "vanta_experiment004_#{System.unique_integer([:positive])}")

@@ -1,6 +1,8 @@
 defmodule Vanta.SchemaContractTest do
   use ExUnit.Case, async: true
 
+  @moduletag :fast_unit
+
   alias Vanta.{
     ActionExecutor,
     EpisodeJournal,
@@ -12,7 +14,7 @@ defmodule Vanta.SchemaContractTest do
     VerifierRuntime
   }
 
-  @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @fixture_root Path.expand("../../fixtures/document_ops", __DIR__)
 
   test "document ops task fixtures validate against benchmark and canonical state schemas" do
     @fixture_root

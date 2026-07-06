@@ -3,8 +3,9 @@ defmodule Vanta.PostStage1LargerSampleTest do
 
   alias Vanta.{PostStage1LargerSample, Schema}
 
-  @fixture_root Path.expand("../fixtures/document_ops", __DIR__)
+  @fixture_root Path.expand("../../fixtures/document_ops", __DIR__)
 
+  @tag :fast_unit
   test "sample frame fixes 48 fixtures across 8 strata" do
     frame = PostStage1LargerSample.sample_frame()
 
@@ -15,6 +16,7 @@ defmodule Vanta.PostStage1LargerSampleTest do
     assert Enum.all?(strata, fn {_stratum, items} -> length(items) == 6 end)
   end
 
+  @tag :docs_consistency
   test "sample frame fixtures exist and validate with expected artifacts" do
     Enum.each(PostStage1LargerSample.sample_frame(), fn %{"fixture_id" => fixture_id} ->
       workspace = Path.join(@fixture_root, fixture_id)
@@ -27,11 +29,12 @@ defmodule Vanta.PostStage1LargerSampleTest do
     end)
   end
 
+  @tag :fast_unit
   test "reversible append section fixture exposes exact insertion contract" do
     exact_line = "Add audit trail before commit."
 
     Enum.each(
-      [@fixture_root, Path.expand("../../docs/04_experiments/fixtures/document_ops", __DIR__)],
+      [@fixture_root, Path.expand("../../../docs/04_experiments/fixtures/document_ops", __DIR__)],
       fn
         root ->
           workspace = Path.join(root, "docops_ps1_reversible_append_section_001")
@@ -57,6 +60,7 @@ defmodule Vanta.PostStage1LargerSampleTest do
     )
   end
 
+  @tag :fast_unit
   test "fixture hash inventory is deterministic" do
     workspace = Path.join(@fixture_root, "docops_ps1_traceability_multisource_001")
 
@@ -64,6 +68,7 @@ defmodule Vanta.PostStage1LargerSampleTest do
              PostStage1LargerSample.fixture_hash(workspace)
   end
 
+  @tag :integration
   test "mock run emits Lane A artifacts and pass_acceptance_candidate" do
     out_dir =
       Path.join(System.tmp_dir!(), "vanta_lane_a_#{System.unique_integer([:positive])}")
@@ -99,6 +104,7 @@ defmodule Vanta.PostStage1LargerSampleTest do
     assert String.contains?(summary, "must not be described as H1-H5 validation")
   end
 
+  @tag :integration
   test "runner records planner adapter errors instead of aborting measured artifacts" do
     out_dir =
       Path.join(System.tmp_dir!(), "vanta_lane_a_failed_#{System.unique_integer([:positive])}")
@@ -134,6 +140,7 @@ defmodule Vanta.PostStage1LargerSampleTest do
     assert String.contains?(summary, "## Blocking Details")
   end
 
+  @tag :fast_unit
   test "threshold decision distinguishes blocked and failed runs" do
     blocked = %{
       "sample_frame_id" => "PS1-LA-SAMPLE-002",

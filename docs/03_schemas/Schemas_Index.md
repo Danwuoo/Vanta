@@ -12,6 +12,12 @@ Schema files in this directory are the `*.schema.json` contracts consumed by
 runtime, benchmark, experiment, and evaluation artifacts. Markdown files in this
 directory are review or planning documents unless they explicitly say otherwise.
 
+The accepted 2026-07-06 schema packaging decision keeps these schema files
+documentation-local under `docs/03_schemas/*.schema.json` for the current
+Post-Stage-1 runtime. `Vanta.Schema` loads validation contracts from this
+docs-local path. Packaged runtime assets require a later accepted migration gate
+with loader, package, and test changes.
+
 Post-Stage-1 Context OS and Side-Effect schema impact reviews are review
 documents. They record no-change planning decisions for their batches and do not
 add schema enum behavior, runtime action names, memory writes, irreversible
