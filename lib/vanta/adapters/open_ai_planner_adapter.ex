@@ -38,6 +38,13 @@ defmodule Vanta.OpenAIPlannerAdapter do
     end
   end
 
+  def baseline_id(opts \\ []) do
+    case env(opts) do
+      {:ok, env} -> "responses_api/#{env.model}_direct_execution"
+      {:error, _reason} -> "responses_api/direct_execution"
+    end
+  end
+
   defp request_body(task, workspace, env) do
     prompt = """
     Produce a JSON action sequence for this Stage 1 Document Ops fixture.

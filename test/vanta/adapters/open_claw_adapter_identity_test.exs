@@ -7,7 +7,8 @@ defmodule Vanta.OpenClawAdapterIdentityTest do
     OpenClawContextPlannerAdapter,
     OpenClawPlannerAdapter,
     OpenClawRecoveryAdapter,
-    OpenClawVerifierAdapter
+    OpenClawVerifierAdapter,
+    OpenAIPlannerAdapter
   }
 
   @opts [
@@ -28,5 +29,13 @@ defmodule Vanta.OpenClawAdapterIdentityTest do
 
     assert OpenClawVerifierAdapter.verifier_id(@opts) ==
              "openclaw_agent_local/openai-codex/test-model_verifier"
+  end
+
+  test "preserves direct Responses API arm identity" do
+    assert OpenAIPlannerAdapter.baseline_id(api_key: "test-key", model: "test-model") ==
+             "responses_api/test-model_direct_execution"
+
+    assert OpenAIPlannerAdapter.baseline_id(api_key: "", model: "test-model") ==
+             "responses_api/direct_execution"
   end
 end

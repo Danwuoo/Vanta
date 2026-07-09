@@ -85,10 +85,7 @@ defmodule Vanta.Experiment001 do
     do: OpenClawPlannerAdapter.baseline_id(opts)
 
   defp baseline_id(Vanta.OpenAIPlannerAdapter, opts) do
-    case OpenAIPlannerAdapter.env(opts) do
-      {:ok, env} -> "openai_responses/#{env.model}_direct_execution"
-      {:error, _reason} -> "openai_responses/direct_execution"
-    end
+    OpenAIPlannerAdapter.baseline_id(opts)
   end
 
   defp baseline_id(_planner, _opts), do: "llm_action_sequence_direct_execution"
