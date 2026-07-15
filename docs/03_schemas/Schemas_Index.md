@@ -33,6 +33,9 @@ effects, or full Context OS behavior.
 | `evidence_packet.schema.json` | Runtime schema | Structured evidence for verifier, audit, recovery, and regression handling. It is not an explanation field. |
 | `verifier_output.schema.json` | Runtime schema | Verifier decision and diagnostics. Verifier Runtime is not limited to final-answer judging. |
 | `episode_journal.schema.json` | Runtime schema | Audit and replay journal for runtime episodes. It is not durable memory. |
+| `persistence_manifest.schema.json` | Persistence schema | Fixture-local episode lifecycle, accepted state/journal pointers, and storage/runtime/hash-policy versions. |
+| `persisted_artifact.schema.json` | Persistence schema | Immutable typed artifact envelope; it does not replace core payload schemas. |
+| `recovery_record.schema.json` | Persistence schema | Prepared-effect, crash-window, rollback, and recovery metadata. |
 | `benchmark_task.schema.json` | Benchmark schema | Document Ops task fixture contract, including inputs, allowed actions, expected artifacts, and runtime artifact requirements. |
 | `fixture_acceptance.schema.json` | Benchmark schema | Deterministic expected outcome and action recipe for controlled fixtures. |
 | `experiment_run.schema.json` | Benchmark and evaluation schema | Compact measured run record for local and post-Stage-1 experiment outputs. A valid run record does not by itself create closure acceptance. |
@@ -50,6 +53,9 @@ effects, or full Context OS behavior.
 - `evidence_packet.schema.json`
 - `verifier_output.schema.json`
 - `episode_journal.schema.json`
+- `persistence_manifest.schema.json`
+- `persisted_artifact.schema.json`
+- `recovery_record.schema.json`
 
 Runtime schemas support the Stage 1 spine:
 
@@ -86,12 +92,24 @@ known-omission reporting, failure classification, and targeted recovery. They do
 not authorize learned retrieval, memory governance, memory writes, or full
 Context OS behavior.
 
+### Persistence Schemas
+
+- `persistence_manifest.schema.json`
+- `persisted_artifact.schema.json`
+- `recovery_record.schema.json`
+
+These schemas implement the `PS1-G9` storage envelope, lifecycle, pointer, and
+recovery contracts. Core runtime payloads continue to validate against their
+existing schemas. Persistence schemas do not authorize production or
+distributed storage, durable memory, or external side effects.
+
 ## Review Documents In This Directory
 
 | Review document | Status |
 | --- | --- |
 | `Post_Stage_1_Context_OS_Schema_Impact_Review.md` | Context OS planning review. No schema changes in the planning batch. |
 | `Post_Stage_1_Side_Effect_Schema_Impact_Review.md` | Side-effect planning review. No schema changes and no executable `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` expansion in the planning batch. |
+| `Post_Stage_1_Persistence_Schema_Impact_Review.md` | `PS1-G9` impact review. Adds three persistence schemas while preserving existing core enum and payload authority. |
 
 These review documents should be routed from manifest, spec, experiment, and
 evaluation planning documents when schema impact is being discussed. They should

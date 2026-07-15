@@ -141,6 +141,7 @@ classes, but it does not authorize runtime execution:
 | `PS1-G6` | Which runtime capability may expand next? | [Post-Stage-1 Runtime Scope Proposal](Post_Stage_1_Runtime_Scope_Proposal.md) | Local structured edit runtime implementation |
 | `PS1-G7` | When can Context OS expand beyond Working Set Compiler v0? | [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) | Context OS specification and evaluation planning |
 | `PS1-G8` | When can side-effect classes expand beyond Stage 1 allowances? | [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) | `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` planning |
+| `PS1-G9` | When may fixture-local runtime artifacts become restartable persistence authority? | [Storage and Persistence Gate](Storage_and_Persistence_Gate.md) | Fixture-local SQLite implementation, failure injection, measured evaluation, and closure |
 
 `PS1-G0` is met by the current closure set. `PS1-G1` is accepted by the
 larger-sample plan, `PS1-G2` is accepted by the metric policy, `PS1-G3` and
@@ -170,6 +171,20 @@ and
 It defines a fixture-local Document Ops `COMMITTABLE` commit-proposal planning
 surface only and does not authorize execution, approval collection, schema
 changes, H5 validation, or production readiness.
+
+`PS1-G9` is accepted by
+[Storage and Persistence Gate](Storage_and_Persistence_Gate.md) for the named
+`Fixture-Local SQLite Persistence v0` implementation and measured evaluation
+path. It resolves the storage backend, minimum replay fidelity, and Canonical
+State hash policy. Gate/spec acceptance does not make SQLite persistence
+authority: implementation completion, a complete 20-case deterministic
+failure-injection run, every hard metric, an evaluation report, and manifest
+closure are separate required states. Those states are now complete for run
+`20260715_114209`; the
+[Post-Stage-1 Persistence v0 Closure](Post_Stage_1_Persistence_v0_Closure.md)
+marks the named fixture-local scope `accepted_by_closure` and `validated for
+Fixture-Local SQLite Persistence v0`. The gate does not authorize production,
+distributed storage, durable memory, external side effects, or H1-H5 claims.
 
 Lane A has an accepted threshold-governed larger-sample closure for the
 `20260601_113121` measured `PS1-LA-SAMPLE-002` run. The
@@ -240,7 +255,7 @@ enums, approval records, fixtures, tests, or measured results.
 
 [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md) tracks artifact
 status, proposed artifact paths, dependencies, and routing for `PS1-G1` through
-`PS1-G8`. This document remains the normative source for post-Stage-1 gate
+`PS1-G9`. This document remains the normative source for post-Stage-1 gate
 conditions. The inventory cannot replace any required artifact and cannot
 accept a gate item by itself.
 
@@ -296,6 +311,9 @@ claim`.
 - [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 - [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
 - [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
+- [Storage and Persistence Gate](Storage_and_Persistence_Gate.md)
+- [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md)
+- [Experiment 006 Persistence and Recovery](../04_experiments/Experiment_006_Persistence_and_Recovery.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Post-Stage-1 Larger Sample G6 Successor Plan](../04_experiments/Post_Stage_1_Larger_Sample_G6_Successor_Plan.md)
 - [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md)

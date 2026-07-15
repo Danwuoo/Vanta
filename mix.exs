@@ -34,7 +34,8 @@ defmodule Vanta.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4"},
-      {:ex_json_schema, "~> 0.10"}
+      {:ex_json_schema, "~> 0.10"},
+      {:exqlite, "~> 0.38"}
     ]
   end
 
@@ -51,7 +52,8 @@ defmodule Vanta.MixProject do
       "vanta.post_stage_1_lane_b_label_results": ["vanta.post_stage1_lane_b_label_results"],
       "vanta.post_stage_1_side_effect_planning": [
         "vanta.post_stage1_side_effect_planning"
-      ]
+      ],
+      "vanta.persistence_and_recovery": ["vanta.persistence_experiment"]
     ]
   end
 end

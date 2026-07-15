@@ -271,6 +271,32 @@ For broader evaluation:
   provenance completeness, task stability, or absence of unsupported commits as
   H3 validation.
 
+## PS1-G9 Persistence Metrics
+
+These hard metrics apply only to the named `Fixture-Local SQLite Persistence
+v0` gate and Experiment 006. Reports must include observed denominators and raw
+counts.
+
+| Metric | Computation | Hard requirement |
+| --- | --- | ---: |
+| `persistence_artifact_schema_validity` | typed persisted artifacts validating against envelope and payload schemas divided by artifacts checked | `1.0` |
+| `persistence_write_success_rate` | successful durable writes divided by writes expected to succeed; expected negative injections are evaluated separately | `1.0` |
+| `restart_recovery_success` | safe completed, aborted, or rolled-back recoveries divided by restart recovery cases | `1.0` |
+| `replay_consistency` | strict full-fidelity replay successes divided by replay cases | `1.0` |
+| `audit_completeness` | committed episodes with resolvable state/journal pointers and required refs divided by audited committed episodes | `1.0` |
+| `state_journal_atomicity_violations` | transactions leaving one accepted pointer without the other or a partially visible commit | `0` |
+| `duplicate_logical_commits` | repeated identical idempotency requests that create another logical commit/effect | `0` |
+| `silent_partial_commits` | partial commits not surfaced as explicit errors or recovery work | `0` |
+| `committed_effects_without_journal_refs` | committed effects whose journal lacks resolvable required refs | `0` |
+| `artifact_integrity_detection_rate` | injected corrupt or missing integrity conditions detected divided by integrity injections | `1.0` |
+| `unsupported_commits` | unsupported side-effect commits | `0` |
+| `memory_writes` | executed or persisted memory writes | `0` |
+| `irreversible_effects` | executed irreversible effects | `0` |
+
+These metrics support only the named persistence scope. They do not validate
+H1-H5, production readiness, distributed persistence, durable memory, full
+Context OS, or external side effects.
+
 ## Stage 1 Local Smoke Gate
 
 The first Experiment 001 local smoke run uses OpenClaw
@@ -317,3 +343,7 @@ Post-Stage-1 metric and labeling questions are tracked by
   [Post-Stage-1 Labeling Scope and Adjudication Policy](Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md).
 - Phase 5 working-set omission, relevance, and provenance labeling contract:
   [Human Labeling Guide](Human_Labeling_Guide.md).
+- Storage and persistence hard metrics: `PS1-G9`, defined by
+  [Storage and Persistence Gate](../00_manifest/Storage_and_Persistence_Gate.md)
+  and measured by
+  [Experiment 006](../04_experiments/Experiment_006_Persistence_and_Recovery.md).

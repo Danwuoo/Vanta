@@ -72,6 +72,12 @@ Define the MVP runtime loop that turns state into action, action into evidence, 
 - The OpenClaw harness baseline remains local-harness labeled and may be
   supplemented by separately named direct Responses arms according to
   [Baseline Identity Plan](../04_experiments/Baseline_Identity_Plan.md).
+- `PS1-G9` accepts SQLite behind `Vanta.Persistence` for the named
+  `Fixture-Local SQLite Persistence v0` surface. Runtime artifacts remain typed
+  and separate; accepted Canonical State and Episode Journal pointers commit in
+  one database transaction. The filesystem uses the prepared-effect recovery
+  protocol in
+  [Persistence and Recovery Semantics](Persistence_and_Recovery_Semantics.md).
 
 ## Related Documents
 

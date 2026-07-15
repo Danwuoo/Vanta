@@ -17,6 +17,9 @@ evidence into validation claims.
   and ChatGPT Project Knowledge export parity where applicable.
 - Generated artifact and tooling tests for packet builders, label-result
   validators, scaffold generators, and Mix task wrappers.
+- Persistence adapter contract, Memory/SQLite parity, transaction rollback,
+  idempotency/conflict, recovery lifecycle, corruption/version, clean restart,
+  strict replay, and result-artifact tests.
 - Schema source tests that validate runtime artifacts against
   `docs/03_schemas/*.schema.json`; this batch does not test packaged runtime
   schema assets because no such asset path is accepted.
@@ -110,8 +113,19 @@ coverage.
 - PS1-G8 planning checks must keep side-effect work planning-only: no executable
   `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` behavior, no approval
   collection, no production readiness, and no H5 validation.
+- PS1-G9 tests must cover MemoryAdapter/SQLiteAdapter parity, atomic accepted
+  state and journal pointers, same-key idempotency, conflicting-key rejection,
+  deterministic Canonical State JSON hashing, prepared-effect recovery, all
+  documented crash windows, artifact corruption and missing refs, incompatible
+  versions, database busy/locked, transaction rollback, incomplete discovery,
+  strict clean replay, rejected/non-accept isolation, zero unsupported commits,
+  zero memory writes, and zero irreversible effects.
+- Experiment 006 result validation must preserve failed predecessor provenance,
+  validate all required files, require 20/20 cases, and keep runner output at
+  `pass_acceptance_candidate` until manifest closure.
 
 ## Open Questions
 
 - How should non-deterministic tool outputs be simulated?
-- What is the minimum replay fidelity requirement for MVP?
+- Resolved pointer: minimum replay fidelity is locked by `PS1-G9` and
+  [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md).

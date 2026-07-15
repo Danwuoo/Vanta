@@ -89,10 +89,31 @@ It defines a fixture-local Document Ops `COMMITTABLE` commit-proposal planning
 surface with required rollback or compensation statements. It does not create a
 commit path, rollback path, approval record, or replayable runtime episode.
 
+## PS1-G9 Persistence, Hash, And Replay Contract
+
+`PS1-G9` resolves Canonical State hashing as deterministic semantic JSON under
+`canonical-json-sha256-v1`, excluding `state_hash` and non-canonical runtime
+metadata while retaining the existing SHA-256 digest algorithm.
+
+Replay success is fail-closed. Episode/task identity, runtime/schema version,
+ordered step count, action type, side-effect class, step/commit status,
+rollback/recovery status, the full Canonical State hash sequence, Evidence
+Packet and Verifier Output references, observation signatures, structured-edit
+path and selector resolution, before/after hashes, diff or contract result, and
+final accepted state hash must all be present and match. "When artifacts are
+available" is not sufficient for the Persistence v0 acceptance path.
+
+The accepted Canonical State pointer, committed Episode Journal pointer, typed
+artifacts, and logical idempotency record are one SQLite transaction. A
+fixture-local reversible effect is prepared before filesystem mutation and
+recovered according to
+[Persistence and Recovery Semantics](Persistence_and_Recovery_Semantics.md).
+
 ## Open Questions
 
 - Which post-`PS1-G8` side-effect domain should be specified first?
-- What state hash granularity is required?
+- Resolved pointer: Canonical State hash granularity is defined by `PS1-G9` and
+  `canonical-json-sha256-v1`.
 - How should compensation be represented for non-reversible actions beyond the
   Phase 4 fixture-local compensation record?
 - What additional replay fields should be compared before using structured

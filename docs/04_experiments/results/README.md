@@ -21,6 +21,7 @@ separate evaluation report and manifest closure say so.
 | `experiment_005/` | Stage 1 Working Set Compiler v0 local smoke run artifacts. | Historical Stage 1 local smoke family. | Yes, for the completed local smoke result. | No |
 | `post_stage_1_larger_sample/` | Lane A larger controlled Document Ops sample run artifacts for `PS1-LA-SAMPLE-002`. | Active Lane A result family. It contains failed, threshold-passing candidate, superseded, timeout or partial, and closure-accepted provenance. | Yes, for completed run directories with `run.json`, `summary.md`, and `fixture_inventory.md`; not every directory is accepted. | No |
 | `side_effect_planning/` | PS1-G8 side-effect planning artifact scaffolds. | Planning artifact family only. Current artifacts materialize planning contracts and do not execute side-effect runtime actions. | No runtime execution measurement. | Yes |
+| `persistence_and_recovery/` | `PS1-G9` Experiment 006 SQLite persistence and deterministic failure-injection artifacts. | Active persistence result family. `20260715_114052` is retained `failed_no_acceptance`; `20260715_114209` is the complete 20-case `pass_acceptance_candidate` used by measured report and closure review. | Yes. Deterministic protocol-boundary injection is measured; no OS-level process-kill claim. | No |
 
 ## Accepted Closure Boundary
 
@@ -33,6 +34,14 @@ That acceptance does not validate H1-H5, authorize full Context OS, approve
 production readiness, authorize memory writes, authorize irreversible effects,
 authorize runtime execution of side-effect planning surfaces, or promote
 OpenClaw local harness arms to pure model-only baselines.
+
+The `persistence_and_recovery/20260715_114209/` runner result is
+`pass_acceptance_candidate` for the named Fixture-Local SQLite Persistence v0
+surface. Only
+[Post-Stage-1 Persistence v0 Closure](../../00_manifest/Post_Stage_1_Persistence_v0_Closure.md)
+upgrades that named scope to `accepted_by_closure` and records `validated for
+Fixture-Local SQLite Persistence v0`; predecessor `20260715_114052` remains
+failed provenance.
 
 ## Provenance Retention
 
@@ -56,3 +65,6 @@ not by mutating historical run artifacts.
 - [Post-Stage-1 Side-Effect Evaluation Plan](../Post_Stage_1_Side_Effect_Evaluation_Plan.md)
 - [Post-Stage-1 Lane A 20260601_113121 Run Report](../../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
 - [Post-Stage-1 Lane A 20260601_113121 Closure](../../00_manifest/Post_Stage_1_Lane_A_20260601_113121_Closure.md)
+- [Experiment 006 Persistence and Recovery](../Experiment_006_Persistence_and_Recovery.md)
+- [Experiment 006 Persistence and Recovery Run Report](../../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
+- [Post-Stage-1 Persistence v0 Closure](../../00_manifest/Post_Stage_1_Persistence_v0_Closure.md)

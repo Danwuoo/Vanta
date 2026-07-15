@@ -63,7 +63,7 @@
     },
     "state_hash": {
       "type": "string",
-      "description": "Hash of the accepted canonical state content used for audit and replay."
+      "description": "SHA-256 hash of deterministic semantic Canonical State JSON under the manifest-selected hash policy. The hash input excludes this state_hash field and non-canonical runtime metadata."
     }
   },
   "additionalProperties": false

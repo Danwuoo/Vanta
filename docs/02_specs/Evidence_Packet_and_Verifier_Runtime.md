@@ -89,6 +89,15 @@ It defines pre-effect evidence, post-effect evidence, verifier, and approval
 boundaries for a fixture-local Document Ops `COMMITTABLE` planning placeholder
 only. It does not collect approvals or produce post-effect evidence.
 
+## PS1-G9 Persistence Evidence Boundary
+
+Evidence Packets remain distinct immutable payloads inside persistence
+envelopes. A Verifier Output other than `accept` cannot update the accepted
+Canonical State pointer. Every committed step must have resolvable Evidence
+Packet and Verifier Output references in its committed Episode Journal;
+missing, corrupt, incompatible, or hash-mismatched artifacts fail audit and
+replay.
+
 ## Open Questions
 
 - Which evidence fields are mandatory for Stage 1?

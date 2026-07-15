@@ -24,6 +24,10 @@ This glossary freezes working terminology for the Vanta documentation system. De
 | tool log | Raw record of tool calls and outputs. It may provide provenance or observations, but it is not canonical state. |
 | memory append | Governed write to a memory store or memory candidate set. It is not learning unless a training process and evaluation document define it as such. |
 | final-answer judging | Evaluation that inspects only the final answer. It is insufficient for Stage 1 verifier semantics when actions, evidence, and side effects must be checked. |
+| Persistence Manifest | Fixture-local storage record for episode lifecycle, accepted Canonical State and Episode Journal pointers, and runtime/schema/hash-policy versions. It is not Canonical State or durable memory. |
+| logical commit | One idempotency-keyed accepted persistence transition whose typed artifacts, Canonical State pointer, Episode Journal pointer, and commit result are written atomically. |
+| prepared effect | Durable recovery record created before a fixture-local reversible filesystem mutation, containing target identity, pre-effect hash, and backup metadata. It is not a committed effect. |
+| hash policy | Versioned rule for selecting and deterministically encoding semantic content before applying the project SHA-256 algorithm. Persistence v0 uses `canonical-json-sha256-v1`. |
 
 ## Open Questions
 

@@ -97,11 +97,31 @@ Post-Stage-1 advancement is governed by
   `docs/03_schemas/*.schema.json` for the current runtime. Packaged runtime
   schema assets require a later accepted migration gate with loader, package,
   and test changes.
+- `PS1-G9` gate/spec, three persistence schemas, adapter abstraction,
+  MemoryAdapter, SQLiteAdapter, runtime integration, idempotency, restart
+  recovery, strict replay, and Experiment 006 runner are implemented. The
+  `20260715_114209` complete run is `pass_acceptance_candidate`, and the
+  manifest closure accepts its named fixture-local scope as
+  `accepted_by_closure` after all required test commands passed.
+
+## Phase 6: Fixture-Local Persistence v0
+
+- Backend: SQLite through direct `exqlite`, behind `Vanta.Persistence`.
+- Migration path: Memory authority plus SQLite shadow parity, SQLite
+  restart/replay candidate, then named persistence authority only by closure.
+- Failure injection: 20 deterministic protocol-boundary cases; no OS-level
+  process-kill claim.
+- Measured candidate: `20260715_114209`, 20/20 cases and every `PS1-G9` hard
+  metric passing; accepted by the named Persistence v0 closure.
+- Predecessor: `20260715_114052`, retained as `failed_no_acceptance` provenance.
+- Claim boundary: fixture-local single-machine persistence only; not production,
+  distributed persistence, durable memory, external effects, or H1-H5.
 
 ## Next Implementation Gates
 
-- Define the next accepted storage or persistence gate before replacing
-  fixture-local in-memory/file artifacts.
+- Successor persistence gates may address migration beyond v0, concurrent
+  multi-process authority, retention operations, or packaged schema assets;
+  none are implied by `PS1-G9`.
 - Define any executable `COMMITTABLE` behavior through a later accepted schema,
   implementation, fixture, test, and evaluation batch.
 - Define any full Context OS implementation through later accepted specs,

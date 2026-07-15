@@ -211,6 +211,24 @@ surface only. The bundle does not add runtime actions, change schemas, execute
 run experiments, validate H5, approve production readiness, or create a runtime
 approval path.
 
+Lane C has accepted `PS1-G9` for the named `Fixture-Local SQLite Persistence
+v0` implementation and measured evaluation path:
+[Storage and Persistence Gate](Storage_and_Persistence_Gate.md) resolves the
+storage backend, minimum replay fidelity, and Canonical State hash granularity.
+The adapter abstraction, Memory/SQLite adapters, restart recovery,
+idempotency, transactional state/journal pointer update, and deterministic
+failure-injection runner are implemented. The complete Experiment 006 run at
+`docs/04_experiments/results/persistence_and_recovery/20260715_114209/` is
+`pass_acceptance_candidate` with 20/20 cases and every hard metric passing; the
+earlier `20260715_114052` run remains `failed_no_acceptance` provenance.
+The
+[Post-Stage-1 Persistence v0 Closure](Post_Stage_1_Persistence_v0_Closure.md)
+accepts the passing run as `accepted_by_closure` and records the exact claim
+`validated for Fixture-Local SQLite Persistence v0`. This scope does not
+validate H1-H5, the full architecture, production readiness, distributed
+persistence, durable memory, full Context OS, external `COMMITTABLE`,
+`IRREVERSIBLE`, or `MEMORY_WRITE` execution.
+
 ## Source Documents
 
 - [Design Theory](../01_theory/Design_Theory.md)

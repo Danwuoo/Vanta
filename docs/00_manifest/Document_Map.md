@@ -46,16 +46,22 @@ Map how documents relate so readers can navigate from theory to implementation w
 38. [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 39. [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
 40. [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
-41. [Design Theory](../01_theory/Design_Theory.md)
-42. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-43. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-44. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-45. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-46. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-47. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-48. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-49. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-50. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+41. [Storage and Persistence Gate](Storage_and_Persistence_Gate.md)
+42. [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md)
+43. [Post-Stage-1 Persistence Schema Impact Review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md)
+44. [Experiment 006 Persistence and Recovery](../04_experiments/Experiment_006_Persistence_and_Recovery.md)
+45. [Experiment 006 Persistence and Recovery Run Report](../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
+46. [Post-Stage-1 Persistence v0 Closure](Post_Stage_1_Persistence_v0_Closure.md)
+47. [Design Theory](../01_theory/Design_Theory.md)
+48. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+49. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+50. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+51. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+52. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+53. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+54. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+55. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+56. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -79,8 +85,8 @@ note-graph configuration, frontmatter, or application-specific link syntax.
 | --- | --- | --- |
 | L0 | `docs/00_manifest/` | [Project Manifest](Project_Manifest.md), [Document Map](Document_Map.md), [Traceability Matrix](Traceability_Matrix.md), [Glossary](Glossary.md), [Decision Log](Decision_Log.md), [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md), [Open Questions Index](Open_Questions_Index.md) |
 | L1 | `docs/01_theory/` | [Design Theory](../01_theory/Design_Theory.md), [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md), [Research Hypotheses](../01_theory/Research_Hypotheses.md), [Alternative Theories](../01_theory/Alternative_Theories.md) |
-| L2 | `docs/02_specs/` | [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md), [Execution IR and Episode Semantics](../02_specs/Execution_IR_and_Episode_Semantics.md), [Evidence Packet and Verifier Runtime](../02_specs/Evidence_Packet_and_Verifier_Runtime.md), [Commit Abort Replay Semantics](../02_specs/Commit_Abort_Replay_Semantics.md), [Failure Taxonomy v0](../02_specs/Failure_Taxonomy_v0.md), [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md), [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md), and [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md) |
-| L3 | `docs/03_schemas/` | Runtime, benchmark, and evaluation data contracts under [Schemas Index](../03_schemas/Schemas_Index.md), plus [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md) and [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md) for no-change planning reviews |
+| L2 | `docs/02_specs/` | [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md), [Execution IR and Episode Semantics](../02_specs/Execution_IR_and_Episode_Semantics.md), [Evidence Packet and Verifier Runtime](../02_specs/Evidence_Packet_and_Verifier_Runtime.md), [Commit Abort Replay Semantics](../02_specs/Commit_Abort_Replay_Semantics.md), [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md), [Failure Taxonomy v0](../02_specs/Failure_Taxonomy_v0.md), [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md), [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md), and [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md) |
+| L3 | `docs/03_schemas/` | Runtime, persistence, benchmark, and evaluation data contracts under [Schemas Index](../03_schemas/Schemas_Index.md), plus Context OS, side-effect, and [Persistence Schema Impact Review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md) documents |
 | L4 | `docs/04_experiments/` | [Document Ops Benchmark](../04_experiments/Document_Ops_Benchmark.md), [Benchmark Task Format](../04_experiments/Benchmark_Task_Format.md), [Ablation Plan](../04_experiments/Ablation_Plan.md), Experiment 001 through 005 protocols, post-Stage-1 sample plans, [Fixtures Catalog](../04_experiments/fixtures/README.md), [Experiment Results README](../04_experiments/results/README.md), [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md), and [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md) |
 | L5 | `docs/05_evaluation/` | [Metrics Definition](../05_evaluation/Metrics_Definition.md), labeling guides, report templates, measured run reports, and [Label Packets README](../05_evaluation/label_packets/README.md) |
 | L6 | `docs/06_engineering/` | [MVP Architecture](../06_engineering/MVP_Architecture.md), [Repository Structure](../06_engineering/Repository_Structure.md), [Runtime Module Plan](../06_engineering/Runtime_Module_Plan.md), [Implementation Timeline](../06_engineering/Implementation_Timeline.md), [Testing Strategy](../06_engineering/Testing_Strategy.md) |
@@ -132,6 +138,11 @@ note-graph configuration, frontmatter, or application-specific link syntax.
 -> [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 -> [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
 -> [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
+-> [Storage and Persistence Gate](Storage_and_Persistence_Gate.md)
+-> [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md)
+-> [Experiment 006 Persistence and Recovery](../04_experiments/Experiment_006_Persistence_and_Recovery.md)
+-> [Experiment 006 Persistence and Recovery Run Report](../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
+-> [Post-Stage-1 Persistence v0 Closure](Post_Stage_1_Persistence_v0_Closure.md)
 
 ## Stage 0 Gate
 
@@ -365,6 +376,16 @@ Ops `COMMITTABLE` commit-proposal planning surface only. The bundle does not
 add runtime actions, change schemas, collect approvals, run experiments,
 authorize `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` execution, validate
 H5, or approve production readiness.
+
+[Storage and Persistence Gate](Storage_and_Persistence_Gate.md),
+[Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md),
+[Post-Stage-1 Persistence Schema Impact Review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md),
+and [Experiment 006](../04_experiments/Experiment_006_Persistence_and_Recovery.md)
+form the `PS1-G9` path. The `20260715_114209` measured run is the complete
+20-case acceptance candidate; the evaluation report and manifest closure are
+the only documents that may interpret it as `accepted_by_closure` for the named
+Fixture-Local SQLite Persistence v0 scope. The failed `20260715_114052` run
+remains provenance.
 
 ## Translation Sources
 

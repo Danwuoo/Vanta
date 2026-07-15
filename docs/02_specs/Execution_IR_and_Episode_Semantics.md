@@ -102,6 +102,14 @@ It names `commit_fixture_document_candidate` as a fixture-local Document Ops
 action enum, must not appear in task `allowed_actions`, and must not enter the
 runtime execution path in this batch.
 
+## PS1-G9 Persistence Boundary
+
+`PS1-G9` does not add an action type or side-effect class. Before a
+fixture-local `REVERSIBLE` step executes under SQLite persistence, the runtime
+must durably record the step identity, target identity, pre-effect hash, backup
+metadata, and unique logical-commit key. Execution IR stays an action contract;
+the persistence manifest and recovery record own storage lifecycle data.
+
 ## Open Questions
 
 - What is the minimum dependency graph representation for Stage 1?

@@ -36,11 +36,13 @@ runtime, or CI source-of-truth paths.
 | Documentation source | `docs/00_manifest/`, `docs/01_theory/`, `docs/02_specs/`, `docs/04_experiments/*.md`, `docs/05_evaluation/*.md`, `docs/06_engineering/` | Follow [Document Map](../00_manifest/Document_Map.md) and manifest precedence before treating downstream material as authoritative. |
 | Schemas | `docs/03_schemas/*.schema.json` | Use [Schemas Index](../03_schemas/Schemas_Index.md) as the L3 navigation entry. Schema files define data contracts and remain the current runtime validation source. |
 | Schema impact reviews | `docs/03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md`, `docs/03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md` | Review documents only. They record no-change decisions and do not add schema enum behavior. |
+| Persistence schema impact review | `docs/03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md` | `PS1-G9` review that adds envelope/lifecycle/recovery schemas without changing existing core enum authority. |
 | Experiment protocols | `docs/04_experiments/*.md` outside `fixtures/` and `results/` | Protocols, plans, and benchmark definitions. They do not report results unless a measured run artifact or evaluation report is linked. |
 | Experiment results | `docs/04_experiments/results/<experiment>/<timestamp>/` | Use [Experiment Results README](../04_experiments/results/README.md) as the L4 result navigation entry. Preserve historical, failed, superseded, timeout, partial, measured, and planning-only result directories as provenance. |
 | Evaluation reports | `docs/05_evaluation/*.md` | Metrics, labeling policies, run reports, report templates, and reported evaluation summaries. |
 | Label packets | `docs/05_evaluation/label_packets/<packet>/` | Use [Label Packets README](../05_evaluation/label_packets/README.md) as the L5 packet navigation entry. Lane B packet artifacts, blinded items, packet-local templates, filled labels, and import summaries are evaluation artifacts, not runtime schemas or approvals. |
 | Runtime code | `lib/vanta/**/*.ex`, `lib/mix/tasks/vanta/*.ex` | Current Elixir implementation and CLI entry points. Runtime modules and Mix task modules are grouped by engineering responsibility while preserving existing module names and CLI task names. |
+| Persistence code | `lib/vanta/persistence/*.ex` | Adapter contract, Memory/SQLite adapters, and fixture-local recovery protocol. Concrete SQLite code stays behind the adapter boundary. |
 | Executable fixtures | `test/fixtures/document_ops/` | ExUnit-consumed fixture mirror. Must stay byte-for-byte synchronized with `docs/04_experiments/fixtures/document_ops/`. |
 | CI configuration | `.github/workflows/ci.yml` | GitHub Actions entry point for test layering. It runs the fast smoke alias before the full test alias and does not replace local `mix test` as the complete suite. |
 | ChatGPT Project Knowledge export | `chatgpt_docs/docs/` | Curated mirror of selected source docs. It is not the source of truth and must remain at 25 files or fewer unless the cap changes. |
@@ -71,6 +73,7 @@ docs/04_experiments/
     experiment_005/<timestamp>/
     post_stage_1_larger_sample/<timestamp>/
     side_effect_planning/<timestamp>/      Planning artifacts only when present
+    persistence_and_recovery/<timestamp>/  Experiment 006 measured persistence artifacts
 
 docs/05_evaluation/
   label_packets/
@@ -116,6 +119,7 @@ Current `.gitignore` mapping:
 | `docs/04_experiments/results/*/*/*.json` | Broad guard against accidentally adding unreviewed result JSON. Required compact JSON should be explicitly tracked or explicitly unignored only when a report or closure needs it. |
 | `!docs/04_experiments/results/experiment_004/20260506_231941/run.json` | Explicit tracked compact run JSON exception for the Experiment 004 local smoke closure. |
 | `!docs/04_experiments/results/experiment_005/20260507_105950/run.json` | Explicit tracked compact run JSON exception for the Experiment 005 local smoke closure. |
+| `!docs/04_experiments/results/persistence_and_recovery/*/{run.json,failure_injection_results.json,environment_manifest.json,schema_hash_policy_versions.json}` | Compact Experiment 006 machine-readable evidence required by the measured report and closure review; Markdown summaries and matrices remain tracked normally. |
 | `/chatgpt_docs` | Local ChatGPT Project Knowledge export mirror; synchronize mirrored files when their source changes, but keep source-of-truth status in `docs/`. |
 
 Retention boundaries:
@@ -154,6 +158,11 @@ lib/
       episode_journal.ex
       runtime.ex
       replay_runner.ex
+    persistence/
+      persistence.ex
+      memory_adapter.ex
+      sqlite_adapter.ex
+      recovery.ex
     adapters/
       planner_adapter.ex
       open_ai_planner_adapter.ex
@@ -174,6 +183,7 @@ lib/
       evaluation_harness.ex
       working_set_compiler.ex
       raw_trace_context_builder.ex
+      persistence_experiment.ex
     post_stage1/
       post_stage1_larger_sample.ex
       post_stage1_lane_b_packet.ex
@@ -190,6 +200,7 @@ lib/
       post_stage_1_lane_b_packet.ex
       post_stage1_lane_b_label_results.ex
       post_stage_1_side_effect_planning.ex
+      persistence_experiment.ex
 ```
 
 `lib/mix/tasks/vanta/` groups the Vanta Mix task source files by CLI namespace.

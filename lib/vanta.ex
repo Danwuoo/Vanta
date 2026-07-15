@@ -4,6 +4,8 @@ defmodule Vanta do
   """
 
   @schema_version "stage1-mvp-v0"
+  @persistence_schema_version "persistence-v0"
+  @hash_policy_version "canonical-json-sha256-v1"
   @allowed_side_effect_classes ~w(READ_ONLY SIMULATED REVERSIBLE COMPENSABLE)
   @action_types ~w(
     read_file
@@ -21,6 +23,10 @@ defmodule Vanta do
   )
 
   def schema_version, do: @schema_version
+
+  def persistence_schema_version, do: @persistence_schema_version
+
+  def hash_policy_version, do: @hash_policy_version
 
   def allowed_side_effect_classes, do: @allowed_side_effect_classes
 

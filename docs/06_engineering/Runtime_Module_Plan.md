@@ -29,6 +29,11 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 | Raw Trace Context Builder | Build bounded raw-trace baseline context under the same budget as treatment. | Implemented and exercised by Experiment 005 baseline local smoke |
 | OpenClaw Context Planner Adapter | Ask OpenClaw for JSON action sequences using embedded baseline or working-set context only. | Implemented and exercised by Experiment 005 local smoke |
 | Side-Effect Planning Scaffold Generator | Write the `PS1-G8` planning-only artifact contract under `docs/04_experiments/results/side_effect_planning/<timestamp>/`. | Implemented as rerunnable artifact generator only; not wired into runtime execution |
+| Persistence Adapter | Define backend-independent open, artifact, state, commit, recovery, load, integrity, and close operations. | Implemented as `Vanta.Persistence` |
+| Memory Persistence Adapter | Provide fast adapter-contract and compatibility behavior. | Implemented and parity-tested |
+| SQLite Persistence Adapter | Persist typed runtime artifacts, accepted pointers, recovery rows, and logical commits with explicit SQLite transactions. | Implemented for `Fixture-Local SQLite Persistence v0` |
+| Persistence Recovery | Prepare reversible fixture effects and complete restart abort/rollback/recovery decisions. | Implemented and failure-injection tested |
+| Persistence Experiment Runner | Produce the 20-case Experiment 006 artifact contract. | Implemented as `Vanta.PersistenceExperiment` and `mix vanta.persistence_experiment` |
 
 ## Source Layout
 
@@ -44,6 +49,7 @@ module rename, schema change, runtime behavior change, or side-effect expansion.
 | Experiments and evaluation tooling | `lib/vanta/experiments/` | Experiment 001 through 005 runners, baseline/blind retry runners, recovery runner/policy, evaluation harness, working-set compiler, and raw-trace context builder. |
 | Post-Stage-1 tooling | `lib/vanta/post_stage1/` | Larger-sample runner, Lane B packet/result tooling, and side-effect planning scaffold generator. |
 | Support | `lib/vanta/support/` | Hashing, path guard, and JSON Schema helpers. |
+| Persistence | `lib/vanta/persistence/` | Adapter contract, Memory/SQLite adapters, and fixture-local recovery protocol. |
 
 Vanta Mix task source files are grouped under `lib/mix/tasks/vanta/`. This
 preserves existing `Mix.Tasks.Vanta.*` module names, public `mix vanta.*` task
@@ -96,10 +102,10 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
   floors, but it must not call `Vanta.Runtime.run_task/3`, add action enums,
   collect approvals, produce label packets, validate H5, or approve deployment.
 
-## Post-Stage-1 Open Questions
+## Post-Stage-1 Decisions And Open Questions
 
-- What storage backend should the journal use after the in-memory/file fixture
-  prototype?
+- Resolved by `PS1-G9`: the named Persistence v0 authority uses SQLite behind
+  `Vanta.Persistence`; MemoryAdapter remains for fast tests and compatibility.
 - What benchmark size is required before moving beyond Stage 1 smoke checks?
 - What measured threshold, after a real LLM baseline run, is sufficient to move
   beyond local Document Ops fixtures?

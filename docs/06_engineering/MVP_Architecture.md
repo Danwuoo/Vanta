@@ -34,6 +34,10 @@ Task Input
   claims.
 - The `20260601_113121` Lane A run is accepted by closure for the named
   threshold-governed Document Ops sample only.
+- `PS1-G9` has a complete `Fixture-Local SQLite Persistence v0`
+  implementation and a 20-case measured `pass_acceptance_candidate` run at
+  `20260715_114209`; the named manifest closure accepts it as fixture-local
+  Persistence v0 authority.
 - `PS1-G7` Context OS and `PS1-G8` side-effect work remain specification,
   schema-impact, evaluation, and implementation planning only.
 - Disallowed in the current runtime: full Context OS, memory writes,
@@ -61,6 +65,13 @@ Task Input
 - Post-Stage-1 tooling: generates larger-sample artifacts, Lane B packet and
   label-result artifacts, and `PS1-G8` side-effect planning scaffolds without
   changing the commit path.
+- Persistence Adapter: keeps runtime orchestration independent of backend
+  details through Memory and SQLite adapters.
+- SQLite Persistence v0: stores typed artifacts, accepted state/journal
+  pointers, recovery records, and idempotency keys with explicit transactions.
+- Persistence Recovery: prepares fixture-local reversible effects before
+  mutation and resolves restart windows to commit, abort, rollback, or
+  `recovery_required`.
 
 ## Deferred Modules
 
@@ -73,10 +84,11 @@ Task Input
   `docs/03_schemas/*.schema.json`.
 - High-risk external action governance beyond fixture-local tasks.
 
-## Post-Stage-1 Open Questions
+## Post-Stage-1 Decisions And Open Questions
 
-- What storage format should replace fixture-local in-memory/file artifacts after
-  the Phase 1 skeleton?
+- Resolved by `PS1-G9`: SQLite behind `Vanta.Persistence` replaces the named
+  fixture-local persistence prototype; MemoryAdapter remains for tests and
+  compatibility.
 - What successor measured-comparison scope is required beyond the accepted
   `20260601_113121` Lane A Document Ops sample?
 - What benchmark size and direct Responses comparison are required before the
