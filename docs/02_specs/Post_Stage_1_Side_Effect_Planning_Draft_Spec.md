@@ -19,7 +19,8 @@ Gate policy version: `PS1-LC-SIDEFX-GATE-001`.
 
 Surface name: `Fixture-Local Document Ops Commit Proposal Surface v0`.
 
-Run status: `Not yet run`.
+Run status: `committable_docops_planning_pilot` complete at
+`docs/04_experiments/results/side_effect_planning/20260715_223158/`.
 
 Implementation status: `Not authorized`.
 
@@ -36,6 +37,10 @@ planning surface.
 
 Claim level: planning artifact only. This document does not validate H5, approve
 production readiness, or create a runtime approval path.
+
+The measured pilot implements the planning-record validator and runner for this
+draft without promoting the draft to an executable runtime spec. Its proposal
+format remains pilot-local and is not a JSON Schema authority.
 
 ## Inputs
 
@@ -173,17 +178,25 @@ closest successor report label if it:
 
 ## Outputs
 
-The minimum routable output set for this planning layer is:
+The source planning bundle is:
 
 | Output | Path in this batch | Status |
 | --- | --- | --- |
 | Side-effect planning draft spec | `docs/02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md` | Draft |
 | Schema impact review | `docs/03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md` | Draft, no schema changes |
-| Side-effect evaluation plan | `docs/04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md` | Draft, not yet run |
+| Side-effect evaluation plan | `docs/04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md` | Executed by named planning pilot |
 
 These outputs are routing artifacts. They do not replace runtime specs, schemas,
 fixtures, implementation code, tests, or measured reports required by a later
 implementation batch.
+
+The completed planning pilot additionally writes immutable planning fixtures
+under `docs/04_experiments/fixtures/side_effect_planning/`, measured artifacts
+under `docs/04_experiments/results/side_effect_planning/20260715_223158/`, and
+the
+[planning pilot run report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md).
+These are evaluation artifacts and do not replace an executable action spec or
+schema batch.
 
 ## Open Questions
 
@@ -208,3 +221,4 @@ implementation batch.
 - [Commit Abort Replay Semantics](Commit_Abort_Replay_Semantics.md)
 - [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
 - [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
+- [Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md)

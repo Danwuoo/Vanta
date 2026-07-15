@@ -38,6 +38,7 @@ runtime, or CI source-of-truth paths.
 | Schema impact reviews | `docs/03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md`, `docs/03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md` | Review documents only. They record no-change decisions and do not add schema enum behavior. |
 | Persistence schema impact review | `docs/03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md` | `PS1-G9` review that adds envelope/lifecycle/recovery schemas without changing existing core enum authority. |
 | Experiment protocols | `docs/04_experiments/*.md` outside `fixtures/` and `results/` | Protocols, plans, and benchmark definitions. They do not report results unless a measured run artifact or evaluation report is linked. |
+| Side-effect planning fixtures | `docs/04_experiments/fixtures/side_effect_planning/` | Immutable proposal templates and evaluation-only fixture oracles for the named PS1-G8 planning pilot. They are not executable runtime fixtures or approvals. |
 | Experiment results | `docs/04_experiments/results/<experiment>/<timestamp>/` | Use [Experiment Results README](../04_experiments/results/README.md) as the L4 result navigation entry. Preserve historical, failed, superseded, timeout, partial, measured, and planning-only result directories as provenance. |
 | Evaluation reports | `docs/05_evaluation/*.md` | Metrics, labeling policies, run reports, report templates, and reported evaluation summaries. |
 | Label packets | `docs/05_evaluation/label_packets/<packet>/` | Use [Label Packets README](../05_evaluation/label_packets/README.md) as the L5 packet navigation entry. Lane B packet artifacts, blinded items, packet-local templates, filled labels, and import summaries are evaluation artifacts, not runtime schemas or approvals. |
@@ -65,6 +66,7 @@ The documentation source tree intentionally keeps result provenance in place:
 ```text
 docs/04_experiments/
   fixtures/document_ops/                   Documentation-side fixture source
+  fixtures/side_effect_planning/            Immutable planning proposal fixtures
   results/
     experiment_001/<timestamp>/
     experiment_002/<timestamp>/
@@ -72,7 +74,7 @@ docs/04_experiments/
     experiment_004/<timestamp>/
     experiment_005/<timestamp>/
     post_stage_1_larger_sample/<timestamp>/
-    side_effect_planning/<timestamp>/      Planning artifacts only when present
+    side_effect_planning/<timestamp>/      Scaffold or measured planning-pilot artifacts
     persistence_and_recovery/<timestamp>/  Experiment 006 measured persistence artifacts
 
 docs/05_evaluation/
@@ -119,6 +121,7 @@ Current `.gitignore` mapping:
 | `docs/04_experiments/results/*/*/*.json` | Broad guard against accidentally adding unreviewed result JSON. Required compact JSON should be explicitly tracked or explicitly unignored only when a report or closure needs it. |
 | `!docs/04_experiments/results/experiment_004/20260506_231941/run.json` | Explicit tracked compact run JSON exception for the Experiment 004 local smoke closure. |
 | `!docs/04_experiments/results/experiment_005/20260507_105950/run.json` | Explicit tracked compact run JSON exception for the Experiment 005 local smoke closure. |
+| `!docs/04_experiments/results/side_effect_planning/*/{run.json,fixture_results.json,environment_manifest.json}` | Compact machine-readable planning-pilot evidence; these files measure proposal validation only and do not authorize runtime execution. |
 | `!docs/04_experiments/results/persistence_and_recovery/*/{run.json,failure_injection_results.json,environment_manifest.json,schema_hash_policy_versions.json}` | Compact Experiment 006 machine-readable evidence required by the measured report and closure review; Markdown summaries and matrices remain tracked normally. |
 | `/chatgpt_docs` | Local ChatGPT Project Knowledge export mirror; synchronize mirrored files when their source changes, but keep source-of-truth status in `docs/`. |
 
@@ -189,6 +192,9 @@ lib/
       post_stage1_lane_b_packet.ex
       post_stage1_lane_b_label_results.ex
       post_stage1_side_effect_planning.ex
+      post_stage1_side_effect_planning/
+        path_helpers.ex
+        validator.ex
     support/
       hash.ex
       path_guard.ex
@@ -221,6 +227,12 @@ The docs tree is the documentation-side fixture and provenance mirror. The test
 tree is the executable fixture mirror used by ExUnit and Mix tasks. The two
 trees must remain byte-for-byte synchronized. `Vanta.FixtureSyncTest` enforces
 this by comparing relative file lists and file contents.
+
+The PS1-G8 planning fixtures under
+`docs/04_experiments/fixtures/side_effect_planning/` are a separate
+evaluation-only fixture class. The planning runner reads them directly,
+verifies pre/post tree hashes, and does not create an executable
+`test/fixtures/` mirror.
 
 ## Follow-Up Source Layout
 

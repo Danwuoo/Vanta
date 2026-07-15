@@ -211,6 +211,19 @@ surface only. The bundle does not add runtime actions, change schemas, execute
 run experiments, validate H5, approve production readiness, or create a runtime
 approval path.
 
+The formal `committable_docops_planning_pilot` completed at
+`docs/04_experiments/results/side_effect_planning/20260715_223158/` with 10
+fixtures. All 15 planning metrics passed at `1.0000`, including `8 / 8`
+negative-fixture rejection-rule accuracy and `10 / 10` planning audit and
+fixture-oracle conformance; all 16 process-integrity floors were `0`, including
+actual `COMMITTABLE`, `IRREVERSIBLE`, and `MEMORY_WRITE` execution counts and
+source-fixture mutation. The
+[measured report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md)
+marks only this named planning pilot complete. It does not create closure
+acceptance, validate H5 or executed side-effect safety, collect runtime
+approval, authorize runtime effects, change schemas, or establish production
+readiness.
+
 Lane C has accepted `PS1-G9` for the named `Fixture-Local SQLite Persistence
 v0` implementation and measured evaluation path:
 [Storage and Persistence Gate](Storage_and_Persistence_Gate.md) resolves the

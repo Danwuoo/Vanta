@@ -46,22 +46,23 @@ Map how documents relate so readers can navigate from theory to implementation w
 38. [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 39. [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
 40. [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
-41. [Storage and Persistence Gate](Storage_and_Persistence_Gate.md)
-42. [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md)
-43. [Post-Stage-1 Persistence Schema Impact Review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md)
-44. [Experiment 006 Persistence and Recovery](../04_experiments/Experiment_006_Persistence_and_Recovery.md)
-45. [Experiment 006 Persistence and Recovery Run Report](../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
-46. [Post-Stage-1 Persistence v0 Closure](Post_Stage_1_Persistence_v0_Closure.md)
-47. [Design Theory](../01_theory/Design_Theory.md)
-48. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-49. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-50. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-51. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-52. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-53. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-54. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-55. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-56. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+41. [Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md)
+42. [Storage and Persistence Gate](Storage_and_Persistence_Gate.md)
+43. [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md)
+44. [Post-Stage-1 Persistence Schema Impact Review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md)
+45. [Experiment 006 Persistence and Recovery](../04_experiments/Experiment_006_Persistence_and_Recovery.md)
+46. [Experiment 006 Persistence and Recovery Run Report](../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
+47. [Post-Stage-1 Persistence v0 Closure](Post_Stage_1_Persistence_v0_Closure.md)
+48. [Design Theory](../01_theory/Design_Theory.md)
+49. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+50. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+51. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+52. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+53. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+54. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+55. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+56. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+57. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -373,9 +374,16 @@ and
 [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
 are the first `PS1-G8` planning bundle. They define a fixture-local Document
 Ops `COMMITTABLE` commit-proposal planning surface only. The bundle does not
-add runtime actions, change schemas, collect approvals, run experiments,
-authorize `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` execution, validate
-H5, or approve production readiness.
+add runtime actions, change schemas, collect approvals, authorize
+`COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` execution, validate H5, or
+approve production readiness.
+
+The [Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md)
+routes the complete `20260715_223158` `committable_docops_planning_pilot` run.
+The 10-fixture pilot measured every planning metric at `1.0000`, every
+process-integrity floor at `0`, and an unchanged source-fixture tree. It
+completes only the named planning pilot; it is not closure acceptance or an
+executable `COMMITTABLE` successor gate.
 
 [Storage and Persistence Gate](Storage_and_Persistence_Gate.md),
 [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md),

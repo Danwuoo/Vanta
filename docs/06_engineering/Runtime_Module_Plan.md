@@ -28,7 +28,8 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 | Working Set Compiler | Compile schema-valid, reference-backed `WorkingSet` artifacts from explicit candidate refs under a fixed budget. | Implemented and exercised by Experiment 005 local smoke |
 | Raw Trace Context Builder | Build bounded raw-trace baseline context under the same budget as treatment. | Implemented and exercised by Experiment 005 baseline local smoke |
 | OpenClaw Context Planner Adapter | Ask OpenClaw for JSON action sequences using embedded baseline or working-set context only. | Implemented and exercised by Experiment 005 local smoke |
-| Side-Effect Planning Scaffold Generator | Write the `PS1-G8` planning-only artifact contract under `docs/04_experiments/results/side_effect_planning/<timestamp>/`. | Implemented as rerunnable artifact generator only; not wired into runtime execution |
+| Side-Effect Proposal Validator | Deterministically validate fixture-local planning proposals for target identity, approval boundary, idempotency/duplicate guard, rollback/compensation declaration, path scope, irreversible classification, and memory-write smuggling. | Implemented and measured on 10 immutable planning fixtures; evaluation-only and not runtime approval |
+| Side-Effect Planning Pilot Runner | Materialize planning proposals in memory, compare evaluation-only fixture oracles, verify source-fixture hashes, compute strict planning/process floors, and write the artifact contract under `docs/04_experiments/results/side_effect_planning/<timestamp>/`. | Implemented and exercised by complete run `20260715_223158`; not wired into runtime execution |
 | Persistence Adapter | Define backend-independent open, artifact, state, commit, recovery, load, integrity, and close operations. | Implemented as `Vanta.Persistence` |
 | Memory Persistence Adapter | Provide fast adapter-contract and compatibility behavior. | Implemented and parity-tested |
 | SQLite Persistence Adapter | Persist typed runtime artifacts, accepted pointers, recovery rows, and logical commits with explicit SQLite transactions. | Implemented for `Fixture-Local SQLite Persistence v0` |
@@ -47,7 +48,7 @@ module rename, schema change, runtime behavior change, or side-effect expansion.
 | Adapters | `lib/vanta/adapters/` | Planner adapter behavior and OpenAI/OpenClaw harness adapters. |
 | Document Ops surface | `lib/vanta/document_ops/` | Structured edit implementation and fixture-specific acceptance checks. |
 | Experiments and evaluation tooling | `lib/vanta/experiments/` | Experiment 001 through 005 runners, baseline/blind retry runners, recovery runner/policy, evaluation harness, working-set compiler, and raw-trace context builder. |
-| Post-Stage-1 tooling | `lib/vanta/post_stage1/` | Larger-sample runner, Lane B packet/result tooling, and side-effect planning scaffold generator. |
+| Post-Stage-1 tooling | `lib/vanta/post_stage1/` | Larger-sample runner, Lane B packet/result tooling, and side-effect planning proposal validator/runner. |
 | Support | `lib/vanta/support/` | Hashing, path guard, and JSON Schema helpers. |
 | Persistence | `lib/vanta/persistence/` | Adapter contract, Memory/SQLite adapters, and fixture-local recovery protocol. |
 
@@ -97,10 +98,14 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
   Verifier Runtime, Commit Controller, or Episode Journal as executable runtime
   behavior without a later accepted schema, implementation, fixture, test, and
   evaluation batch.
-- `Vanta.PostStage1SideEffectPlanning` is only a scaffold generator for the
-  future artifact contract. It writes planning files and zero-count process
-  floors, but it must not call `Vanta.Runtime.run_task/3`, add action enums,
-  collect approvals, produce label packets, validate H5, or approve deployment.
+- `Vanta.PostStage1SideEffectPlanning.Validator` and
+  `Vanta.PostStage1SideEffectPlanning` are planning evaluation tooling only.
+  They validate immutable fixtures, write measured planning artifacts and
+  zero-count process floors, but must not call `Vanta.Runtime.run_task/3`, add
+  action enums, collect approvals, produce label packets, validate H5, or
+  approve deployment.
+- The complete `20260715_223158` run measures the named planning pilot only;
+  its passing metrics are not an executable side-effect or production claim.
 
 ## Post-Stage-1 Decisions And Open Questions
 

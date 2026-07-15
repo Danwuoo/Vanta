@@ -171,6 +171,11 @@ and
 It defines a fixture-local Document Ops `COMMITTABLE` commit-proposal planning
 surface only and does not authorize execution, approval collection, schema
 changes, H5 validation, or production readiness.
+The `20260715_223158` `committable_docops_planning_pilot` now completes the
+named planning evaluation with 10 fixtures, all planning floors passed and all
+process floors at `0`. The measured result does not expand the `PS1-G8` unlock.
+See the
+[Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md).
 
 `PS1-G9` is accepted by
 [Storage and Persistence Gate](Storage_and_Persistence_Gate.md) for the named
@@ -248,8 +253,10 @@ fixtures, runtime code, tests, and evaluation artifacts.
 
 The first routed `PS1-G8` bundle defines only the fixture-local
 `COMMITTABLE` Document Ops commit-proposal planning surface. It keeps
-`IRREVERSIBLE` and `MEMORY_WRITE` out of scope and does not add runtime action
-enums, approval records, fixtures, tests, or measured results.
+`IRREVERSIBLE` and `MEMORY_WRITE` execution out of scope and does not add
+runtime action enums or approval records. Planning fixtures, validator tests,
+and the complete `20260715_223158` measured planning result now exist; they are
+not executable runtime fixtures or successor execution authority.
 
 ## Gate Inventory Boundary
 

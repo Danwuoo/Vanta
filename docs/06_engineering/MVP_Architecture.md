@@ -38,8 +38,9 @@ Task Input
   implementation and a 20-case measured `pass_acceptance_candidate` run at
   `20260715_114209`; the named manifest closure accepts it as fixture-local
   Persistence v0 authority.
-- `PS1-G7` Context OS and `PS1-G8` side-effect work remain specification,
-  schema-impact, evaluation, and implementation planning only.
+- `PS1-G7` Context OS work remains specification, schema-impact, evaluation,
+  and implementation planning only. `PS1-G8` now has a complete 10-fixture
+  planning validator/runner pilot, but remains planning-only runtime scope.
 - Disallowed in the current runtime: full Context OS, memory writes,
   irreversible external actions, production deployment, executable
   `COMMITTABLE` actions, and H1-H5 validation claims.
@@ -63,8 +64,8 @@ Task Input
 - Working Set Compiler v0: produces schema-valid, reference-backed working sets
   for controlled long-context fixtures without implementing full Context OS.
 - Post-Stage-1 tooling: generates larger-sample artifacts, Lane B packet and
-  label-result artifacts, and `PS1-G8` side-effect planning scaffolds without
-  changing the commit path.
+  label-result artifacts, and `PS1-G8` side-effect planning validation artifacts
+  without changing the commit path.
 - Persistence Adapter: keeps runtime orchestration independent of backend
   details through Memory and SQLite adapters.
 - SQLite Persistence v0: stores typed artifacts, accepted state/journal

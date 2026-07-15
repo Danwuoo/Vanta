@@ -35,6 +35,15 @@ The latest accepted Lane A run inventory records the same 48 fixtures under
 
 Total: 48 fixtures.
 
+## Separate PS1-G8 Planning Fixtures
+
+The evaluation-only planning fixtures for the named
+`committable_docops_planning_pilot` live under
+`docs/04_experiments/fixtures/side_effect_planning/`. They are not part of the
+48-fixture Lane A sample, are not runtime `benchmark_task` fixtures, and do not
+have an executable `test/fixtures/` mirror. The planning runner treats that root
+as immutable and records pre-run and post-run tree hashes.
+
 ## Fixture Catalog
 
 | Stratum | Phase / Gate | Fixture ID | Purpose |

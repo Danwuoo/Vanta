@@ -35,6 +35,7 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
   ]
 
   @future_artifact_path "docs/04_experiments/results/side_effect_planning/<timestamp>/"
+  @measured_report "Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md"
   @gate_policy "PS1-LC-SIDEFX-GATE-001"
   @surface_id "PS1-LC-SIDEFX-COMMITTABLE-DOCOPS-001"
   @placeholder_action "commit_fixture_document_candidate"
@@ -50,6 +51,8 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
       Enum.each(@planning_bundle_file_names, fn file_name ->
         assert_contains(text, file_name, relative_path)
       end)
+
+      assert_contains(text, @measured_report, relative_path)
     end)
 
     assert_contains(
@@ -78,7 +81,7 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
 
     assert_contains(
       read_doc("00_manifest/Traceability_Matrix.md"),
-      "| Side-effect planning bundle |",
+      "| Side-effect planning bundle and named pilot |",
       "Traceability Matrix"
     )
   end
@@ -206,16 +209,23 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
   end
 
   @tag :docs_consistency
-  test "future side-effect planning artifact contract remains non-executing and future-only" do
+  test "measured side-effect planning artifact contract remains non-executing" do
     evaluation_plan = read_doc("04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md")
     traceability = read_doc("00_manifest/Traceability_Matrix.md")
 
     assert_contains(evaluation_plan, @future_artifact_path, "Side-effect evaluation plan")
-    assert_contains(traceability, @future_artifact_path, "Traceability Matrix")
+
+    assert_contains(
+      traceability,
+      "docs/04_experiments/results/side_effect_planning/20260715_223158/",
+      "Traceability Matrix"
+    )
 
     Enum.each(
       [
         "run.json",
+        "fixture_results.json",
+        "environment_manifest.json",
         "summary.md",
         "fixture_inventory.md",
         "commit_plan_inventory.md",
@@ -253,6 +263,18 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
       fn floor ->
         assert_contains(evaluation_plan, floor, "Side-effect evaluation plan")
       end
+    )
+
+    assert_contains(
+      evaluation_plan,
+      "All 15 planning metrics equal `1.0000`",
+      "Side-effect evaluation plan"
+    )
+
+    assert_contains(
+      read_doc("05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md"),
+      "Report label: `committable_docops_planning_pilot`",
+      "Side-effect planning pilot report"
     )
   end
 

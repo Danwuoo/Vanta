@@ -1,11 +1,11 @@
 defmodule Mix.Tasks.Vanta.PostStage1SideEffectPlanning do
   @moduledoc """
-  Generates the PS1-G8 side-effect planning-only scaffold artifacts.
+  Runs the PS1-G8 fixture-local Document Ops planning pilot.
   """
 
   use Mix.Task
 
-  @shortdoc "Generate PS1-G8 side-effect planning scaffold"
+  @shortdoc "Run the PS1-G8 side-effect planning pilot"
 
   @impl Mix.Task
   def run(args) do
@@ -15,20 +15,22 @@ defmodule Mix.Tasks.Vanta.PostStage1SideEffectPlanning do
       OptionParser.parse(args,
         strict: [
           out: :string,
-          timestamp: :string
+          timestamp: :string,
+          fixtures: :string
         ]
       )
 
     runner_opts =
       compact_opts(
         out_dir: Keyword.get(opts, :out),
-        timestamp: Keyword.get(opts, :timestamp)
+        timestamp: Keyword.get(opts, :timestamp),
+        fixture_root: Keyword.get(opts, :fixtures)
       )
 
-    {:ok, run} = Vanta.PostStage1SideEffectPlanning.generate(runner_opts)
+    {:ok, run} = Vanta.PostStage1SideEffectPlanning.run(runner_opts)
 
     Mix.shell().info(
-      "PS1-G8 side-effect planning scaffold #{run["run_status"]}; runtime execution #{run["runtime_execution_status"]}."
+      "PS1-G8 #{run["report_label"]} #{run["completion_status"]}; threshold #{run["threshold_status"]}; runtime execution #{run["runtime_execution_status"]}."
     )
 
     Mix.shell().info("Results: #{run["artifact_root"]}")

@@ -113,6 +113,15 @@ coverage.
 - PS1-G8 planning checks must keep side-effect work planning-only: no executable
   `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` behavior, no approval
   collection, no production readiness, and no H5 validation.
+- PS1-G8 pilot tests must cover two valid rollback/compensation declarations;
+  missing target, approval, idempotency/duplicate guard, and rollback or
+  compensation fields; path escape; source-fixture targeting; irreversible
+  misclassification; memory-write smuggling; exact fixture-oracle comparison;
+  output-path isolation; source-tree pre/post hash equality; failed-run
+  retention; complete artifact generation; and every planning/process floor.
+- The complete `20260715_223158` planning run must retain 10/10 oracle
+  conformance, 8/8 rejection-rule accuracy, all other planning metrics at
+  `1.0`, and every process-integrity count at `0`.
 - PS1-G9 tests must cover MemoryAdapter/SQLiteAdapter parity, atomic accepted
   state and journal pointers, same-key idempotency, conflicting-key rejection,
   deterministic Canonical State JSON hashing, prepared-effect recovery, all

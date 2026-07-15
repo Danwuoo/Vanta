@@ -90,9 +90,10 @@ Post-Stage-1 advancement is governed by
   and evaluation plan. It does not implement full Context OS, learned retrieval,
   compression, memory governance, memory writes, or H3 validation.
 - `PS1-G8` side-effect work is planning-only for fixture-local Document Ops
-  `COMMITTABLE` commit proposals. It does not execute `COMMITTABLE`,
-  `IRREVERSIBLE`, or `MEMORY_WRITE` effects and does not create runtime
-  approval or H5 validation.
+  `COMMITTABLE` commit proposals. The proposal validator, 10 immutable planning
+  fixtures, rerunnable runner/Mix task, and complete `20260715_223158` measured
+  pilot now exist. It does not execute `COMMITTABLE`, `IRREVERSIBLE`, or
+  `MEMORY_WRITE` effects and does not create runtime approval or H5 validation.
 - The 2026-07-06 schema packaging decision keeps schema files under
   `docs/03_schemas/*.schema.json` for the current runtime. Packaged runtime
   schema assets require a later accepted migration gate with loader, package,

@@ -17,9 +17,11 @@ Gate policy ID: `PS1-LC-SIDEFX-GATE-001`
 
 Status: `Accepted as PS1-G8 gate-definition artifact` on 2026-05-11.
 
-Run status: `Not yet run`.
+Run status: named planning pilot complete at
+`docs/04_experiments/results/side_effect_planning/20260715_223158/`.
 
-Label status: `Not yet run`.
+Label status: `Not applicable`; fixture oracles were used as evaluation
+comparators only and are not runtime approvals.
 
 Accepted unlock: side-effect specification, schema impact review, evaluation
 planning, and implementation planning only.
@@ -32,6 +34,12 @@ and
 This bundle defines a fixture-local Document Ops `COMMITTABLE` planning surface
 only. It does not authorize runtime execution, schema changes, approval
 collection, experiments, production readiness, or H5 validation.
+
+The named `committable_docops_planning_pilot` is complete for 10 planning
+fixtures. All 15 planning metric floors passed, all 16 process-integrity floors
+were `0`, and the source fixture tree remained unchanged. This measures only
+planning completeness and rejection rules; it does not expand the accepted
+unlock or create executable side-effect authority.
 
 ## Inputs
 
@@ -48,6 +56,7 @@ This gate depends on the existing side-effect boundary stack:
 - [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
+- [Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md)
 
 The Stage 1 and post-Stage-1 local smoke closures are useful evidence for
 fixture-local governance. They are not evidence that high-risk external effects

@@ -271,6 +271,29 @@ For broader evaluation:
   provenance completeness, task stability, or absence of unsupported commits as
   H3 validation.
 
+## PS1-G8 Side-Effect Planning Pilot Metrics
+
+These metrics apply only to the named `committable_docops_planning_pilot`.
+Positive-proposal completeness uses the predeclared complete positive controls;
+family-specific rejection rates use the corresponding negative fixtures; audit
+and oracle conformance use all fixtures. Every rate has a strict `1.0` pilot
+completion floor.
+
+| Metric family | Metrics | Required |
+| --- | --- | ---: |
+| Positive completeness | `approval_boundary_completeness`, `target_identity_completeness`, `duplicate_guard_completeness`, `rollback_or_compensation_declaration_rate` | `1.0` |
+| Negative rejection | missing target, missing approval, missing idempotency/duplicate guard, missing rollback/compensation, path escape, source-fixture mutation, irreversible misclassification, and memory-write smuggling rejection rates | `1.0` each |
+| Whole-pilot integrity | `planning_rejection_rule_accuracy`, `planning_audit_completeness`, `fixture_oracle_conformance` | `1.0` each |
+
+Actual runtime `COMMITTABLE`, `IRREVERSIBLE`, and `MEMORY_WRITE` counts;
+external/production target execution; source-fixture mutation; unsupported
+commit; approval-as-label; collected approval; schema change; runtime action
+addition; and runtime dispatch counts must all be `0`.
+
+The complete `20260715_223158` run passes these planning floors. These metrics
+do not measure executed side-effect safety, approval correctness, rollback
+success, compensation adequacy, or production readiness.
+
 ## PS1-G9 Persistence Metrics
 
 These hard metrics apply only to the named `Fixture-Local SQLite Persistence
@@ -347,3 +370,7 @@ Post-Stage-1 metric and labeling questions are tracked by
   [Storage and Persistence Gate](../00_manifest/Storage_and_Persistence_Gate.md)
   and measured by
   [Experiment 006](../04_experiments/Experiment_006_Persistence_and_Recovery.md).
+- Side-effect planning-pilot metrics: `PS1-G8`, defined by
+  [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
+  and measured by the
+  [planning pilot run report](Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md).

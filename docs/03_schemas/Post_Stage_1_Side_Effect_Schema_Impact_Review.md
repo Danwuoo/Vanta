@@ -24,13 +24,15 @@ Implementation status: `Not authorized`.
 
 Runtime execution status: `Not authorized`.
 
-Run status: `Not yet run`.
+Run status: named planning pilot complete at
+`docs/04_experiments/results/side_effect_planning/20260715_223158/`.
 
 ## Conclusion
 
-The current schemas are sufficient to route this batch as a planning artifact
-because no runtime action, fixture, run artifact, approval record, or executed
-`COMMITTABLE` step is produced.
+The current schemas are sufficient to route this batch as planning evaluation
+because no runtime action, schema-bound runtime fixture, approval record, or
+executed `COMMITTABLE` step is produced. The planning fixtures and measured run
+artifacts are explicitly pilot-local evaluation contracts.
 
 The current schemas are not sufficient for executable `COMMITTABLE` Document Ops
 runtime behavior. They already contain a `COMMITTABLE` side-effect enum in some
@@ -40,6 +42,11 @@ typed rollback or compensation contract.
 
 Therefore this batch must remain a no-change schema impact review with explicit
 planning placeholders.
+
+The measured pilot uses a run-local proposal fixture format and machine-readable
+result contract. Their successful validation does not make current runtime
+schemas sufficient for executable `COMMITTABLE` behavior and does not add a
+second schema authority.
 
 ## Current Schema Coverage
 
@@ -51,8 +58,8 @@ planning placeholders.
 | `evidence_packet.schema.json` | Allows generic structured `observation`, `provenance`, and `runtime_context` objects. | Sufficient for planning prose only; not enough to enforce required pre-effect and post-effect committable evidence. |
 | `verifier_output.schema.json` | Supports `accept`, `reject`, `abstain`, and `request_evidence`, with `side_effect_safety` and `policy_constraints` scopes. | Sufficient for planning the verifier boundary; not enough to enforce approval correctness or duplicate-guard completeness. |
 | `episode_journal.schema.json` | Supports commit status, rollback status, and memory-write audit refs. | Sufficient for audit-boundary discussion; not enough to type approval refs, idempotency keys, compensation plans, or post-effect manifest refs. |
-| `experiment_run.schema.json` | Captures measured run-level artifacts and metrics. | No change. This planning batch has no measured run. |
-| `eval_result.schema.json` | Captures evaluation outputs and labels when reported. | No change. Approval-boundary labels are not runtime approvals and are not defined in this batch. |
+| `experiment_run.schema.json` | Captures core experiment run-level artifacts and metrics. | No change. The measured planning pilot uses an explicitly run-local contract rather than asserting compatibility with the core experiment schema. |
+| `eval_result.schema.json` | Captures evaluation outputs and labels when reported. | No change. Planning fixture oracles are not labels or runtime approvals and do not expand this schema. |
 
 ## Planning Placeholders
 
@@ -136,6 +143,7 @@ A schema proposal must be rejected or kept at planning level if it:
 
 - [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 - [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
+- [Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md)
 - [Side-Effect Escalation Gate](../00_manifest/Side_Effect_Escalation_Gate.md)
 - [Execution IR and Episode Semantics](../02_specs/Execution_IR_and_Episode_Semantics.md)
 - [Evidence Packet and Verifier Runtime](../02_specs/Evidence_Packet_and_Verifier_Runtime.md)
