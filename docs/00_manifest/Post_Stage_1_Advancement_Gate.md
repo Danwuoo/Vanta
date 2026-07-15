@@ -177,6 +177,15 @@ process floors at `0`. The measured result does not expand the `PS1-G8` unlock.
 See the
 [Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md).
 
+The 2026-07-16 upstream decision bundle closes `OQ-SCHEMA-013`,
+`OQ-SCHEMA-014`, `OQ-IMPL-007`, `OQ-IMPL-008`, and `OQ-MEAS-010` for future
+successor design. It selects standalone approval records with typed journal
+refs, explicit `commit_fixture_document_candidate`, copied-fixture Document Ops
+promotion, a separately accepted `Fixture-Local Document Commit Execution v0`
+gate, and a measured supersession compensation-evidence floor. It does not add
+a new gate item, create PS1-G10 closure, change schemas or allowlists, or
+authorize execution.
+
 `PS1-G9` is accepted by
 [Storage and Persistence Gate](Storage_and_Persistence_Gate.md) for the named
 `Fixture-Local SQLite Persistence v0` implementation and measured evaluation
@@ -257,6 +266,14 @@ The first routed `PS1-G8` bundle defines only the fixture-local
 runtime action enums or approval records. Planning fixtures, validator tests,
 and the complete `20260715_223158` measured planning result now exist; they are
 not executable runtime fixtures or successor execution authority.
+
+The upstream shape and authorization ceiling for a possible successor are now
+decided: implementation and actual execution may be considered only by a
+separately authored and accepted `Fixture-Local Document Commit Execution v0`
+gate, and only for explicitly marked ephemeral copied fixtures. Default runtime
+dispatch and source, repository, user, external, production, memory-write, and
+irreversible targets remain blocked. No successor gate or closure is created
+here.
 
 ## Gate Inventory Boundary
 

@@ -179,6 +179,36 @@ operator intervention burden, rollback success, and compensation adequacy
 require a later accepted implementation spec, schema batch, fixtures, and
 measured run. They must not be claimed from this planning plan.
 
+## Resolved Successor Evaluation Inputs
+
+The 2026-07-16 upstream decisions close the design questions needed to draft a
+future executable evaluation contract. They do not amend this completed
+planning pilot and do not authorize a run.
+
+- The first domain is candidate promotion inside explicitly marked ephemeral
+  copied Document Ops fixture workspaces.
+- The future action is explicit `commit_fixture_document_candidate`, not a
+  structured-edit output extension.
+- Approval is a standalone typed artifact referenced from the Episode Journal,
+  not a verifier result, label, fixture oracle, or inline journal object.
+- A separately authored and accepted `Fixture-Local Document Commit Execution
+  v0` successor gate is required before implementation or execution.
+
+For `fixture_commit_supersede`, evaluation beyond declaration completeness must
+predeclare and measure at least:
+
+| Evidence or case | Minimum acceptance meaning |
+| --- | --- |
+| Identity and hashes | Prior and superseding commit IDs, shared target identity, and prior/current/candidate/final hashes are complete and agree. |
+| Append-only lineage | The prior artifact remains immutable and retrievable; a supersession relation is appended and the active pointer resolves to the successor. |
+| Governance refs | Target-scoped approval, verifier `accept`, pre/post Evidence Packet refs, Episode Journal refs, and final accepted state hash are resolvable. |
+| Idempotent retry | Same key and request returns the durable prior compensation result with no duplicate effect. |
+| Stale or conflicting predecessor | Changed current hash, wrong active predecessor, or same key with a different request is rejected without mutation. |
+| Restart and replay | Restart recovery, audit completeness, ordered lineage, pointer transition, refs, hashes, and final state replay exactly. |
+
+No minimum-evidence item in this section has been executed or measured. A
+future plan must set exact metrics and floors before running the successor.
+
 ## Pre-Run Gates For The Planning Pilot
 
 The completed planning pilot satisfied these gates before execution:

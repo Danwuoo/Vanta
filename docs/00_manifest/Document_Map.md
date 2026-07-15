@@ -385,6 +385,16 @@ process-integrity floor at `0`, and an unchanged source-fixture tree. It
 completes only the named planning pilot; it is not closure acceptance or an
 executable `COMMITTABLE` successor gate.
 
+The 2026-07-16 entries in [Decision Log](Decision_Log.md) and
+[Open Questions Index](Open_Questions_Index.md) close the upstream action,
+approval-schema, first-domain, successor-authorization, and supersession-
+evidence questions. They route a possible future `Fixture-Local Document
+Commit Execution v0` gate toward an explicit
+`commit_fixture_document_candidate` action, standalone approval records with
+typed journal refs, copied-fixture-only execution, and an executable
+supersession evidence floor. No successor gate, PS1-G10 closure, schema change,
+runtime action, allowlist change, or execution is created.
+
 [Storage and Persistence Gate](Storage_and_Persistence_Gate.md),
 [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md),
 [Post-Stage-1 Persistence Schema Impact Review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md),

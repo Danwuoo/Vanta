@@ -224,6 +224,20 @@ acceptance, validate H5 or executed side-effect safety, collect runtime
 approval, authorize runtime effects, change schemas, or establish production
 readiness.
 
+On 2026-07-16, five upstream successor questions were resolved without
+expanding runtime authority. Future approval records use standalone schema
+authority plus typed Episode Journal refs; the future commit action is explicit
+`commit_fixture_document_candidate`; the first domain is candidate promotion
+inside explicitly marked ephemeral copied Document Ops fixtures; and only a
+separately authored and accepted `Fixture-Local Document Commit Execution v0`
+successor gate may authorize implementation and execution in that scope.
+`fixture_commit_supersede` also has a fixed executable compensation-evidence
+floor covering identity and hashes, append-only lineage, prior-artifact
+retrieval, active-pointer transition, approval/verifier/evidence/journal refs,
+idempotency and conflicts, restart, and replay. These are decisions and routing
+constraints only: no gate, closure, schema, action, allowlist change, approval,
+execution, or compensation evidence is created by this update.
+
 Lane C has accepted `PS1-G9` for the named `Fixture-Local SQLite Persistence
 v0` implementation and measured evaluation path:
 [Storage and Persistence Gate](Storage_and_Persistence_Gate.md) resolves the

@@ -89,6 +89,20 @@ It defines pre-effect evidence, post-effect evidence, verifier, and approval
 boundaries for a fixture-local Document Ops `COMMITTABLE` planning placeholder
 only. It does not collect approvals or produce post-effect evidence.
 
+The 2026-07-16 upstream decision keeps approval as a distinct typed artifact:
+a future schema batch must define standalone `approval_record.schema.json` and
+typed Episode Journal `approval_record_refs`. Evidence Packet and Verifier
+Output may reference and validate approval scope, but neither becomes the
+approval record.
+
+For future `fixture_commit_supersede` evaluation beyond declaration
+completeness, the evidence contract must bind prior and superseding commit
+identity, target identity, before/current/candidate/final hashes, append-only
+lineage, prior-artifact retrieval, active-pointer transition, scoped approval,
+verifier `accept`, journal refs, compensation idempotency, duplicate/conflict
+outcomes, restart recovery, and replay results. No such executable evidence has
+been collected.
+
 ## PS1-G9 Persistence Evidence Boundary
 
 Evidence Packets remain distinct immutable payloads inside persistence

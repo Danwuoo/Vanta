@@ -42,6 +42,11 @@ The measured pilot implements the planning-record validator and runner for this
 draft without promoting the draft to an executable runtime spec. Its proposal
 format remains pilot-local and is not a JSON Schema authority.
 
+Upstream successor decisions: `OQ-SCHEMA-013`, `OQ-SCHEMA-014`,
+`OQ-IMPL-007`, `OQ-IMPL-008`, and `OQ-MEAS-010` were resolved on 2026-07-16.
+They constrain a future successor batch but do not create its gate, change a
+schema, add an action, expand an allowlist, or authorize execution.
+
 ## Inputs
 
 This planning draft depends on:
@@ -73,6 +78,21 @@ is not evidence that `COMMITTABLE` execution is safe.
 | Compensation | Fixture-local supersession may be planned as compensation, but it is not strict rollback. |
 | Claims | No H5, runtime safety, production, broad side-effect governance, or external-action claim is allowed. |
 
+## Resolved Successor Boundary
+
+The first post-`PS1-G8` executable domain, if its separate successor gate is
+later authored and accepted, is copied-workspace Document Ops candidate
+promotion. The future scope is limited to explicitly marked ephemeral copied
+fixture workspaces. Source fixtures, repository documents, user files,
+external or production systems, memory stores, and irreversible targets remain
+out of scope.
+
+The working successor name is `Fixture-Local Document Commit Execution v0`.
+This document does not create, accept, or close that gate. A future accepted
+gate may authorize implementation and actual `COMMITTABLE` execution only
+inside the named copied-fixture scope. Until then, runtime dispatch remains
+blocked.
+
 ## Surface Definition
 
 `Fixture-Local Document Ops Commit Proposal Surface v0` plans a future effect in
@@ -83,6 +103,13 @@ The future action name `commit_fixture_document_candidate` is a planning
 placeholder only. It is not present in current action schemas, must not appear in
 `allowed_actions`, and must not be sent to `Vanta.Runtime.run_task/3` under this
 batch.
+
+`OQ-SCHEMA-014` is resolved for successor design: the future executable
+surface must use the explicit `commit_fixture_document_candidate` action enum
+and a dedicated payload contract. It must not be implemented as a policy-gated
+extension of `simulate_structured_edit` or
+`apply_reversible_structured_edit` output. This resolution does not add the
+enum or payload to current schemas.
 
 The surface is intentionally narrow:
 
@@ -135,12 +162,18 @@ verifier, and approval layers are distinct.
 | --- | --- | --- |
 | Pre-effect evidence | Source hash, candidate hash, diff, selector or target resolution, contract validation, target path safety, idempotency key, duplicate guard, and policy refs. | Evidence is structured input to verification, not an approval decision. |
 | Verifier output | `decision: accept`, `side_effect_safety`, `policy_constraints`, `state_consistency`, and explicit rejection of missing approval, missing duplicate guard, path escape, or missing rollback or compensation statement. | Verifier `accept` is necessary but insufficient for commit. |
-| Approval record | Approver type, approver identity or policy engine identity, scope, timestamp, target identity, policy version, and approval result. | Human labels, fixture oracle labels, and final-answer judgments are not runtime approvals. |
+| Approval record | Standalone typed approval artifact with approver type, approver identity or policy engine identity, scope, timestamp, target identity, policy version, and approval result; the Episode Journal links it through typed approval-record refs. | Human labels, fixture oracle labels, verifier outputs, and final-answer judgments are not runtime approvals. Approval objects must not be inlined into the Episode Journal. |
 | Post-effect evidence | Committed artifact hash, target path, manifest diff, post-state hash, and audit refs. | Post-effect evidence cannot be fabricated from the plan; it only exists after a later authorized execution batch. |
 
 This planning batch does not collect approval records. A future evaluation may
 check whether a plan names the approval boundary, but it must not report that
 runtime approval occurred.
+
+`OQ-SCHEMA-013` is resolved for successor design: a future schema batch must
+define standalone `approval_record.schema.json` authority and add typed
+`approval_record_refs` to the Episode Journal. The approval artifact remains
+distinct from Evidence Packet, Verifier Output, labels, and fixture oracles.
+No JSON Schema file changes in this decision-only batch.
 
 ## Rollback Or Compensation Statement
 
@@ -155,6 +188,30 @@ runtime batch can be considered.
 
 `fixture_commit_supersede` is a compensation or reconciliation statement, not a
 claim that the original effect was rolled back.
+
+### Minimum Supersession Compensation Evidence
+
+`OQ-MEAS-010` is resolved for future executable evaluation. Declaration
+completeness is insufficient. Evaluation beyond the completed planning pilot
+must require all of the following:
+
+- prior and superseding commit identities bound to the same typed target
+  identity;
+- prior committed, current pre-compensation, superseding candidate, and final
+  active artifact hashes;
+- append-only supersession lineage that leaves the prior artifact immutable and
+  retrievable while moving the active pointer to the superseding commit;
+- a target-scoped approval record, verifier `accept`, pre/post-effect Evidence
+  Packet refs, Episode Journal refs, and final accepted state hash;
+- a compensation idempotency key, deterministic request hash, and duplicate or
+  conflicting-commit guard; and
+- measured happy-path supersession, same-key retry without duplicate effect,
+  stale or conflicting predecessor rejection, restart recovery, audit
+  completeness, and replay consistency.
+
+No such evidence has been collected yet. `fixture_commit_supersede` remains
+non-executable until a future accepted gate, implementation, fixtures, and
+measured run satisfy this floor.
 
 ## Rejection Conditions
 
@@ -198,14 +255,20 @@ the
 These are evaluation artifacts and do not replace an executable action spec or
 schema batch.
 
-## Open Questions
+## Resolved Pointers And Open Questions
 
-- Should the first future executable `COMMITTABLE` action be represented as a
-  new action enum or as a policy-gated extension of structured edit output?
-- Should approval records become a standalone schema or a typed field in the
-  Episode Journal?
-- What minimum fixture-local compensation evidence is needed before
-  `fixture_commit_supersede` can be evaluated?
+- Resolved pointer: `OQ-SCHEMA-013` selects standalone future
+  `approval_record.schema.json` authority plus typed Episode Journal
+  `approval_record_refs`.
+- Resolved pointer: `OQ-SCHEMA-014` selects explicit future action
+  `commit_fixture_document_candidate` with a dedicated payload contract.
+- Resolved pointer: `OQ-IMPL-007` selects copied-workspace Document Ops
+  candidate promotion as the first post-`PS1-G8` domain.
+- Resolved pointer: `OQ-IMPL-008` requires a separately authored and accepted
+  `Fixture-Local Document Commit Execution v0` successor gate before
+  implementation or execution.
+- Resolved pointer: `OQ-MEAS-010` defines the minimum executable supersession
+  compensation-evidence floor above; evidence is not yet collected.
 - Which future label packet, if any, should review approval-boundary adequacy
   without converting labels into runtime approval?
 

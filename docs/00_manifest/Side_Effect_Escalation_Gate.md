@@ -41,6 +41,16 @@ were `0`, and the source fixture tree remained unchanged. This measures only
 planning completeness and rejection rules; it does not expand the accepted
 unlock or create executable side-effect authority.
 
+Upstream successor decisions recorded on 2026-07-16 select copied-workspace
+Document Ops candidate promotion as the first domain, explicit future action
+`commit_fixture_document_candidate`, standalone approval-record schema
+authority plus typed Episode Journal refs, and a minimum executable
+`fixture_commit_supersede` evidence floor. A future `Fixture-Local Document
+Commit Execution v0` gate may authorize implementation and actual execution
+only after it is separately authored and accepted, and only in explicitly
+marked ephemeral copied fixtures. These decisions do not modify this gate's
+planning-only unlock and do not create or close a successor gate.
+
 ## Inputs
 
 This gate depends on the existing side-effect boundary stack:

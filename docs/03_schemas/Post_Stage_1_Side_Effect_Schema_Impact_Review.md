@@ -27,6 +27,10 @@ Runtime execution status: `Not authorized`.
 Run status: named planning pilot complete at
 `docs/04_experiments/results/side_effect_planning/20260715_223158/`.
 
+Upstream schema-placement decisions: `OQ-SCHEMA-013` and `OQ-SCHEMA-014`
+resolved on 2026-07-16. They constrain a future schema batch; they do not change
+JSON Schema files in this decision-only batch.
+
 ## Conclusion
 
 The current schemas are sufficient to route this batch as planning evaluation
@@ -42,6 +46,14 @@ typed rollback or compensation contract.
 
 Therefore this batch must remain a no-change schema impact review with explicit
 planning placeholders.
+
+For a future separately accepted `Fixture-Local Document Commit Execution v0`
+schema batch, the upstream shape is now fixed: use an explicit
+`commit_fixture_document_candidate` action enum with a dedicated payload;
+define approval records in standalone `approval_record.schema.json`; and add
+typed `approval_record_refs` to the Episode Journal. Approval objects must not
+be inlined in the Episode Journal, and committed promotion must not be hidden in
+structured-edit output.
 
 The measured pilot uses a run-local proposal fixture format and machine-readable
 result contract. Their successful validation does not make current runtime
@@ -71,13 +83,21 @@ properties:
 | `commit_fixture_document_candidate` | Markdown placeholder only. | New action enum and payload contract before execution. |
 | `target_identity` | Planning table field. | Structured object binding fixture workspace, source ref, candidate ref, target path, and hashes. |
 | `approval_policy_ref` | Planning table field. | Versioned approval policy reference. |
-| `approval_record_requirement` | Planning table field. | Typed approval record or journal ref. |
+| `approval_record_requirement` | Planning table field. | Standalone `approval_record.schema.json` plus typed Episode Journal `approval_record_refs`; no inline approval object. |
 | `idempotency_key` | Planning table field. | Required duplicate guard field before commit. |
 | `duplicate_guard` | Planning table field. | Structured rule for rejecting repeated or conflicting commits. |
 | `pre_effect_evidence_requirements` | Planning table field. | Required evidence fields or action-specific evidence contract. |
 | `post_effect_evidence_requirements` | Planning table field. | Required post-effect evidence fields after authorized execution. |
 | `rollback_or_compensation_statement` | Planning table field. | Typed enum or policy ref distinguishing strict rollback from compensation. |
 | `compensation_plan_ref` | Planning table field when compensation is used. | Typed compensation or reconciliation record. |
+
+The future `fixture_commit_supersede` compensation contract must also type the
+prior and superseding commit identities, shared target identity, prior,
+current, candidate, and final hashes, append-only supersession lineage,
+active-pointer transition, approval/evidence/verifier/journal refs,
+idempotency key, request
+hash, and duplicate/conflict outcome. This is an upstream impact decision, not
+a current schema addition.
 
 These placeholders must not be smuggled into runtime artifacts as untyped
 side-channel fields.
@@ -102,11 +122,11 @@ after an accepted successor spec requires them.
 
 | Candidate | Possible trigger | Current status |
 | --- | --- | --- |
-| `committable_document_action` payload contract | A later spec accepts executable fixture-local `COMMITTABLE` Document Ops behavior. | Future question, not authorized. |
-| `approval_record.schema.json` | A later approval policy requires machine-readable approval records before commit. | Future question, not authorized. |
+| `commit_fixture_document_candidate` action and payload contract | A later accepted `Fixture-Local Document Commit Execution v0` gate requires executable copied-fixture promotion. | Upstream shape decided; schema addition not authorized in this batch. |
+| `approval_record.schema.json` and Episode Journal `approval_record_refs` | A later accepted successor gate requires machine-readable approval before commit. | Upstream placement decided; schema addition not authorized in this batch. |
 | `side_effect_policy.schema.json` | Multiple side-effect classes need shared policy versioning and target-boundary validation. | Future question, not authorized. |
 | `commit_idempotency.schema.json` | Duplicate prevention needs schema validation across fixtures or runs. | Future question, not authorized. |
-| `compensation_record.schema.json` | Fixture-local compensation or supersession needs audit and evaluation beyond prose. | Future question, not authorized. |
+| `compensation_record.schema.json` | Fixture-local supersession is evaluated beyond declaration completeness under the resolved evidence floor. | Required shape partially fixed by `OQ-MEAS-010`; schema addition not authorized in this batch. |
 | `committable_eval_result` fields | A future run reports side-effect planning or execution metrics repeatedly enough to require typed aggregation. | Future question, not authorized. |
 
 ## Acceptance Criteria For A Later Schema Batch

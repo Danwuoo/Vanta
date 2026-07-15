@@ -111,8 +111,14 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
 
 - Resolved by `PS1-G9`: the named Persistence v0 authority uses SQLite behind
   `Vanta.Persistence`; MemoryAdapter remains for fast tests and compatibility.
+- Resolved on 2026-07-16: the first post-`PS1-G8` domain is copied-workspace
+  Document Ops candidate promotion using a future explicit
+  `commit_fixture_document_candidate` action and dedicated payload.
+- Resolved on 2026-07-16: a separately authored and accepted
+  `Fixture-Local Document Commit Execution v0` successor implementation gate
+  may authorize implementation and actual execution only for explicitly marked
+  ephemeral copied fixtures. No such gate, action, allowlist change, or
+  execution authority exists yet.
 - What benchmark size is required before moving beyond Stage 1 smoke checks?
 - What measured threshold, after a real LLM baseline run, is sufficient to move
   beyond local Document Ops fixtures?
-- Which later implementation gate, if any, should turn the `PS1-G8`
-  `COMMITTABLE` planning surface into executable fixture-local runtime behavior?

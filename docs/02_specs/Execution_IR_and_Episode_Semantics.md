@@ -102,6 +102,15 @@ It names `commit_fixture_document_candidate` as a fixture-local Document Ops
 action enum, must not appear in task `allowed_actions`, and must not enter the
 runtime execution path in this batch.
 
+The 2026-07-16 upstream decision resolves the successor action shape without
+authorizing it: a future separately accepted `Fixture-Local Document Commit
+Execution v0` gate must use an explicit
+`commit_fixture_document_candidate` action enum and dedicated payload contract.
+It must not extend structured-edit output into a commit side effect. Its only
+eligible first domain is candidate promotion inside explicitly marked
+ephemeral copied fixture workspaces; all source, repository, user, external,
+production, memory-write, and irreversible targets remain excluded.
+
 ## PS1-G9 Persistence Boundary
 
 `PS1-G9` does not add an action type or side-effect class. Before a
@@ -118,6 +127,10 @@ the persistence manifest and recovery record own storage lifecycle data.
   executing irreversible external actions?
 - What additional structured target types are needed after the G6 local
   interface is exercised beyond local tests?
+- Resolved pointer: the first future executable `COMMITTABLE` action shape is
+  the explicit `commit_fixture_document_candidate` enum and dedicated payload,
+  subject to a later accepted successor gate; no current enum or allowlist
+  changes are authorized.
 
 ## Related Documents
 

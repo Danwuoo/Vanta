@@ -130,3 +130,29 @@ following:
 `IRREVERSIBLE` and `MEMORY_WRITE` execution remain outside this successor
 question and require their own accepted policies and gates.
 
+## Upstream Decisions Recorded After The Pilot
+
+On 2026-07-16, the repository resolved five upstream questions without
+reinterpreting or rerunning this pilot:
+
+- `OQ-SCHEMA-013`: future approval records use standalone
+  `approval_record.schema.json`; the Episode Journal carries typed approval
+  refs rather than inline approval objects.
+- `OQ-SCHEMA-014`: the future action is explicit
+  `commit_fixture_document_candidate` with a dedicated payload, not a
+  structured-edit output extension.
+- `OQ-IMPL-007`: the first domain is copied-workspace Document Ops candidate
+  promotion, excluding source, repository, user, external, production, memory,
+  and irreversible targets.
+- `OQ-IMPL-008`: only a separately authored and accepted
+  `Fixture-Local Document Commit Execution v0` successor gate may authorize
+  implementation and actual execution in explicitly marked ephemeral copied
+  fixtures.
+- `OQ-MEAS-010`: `fixture_commit_supersede` must provide executable identity,
+  hash, append-only lineage, prior-artifact retrieval, active-pointer,
+  approval, verifier, evidence, journal, idempotency, conflict, restart, and
+  replay evidence before compensation adequacy can be evaluated.
+
+These are design and routing decisions only. This report still contains no
+approval record, executable compensation evidence, runtime action, allowlist
+change, `COMMITTABLE` execution, closure acceptance, or H5 validation.

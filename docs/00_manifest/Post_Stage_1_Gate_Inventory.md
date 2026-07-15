@@ -185,6 +185,14 @@ successor manifest gate that explicitly supersedes it.
   [run report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md).
   It does not authorize runtime execution, schema changes, approval collection,
   production readiness, or H5 validation.
+- The 2026-07-16 upstream decisions close the action-shape, approval-schema,
+  first-domain, successor-authorization, and supersession-evidence questions.
+  A possible `Fixture-Local Document Commit Execution v0` gate must be authored
+  and accepted separately before explicit
+  `commit_fixture_document_candidate` implementation or execution in marked
+  ephemeral copied fixtures. This inventory records routing only; it does not
+  add a gate ID, create PS1-G10 closure, change schemas or allowlists, or
+  authorize execution.
 - `PS1-G9` is accepted as the storage/persistence successor gate. Its
   implementation, measured-run, and closure states remain separately tracked
   by [Storage and Persistence Gate](Storage_and_Persistence_Gate.md). Run

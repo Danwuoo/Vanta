@@ -89,6 +89,21 @@ It defines a fixture-local Document Ops `COMMITTABLE` commit-proposal planning
 surface with required rollback or compensation statements. It does not create a
 commit path, rollback path, approval record, or replayable runtime episode.
 
+The 2026-07-16 upstream decision selects copied-workspace Document Ops
+candidate promotion as the first post-`PS1-G8` domain. A future separately
+authored and accepted `Fixture-Local Document Commit Execution v0` gate may
+authorize implementation and actual execution only for explicitly marked
+ephemeral copied fixtures. Until that gate exists and is accepted, runtime
+dispatch remains blocked and no action enum or allowlist change is authorized.
+
+For future `fixture_commit_supersede`, replay must prove append-only linkage
+between prior and superseding commit identities, shared target identity,
+before/current/candidate/final hashes, an immutable retrievable prior artifact,
+the active-pointer transition, scoped approval, verifier and evidence refs,
+compensation idempotency and duplicate/conflict outcomes, restart recovery, and
+the final accepted state hash. A declaration alone is not compensation
+adequacy.
+
 ## PS1-G9 Persistence, Hash, And Replay Contract
 
 `PS1-G9` resolves Canonical State hashing as deterministic semantic JSON under
@@ -111,7 +126,9 @@ recovered according to
 
 ## Open Questions
 
-- Which post-`PS1-G8` side-effect domain should be specified first?
+- Resolved pointer: copied-workspace Document Ops candidate promotion is the
+  first post-`PS1-G8` side-effect domain; executable behavior still requires a
+  separately accepted successor gate.
 - Resolved pointer: Canonical State hash granularity is defined by `PS1-G9` and
   `canonical-json-sha256-v1`.
 - How should compensation be represented for non-reversible actions beyond the
