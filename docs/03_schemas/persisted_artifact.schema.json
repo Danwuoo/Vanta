@@ -25,6 +25,7 @@
         "execution_step",
         "evidence_packet",
         "verifier_output",
+        "approval_record",
         "episode_journal",
         "runtime_manifest",
         "prepared_effect",

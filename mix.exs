@@ -53,7 +53,8 @@ defmodule Vanta.MixProject do
       "vanta.post_stage_1_side_effect_planning": [
         "vanta.post_stage1_side_effect_planning"
       ],
-      "vanta.persistence_and_recovery": ["vanta.persistence_experiment"]
+      "vanta.persistence_and_recovery": ["vanta.persistence_experiment"],
+      "vanta.fixture_local_committable_execution": ["vanta.fixture_commit_experiment"]
     ]
   end
 end

@@ -47,13 +47,14 @@ typed rollback or compensation contract.
 Therefore this batch must remain a no-change schema impact review with explicit
 planning placeholders.
 
-For a future separately accepted `Fixture-Local Document Commit Execution v0`
-schema batch, the upstream shape is now fixed: use an explicit
+The later separately accepted `PS1-G10` schema batch applies the upstream shape:
+use an explicit
 `commit_fixture_document_candidate` action enum with a dedicated payload;
 define approval records in standalone `approval_record.schema.json`; and add
 typed `approval_record_refs` to the Episode Journal. Approval objects must not
-be inlined in the Episode Journal, and committed promotion must not be hidden in
-structured-edit output.
+be inlined in the Episode Journal, and committed promotion is not hidden in
+structured-edit output. These are G10 changes; this historical G8 review remains
+a no-change decision for its own planning batch.
 
 The measured pilot uses a run-local proposal fixture format and machine-readable
 result contract. Their successful validation does not make current runtime

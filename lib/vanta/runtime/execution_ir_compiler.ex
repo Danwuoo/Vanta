@@ -15,13 +15,14 @@ defmodule Vanta.ExecutionIRCompiler do
     "simulate_patch" => "SIMULATED",
     "compute_diff" => "SIMULATED",
     "apply_reversible_patch" => "REVERSIBLE",
-    "record_compensable_action" => "COMPENSABLE"
+    "record_compensable_action" => "COMPENSABLE",
+    "commit_fixture_document_candidate" => "COMMITTABLE"
   }
 
   def compile(task, episode_id, action_type, payload \\ %{}, occurrence_index \\ nil) do
     with :ok <- allowed_action?(task, action_type),
          {:ok, side_effect_class} <- side_effect_class(task, action_type),
-         :ok <- stage1_side_effect?(side_effect_class) do
+         :ok <- runtime_side_effect?(action_type, side_effect_class) do
       step = %{
         "schema_version" => Vanta.schema_version(),
         "step_id" => step_id(episode_id, action_type, occurrence_index),
@@ -33,12 +34,7 @@ defmodule Vanta.ExecutionIRCompiler do
         "preconditions" => preconditions(action_type),
         "postconditions" => postconditions(action_type),
         "dependency_edges" => [],
-        "verifier_requirements" => [
-          "schema_valid",
-          "evidence_complete",
-          "side_effect_allowed",
-          "provenance_present"
-        ],
+        "verifier_requirements" => verifier_requirements(action_type),
         "rollback_policy" => rollback_policy(side_effect_class),
         "side_effect_class" => side_effect_class,
         "status" => "ready"
@@ -100,11 +96,11 @@ defmodule Vanta.ExecutionIRCompiler do
     end
   end
 
-  defp stage1_side_effect?(side_effect_class) do
-    if side_effect_class in Vanta.allowed_side_effect_classes() do
+  defp runtime_side_effect?(action_type, side_effect_class) do
+    if Vanta.side_effect_allowed?(action_type, side_effect_class) do
       :ok
     else
-      {:error, {:side_effect_class_not_allowed_in_stage1, side_effect_class}}
+      {:error, {:side_effect_class_not_allowed_in_runtime, side_effect_class}}
     end
   end
 
@@ -151,6 +147,9 @@ defmodule Vanta.ExecutionIRCompiler do
   defp expected_effect("record_compensable_action"),
     do: "Record a fixture-local compensable action receipt without executing an external effect."
 
+  defp expected_effect("commit_fixture_document_candidate"),
+    do: "Promote one verified candidate document into a marked copied fixture workspace."
+
   defp expected_effect(_action_type), do: "Reject unsupported action before execution."
 
   defp preconditions(_action_type), do: ["fixture_workspace_exists", "action_is_allowed"]
@@ -173,9 +172,37 @@ defmodule Vanta.ExecutionIRCompiler do
   defp postconditions("record_compensable_action"),
     do: ["compensation_record_required", "rollback_not_claimed"]
 
+  defp postconditions("commit_fixture_document_candidate"),
+    do: [
+      "approval_scope_valid",
+      "prepared_intent_precedes_effect",
+      "candidate_hash_equals_committed_hash",
+      "source_and_candidate_unchanged",
+      "durable_commit_refs_complete"
+    ]
+
   defp postconditions(_action_type), do: ["source_files_preserved_unless_explicitly_allowed"]
 
   defp rollback_policy("REVERSIBLE"), do: "fixture_backup_restore"
   defp rollback_policy("COMPENSABLE"), do: "compensation_record"
+  defp rollback_policy("COMMITTABLE"), do: "fixture_commit_restore"
   defp rollback_policy(_side_effect_class), do: "not_applicable"
+
+  defp verifier_requirements("commit_fixture_document_candidate") do
+    [
+      "schema_valid",
+      "approval_record_valid_and_in_scope",
+      "pre_effect_evidence_complete",
+      "pre_effect_verifier_accept",
+      "post_effect_evidence_complete",
+      "post_effect_verifier_accept",
+      "durable_prepared_intent",
+      "idempotency_and_conflict_guard",
+      "durable_audit_refs_complete"
+    ]
+  end
+
+  defp verifier_requirements(_action_type) do
+    ["schema_valid", "evidence_complete", "side_effect_allowed", "provenance_present"]
+  end
 end

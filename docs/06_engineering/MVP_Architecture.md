@@ -38,12 +38,16 @@ Task Input
   implementation and a 20-case measured `pass_acceptance_candidate` run at
   `20260715_114209`; the named manifest closure accepts it as fixture-local
   Persistence v0 authority.
+- `PS1-G10` implements one task-specific `COMMITTABLE` action for candidate
+  promotion inside marked ephemeral copied fixtures. Experiment 007 run
+  `20260716_020716` passes 28/28 cases and all hard gates and is accepted by the
+  named G10 closure.
 - `PS1-G7` Context OS work remains specification, schema-impact, evaluation,
   and implementation planning only. `PS1-G8` now has a complete 10-fixture
   planning validator/runner pilot, but remains planning-only runtime scope.
-- Disallowed in the current runtime: full Context OS, memory writes,
-  irreversible external actions, production deployment, executable
-  `COMMITTABLE` actions, and H1-H5 validation claims.
+- Disallowed in the current runtime: general or external `COMMITTABLE`
+  authority, full Context OS, memory writes, irreversible actions, production
+  deployment, and H1-H5 validation claims.
 
 ## MVP Modules
 
@@ -73,14 +77,19 @@ Task Input
 - Persistence Recovery: prepares fixture-local reversible effects before
   mutation and resolves restart windows to commit, abort, rollback, or
   `recovery_required`.
+- Fixture Commit Runtime: validates the copied-workspace marker, target and
+  hashes, standalone approval, two-phase evidence/verifiers, durable prepare,
+  atomic promotion, logical commit, restart recovery, audit, and strict replay.
+- Fixture Commit Experiment: validates 28 immutable failure-injection cases and
+  emits the Experiment 007 artifact contract.
 
 ## Deferred Modules
 
 - Full Context OS.
 - Long-term memory write gate.
 - Training on runtime feedback.
-- Runtime execution of `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE`
-  side effects.
+- Runtime execution of any `COMMITTABLE` action except the named G10 copied-
+  fixture promotion, and all `IRREVERSIBLE` or `MEMORY_WRITE` side effects.
 - Packaged runtime schema assets; current schemas remain under
   `docs/03_schemas/*.schema.json`.
 - High-risk external action governance beyond fixture-local tasks.
@@ -90,6 +99,9 @@ Task Input
 - Resolved by `PS1-G9`: SQLite behind `Vanta.Persistence` replaces the named
   fixture-local persistence prototype; MemoryAdapter remains for tests and
   compatibility.
+- Resolved by `PS1-G10`: the first executable commit domain is one explicitly
+  allowlisted candidate promotion inside a marked ephemeral copied workspace;
+  it creates no external, irreversible, memory, or multi-process authority.
 - What successor measured-comparison scope is required beyond the accepted
   `20260601_113121` Lane A Document Ops sample?
 - What benchmark size and direct Responses comparison are required before the

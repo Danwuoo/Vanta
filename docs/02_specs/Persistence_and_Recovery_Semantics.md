@@ -213,6 +213,17 @@ Any missing required value fails replay.
 - Incomplete episodes are discoverable after restart.
 - Silent partial commit is forbidden.
 
+### PS1-G10 Reuse Of Persistence v0
+
+G10 reuses the existing generic artifact, recovery, idempotency, and logical-
+commit tables; it does not migrate or broaden the Persistence v0 database
+authority. Approval Records are typed persisted artifacts. A successful G10
+logical commit must validate exactly one approved approval ref, exactly two
+Evidence Packet refs, exactly two Verifier Output refs, the committed artifact
+ref, and matching Episode Journal refs. Recovery distinguishes no-effect abort,
+strict restore success, `recovery_required`, and already committed same-request
+response recovery.
+
 ## 16. Non-goals
 
 - PostgreSQL, distributed transactions, HA, replication, or sharding.

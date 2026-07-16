@@ -255,9 +255,18 @@ defmodule Vanta.RuntimePersistenceIntegrationTest do
   end
 
   defp temp_db_path(label) do
-    Path.join(
-      System.tmp_dir!(),
-      "vanta_persistence_integration_#{label}_#{System.unique_integer([:positive])}.sqlite3"
-    )
+    nonce = :crypto.strong_rand_bytes(8) |> Base.encode16(case: :lower)
+
+    path =
+      Path.join(
+        System.tmp_dir!(),
+        "vanta_persistence_integration_#{label}_#{nonce}.sqlite3"
+      )
+
+    on_exit(fn ->
+      Enum.each([path, path <> "-shm", path <> "-wal"], &File.rm/1)
+    end)
+
+    path
   end
 end

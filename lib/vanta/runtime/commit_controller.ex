@@ -10,7 +10,7 @@ defmodule Vanta.CommitController do
       verifier_output["decision"] != "accept" ->
         {:error, :verifier_not_accept}
 
-      step["side_effect_class"] not in Vanta.allowed_side_effect_classes() ->
+      not Vanta.side_effect_allowed?(step["action_type"], step["side_effect_class"]) ->
         {:error, :side_effect_class_not_allowed}
 
       VerifierRuntime.missing_evidence_fields(evidence) != [] ->

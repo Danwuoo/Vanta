@@ -132,6 +132,17 @@ coverage.
 - Experiment 006 result validation must preserve failed predecessor provenance,
   validate all required files, require 20/20 cases, and keep runner output at
   `pass_acceptance_candidate` until manifest closure.
+- PS1-G10 fast tests must validate all changed JSON schemas, standalone Approval
+  Record scope, the explicit action payload, and isolation from the general
+  planner/action allowlist.
+- PS1-G10 integration/tooling tests must execute all 28 fixtures, including
+  approval failures, verifier/evidence failures, safe-path/source guards,
+  duplicate/conflict handling, four crash windows, restart, rollback success
+  and failure, corrupt/missing refs, irreversible and memory smuggling, audit,
+  and strict replay mismatch.
+- Experiment 007 result validation must require 28/28 cases, all 15 hard gates,
+  unchanged source-fixture tree hash, the complete result artifact set, and
+  `pass_acceptance_candidate` until the separate manifest closure.
 
 ## Open Questions
 

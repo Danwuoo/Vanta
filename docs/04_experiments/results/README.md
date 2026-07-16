@@ -22,6 +22,7 @@ separate evaluation report and manifest closure say so.
 | `post_stage_1_larger_sample/` | Lane A larger controlled Document Ops sample run artifacts for `PS1-LA-SAMPLE-002`. | Active Lane A result family. It contains failed, threshold-passing candidate, superseded, timeout or partial, and closure-accepted provenance. | Yes, for completed run directories with `run.json`, `summary.md`, and `fixture_inventory.md`; not every directory is accepted. | No |
 | `side_effect_planning/` | PS1-G8 side-effect planning scaffolds and measured planning-pilot artifacts. | `20260701_201804` is the historical scaffold; `20260715_223158` is the complete 10-fixture `committable_docops_planning_pilot`. | Planning validation only: all 15 planning metrics passed and all 16 process floors were `0`; no side-effect runtime execution occurred. | Yes |
 | `persistence_and_recovery/` | `PS1-G9` Experiment 006 SQLite persistence and deterministic failure-injection artifacts. | Active persistence result family. `20260715_114052` is retained `failed_no_acceptance`; `20260715_114209` is the complete 20-case `pass_acceptance_candidate` used by measured report and closure review. | Yes. Deterministic protocol-boundary injection is measured; no OS-level process-kill claim. | No |
+| `fixture_local_committable_execution/` | `PS1-G10` Experiment 007 approval, promotion, recovery, rollback, audit, and strict replay artifacts. | `20260716_015841` preserves a 27/28 `failed_no_acceptance` development diagnostic; repaired complete run `20260716_020716` is the 28-case `pass_acceptance_candidate` accepted by the named manifest closure. | Yes for the closure run; the predecessor is explicitly development-diagnostic provenance. | No |
 
 ## Accepted Closure Boundary
 
@@ -48,6 +49,18 @@ upgrades that named scope to `accepted_by_closure` and records `validated for
 Fixture-Local SQLite Persistence v0`; predecessor `20260715_114052` remains
 failed provenance.
 
+The `fixture_local_committable_execution/20260716_020716/` runner result is
+`pass_acceptance_candidate` with 28/28 fixtures and all 15 G10 hard gates
+passing. The
+[G10 Closure](../../00_manifest/Post_Stage_1_Fixture_Local_Committable_v0_Closure.md)
+accepts only the named copied-fixture promotion surface as
+`accepted_by_closure`; the runner result itself remains unchanged.
+
+The earlier `fixture_local_committable_execution/20260716_015841/` directory is
+retained unchanged as `failed_no_acceptance` development-diagnostic provenance.
+Its missing-evidence case committed incorrectly and its aggregate calculations
+also failed; it is not acceptance evidence.
+
 ## Provenance Retention
 
 Historical, failed, superseded, timeout, and partial run directories are
@@ -73,3 +86,6 @@ not by mutating historical run artifacts.
 - [Experiment 006 Persistence and Recovery](../Experiment_006_Persistence_and_Recovery.md)
 - [Experiment 006 Persistence and Recovery Run Report](../../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
 - [Post-Stage-1 Persistence v0 Closure](../../00_manifest/Post_Stage_1_Persistence_v0_Closure.md)
+- [Experiment 007 Fixture-Local COMMITTABLE Execution](../Experiment_007_Fixture_Local_Committable_Execution.md)
+- [Experiment 007 Run Report](../../05_evaluation/Experiment_007_Fixture_Local_Committable_Execution_Run_Report.md)
+- [G10 Closure](../../00_manifest/Post_Stage_1_Fixture_Local_Committable_v0_Closure.md)

@@ -35,6 +35,8 @@ Define candidate runtime modules and their responsibilities for a first MVP.
 | SQLite Persistence Adapter | Persist typed runtime artifacts, accepted pointers, recovery rows, and logical commits with explicit SQLite transactions. | Implemented for `Fixture-Local SQLite Persistence v0` |
 | Persistence Recovery | Prepare reversible fixture effects and complete restart abort/rollback/recovery decisions. | Implemented and failure-injection tested |
 | Persistence Experiment Runner | Produce the 20-case Experiment 006 artifact contract. | Implemented as `Vanta.PersistenceExperiment` and `mix vanta.persistence_experiment` |
+| Fixture Commit Runtime | Enforce marker/path/hash, standalone approval, two-phase evidence/verifier, durable prepare, file promotion, SQLite logical commit, restart, audit, rollback, and strict replay for the one G10 action. | Implemented for `Fixture-Local COMMITTABLE Document Promotion v0` |
+| Fixture Commit Experiment Runner | Validate 28 immutable authorization and failure-injection cases and produce Experiment 007 artifacts. | Implemented as `Vanta.FixtureCommitExperiment` and `mix vanta.fixture_commit_experiment`; run `20260716_020716` passed |
 
 ## Source Layout
 
@@ -44,10 +46,10 @@ module rename, schema change, runtime behavior change, or side-effect expansion.
 
 | Area | Path | Contents |
 | --- | --- | --- |
-| Runtime commit path | `lib/vanta/runtime/` | State, Execution IR compilation, action execution, evidence, verifier, commit, journal, runtime orchestrator, and replay runner modules. |
+| Runtime commit path | `lib/vanta/runtime/` | State, Execution IR compilation, action execution, evidence, verifier, commit, journal, runtime orchestrator, replay, and the task-specific `fixture_commit.ex` G10 path. |
 | Adapters | `lib/vanta/adapters/` | Planner adapter behavior and OpenAI/OpenClaw harness adapters. |
 | Document Ops surface | `lib/vanta/document_ops/` | Structured edit implementation and fixture-specific acceptance checks. |
-| Experiments and evaluation tooling | `lib/vanta/experiments/` | Experiment 001 through 005 runners, baseline/blind retry runners, recovery runner/policy, evaluation harness, working-set compiler, and raw-trace context builder. |
+| Experiments and evaluation tooling | `lib/vanta/experiments/` | Experiment 001 through 007 runners, including fixture-commit validation, baseline/blind retry, recovery, evaluation, working-set, and raw-trace tooling. |
 | Post-Stage-1 tooling | `lib/vanta/post_stage1/` | Larger-sample runner, Lane B packet/result tooling, and side-effect planning proposal validator/runner. |
 | Support | `lib/vanta/support/` | Hashing, path guard, and JSON Schema helpers. |
 | Persistence | `lib/vanta/persistence/` | Adapter contract, Memory/SQLite adapters, and fixture-local recovery protocol. |
@@ -96,8 +98,10 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
   Document Ops `COMMITTABLE` commit-proposal planning surface. It must not be
   wired into the Planner Adapter, Execution IR Compiler, Action Executor,
   Verifier Runtime, Commit Controller, or Episode Journal as executable runtime
-  behavior without a later accepted schema, implementation, fixture, test, and
-  evaluation batch.
+  behavior by the G8 planning runner. The later accepted `PS1-G10` successor is
+  the separately governed schema, implementation, fixture, test, and evaluation
+  batch; it adds only the explicit action-specific copied-fixture path and does
+  not turn the G8 pilot itself into runtime execution.
 - `Vanta.PostStage1SideEffectPlanning.Validator` and
   `Vanta.PostStage1SideEffectPlanning` are planning evaluation tooling only.
   They validate immutable fixtures, write measured planning artifacts and
@@ -106,19 +110,22 @@ storage, benchmark scale, and broader baseline comparison are post-Stage-1 work.
   approve deployment.
 - The complete `20260715_223158` run measures the named planning pilot only;
   its passing metrics are not an executable side-effect or production claim.
+- G10 runtime dispatch is isolated behind the exact
+  `commit_fixture_document_candidate` action. The general planner action set
+  and general side-effect allowlist remain unchanged; verifier acceptance does
+  not substitute for the standalone Approval Record.
 
 ## Post-Stage-1 Decisions And Open Questions
 
 - Resolved by `PS1-G9`: the named Persistence v0 authority uses SQLite behind
   `Vanta.Persistence`; MemoryAdapter remains for fast tests and compatibility.
 - Resolved on 2026-07-16: the first post-`PS1-G8` domain is copied-workspace
-  Document Ops candidate promotion using a future explicit
+  Document Ops candidate promotion using the explicit
   `commit_fixture_document_candidate` action and dedicated payload.
-- Resolved on 2026-07-16: a separately authored and accepted
-  `Fixture-Local Document Commit Execution v0` successor implementation gate
-  may authorize implementation and actual execution only for explicitly marked
-  ephemeral copied fixtures. No such gate, action, allowlist change, or
-  execution authority exists yet.
+- Implemented under accepted `PS1-G10` only for explicitly marked ephemeral
+  copied fixtures; the measured run is accepted by the named closure. No
+  general allowlist, external, irreversible, memory-write, or production
+  authority was created.
 - What benchmark size is required before moving beyond Stage 1 smoke checks?
 - What measured threshold, after a real LLM baseline run, is sufficient to move
   beyond local Document Ops fixtures?

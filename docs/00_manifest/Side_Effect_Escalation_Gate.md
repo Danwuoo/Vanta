@@ -42,14 +42,13 @@ planning completeness and rejection rules; it does not expand the accepted
 unlock or create executable side-effect authority.
 
 Upstream successor decisions recorded on 2026-07-16 select copied-workspace
-Document Ops candidate promotion as the first domain, explicit future action
+Document Ops candidate promotion as the first domain, explicit action
 `commit_fixture_document_candidate`, standalone approval-record schema
 authority plus typed Episode Journal refs, and a minimum executable
-`fixture_commit_supersede` evidence floor. A future `Fixture-Local Document
-Commit Execution v0` gate may authorize implementation and actual execution
-only after it is separately authored and accepted, and only in explicitly
-marked ephemeral copied fixtures. These decisions do not modify this gate's
-planning-only unlock and do not create or close a successor gate.
+`fixture_commit_supersede` evidence floor. The separately accepted `PS1-G10`
+gate now authorizes actual execution only in explicitly marked ephemeral copied
+fixtures. This does not modify the G8 gate's planning-only unlock, authorize
+supersession, or make G8 evidence an executable approval.
 
 ## Inputs
 

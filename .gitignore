@@ -12,4 +12,8 @@ docs/04_experiments/results/*/*/*.json
 !docs/04_experiments/results/persistence_and_recovery/*/failure_injection_results.json
 !docs/04_experiments/results/persistence_and_recovery/*/environment_manifest.json
 !docs/04_experiments/results/persistence_and_recovery/*/schema_hash_policy_versions.json
+!docs/04_experiments/results/fixture_local_committable_execution/*/run.json
+!docs/04_experiments/results/fixture_local_committable_execution/*/fixture_results.json
+!docs/04_experiments/results/fixture_local_committable_execution/*/environment_manifest.json
+!docs/04_experiments/results/fixture_local_committable_execution/*/schema_policy_versions.json
 /chatgpt_docs

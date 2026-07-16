@@ -87,6 +87,24 @@
     "runtime_context": {
       "type": "object",
       "description": "Runtime metadata needed to interpret this evidence packet."
+    },
+    "evidence_phase": {
+      "type": "string",
+      "enum": ["pre_effect", "post_effect"],
+      "description": "G10 COMMITTABLE evidence phase. Historical non-G10 packets may omit it."
+    },
+    "target_identity": {
+      "type": "object",
+      "description": "Typed target identity for a governed side effect."
+    },
+    "approval_record_refs": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "artifact_refs": {
+      "type": "array",
+      "items": {"type": "object"}
     }
   },
   "additionalProperties": false

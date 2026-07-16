@@ -6,6 +6,7 @@ defmodule Vanta.Schema do
   @schema_dir Path.expand("../../../docs/03_schemas", __DIR__)
 
   @schemas %{
+    "approval_record" => "approval_record.schema.json",
     "benchmark_task" => "benchmark_task.schema.json",
     "canonical_state" => "canonical_state.schema.json",
     "episode_journal" => "episode_journal.schema.json",

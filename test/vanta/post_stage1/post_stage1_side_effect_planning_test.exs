@@ -161,8 +161,9 @@ defmodule Vanta.PostStage1SideEffectPlanningTest do
   end
 
   @tag :fast_unit
-  test "planning placeholder remains outside runtime schemas and dispatch wiring" do
+  test "G8 planning runner remains non-dispatching after the separately governed G10 successor" do
     assert @placeholder_action not in Vanta.action_types()
+    assert @placeholder_action in Vanta.fixture_commit_action_types()
 
     Enum.each(
       [
@@ -171,8 +172,8 @@ defmodule Vanta.PostStage1SideEffectPlanningTest do
         "docs/03_schemas/benchmark_task.schema.json"
       ],
       fn schema_path ->
-        refute File.read!(schema_path) =~ @placeholder_action,
-               "#{schema_path} unexpectedly exposes #{@placeholder_action}"
+        assert File.read!(schema_path) =~ @placeholder_action,
+               "#{schema_path} must expose the separately accepted G10 action"
       end
     )
 

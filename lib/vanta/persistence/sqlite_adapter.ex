@@ -355,6 +355,8 @@ defmodule Vanta.Persistence.SQLiteAdapter do
 
     with {:ok, step_artifacts} <-
            insert_many(conn, "execution_step", request["steps"], episode_id),
+         {:ok, approval_artifacts} <-
+           insert_many(conn, "approval_record", request["approval_records"], episode_id),
          {:ok, evidence_artifacts} <-
            insert_many(conn, "evidence_packet", request["evidence_packets"], episode_id),
          {:ok, verifier_artifacts} <-
@@ -369,6 +371,7 @@ defmodule Vanta.Persistence.SQLiteAdapter do
       artifact_ids =
         Enum.map(
           step_artifacts ++
+            approval_artifacts ++
             evidence_artifacts ++
             verifier_artifacts ++
             [state_artifact, journal_artifact],

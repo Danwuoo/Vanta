@@ -238,6 +238,10 @@ idempotency and conflicts, restart, and replay. These are decisions and routing
 constraints only: no gate, closure, schema, action, allowlist change, approval,
 execution, or compensation evidence is created by this update.
 
+Those decision-only constraints are historical upstream provenance. The later
+separately accepted `PS1-G10` batch described below consumes them; it does not
+retroactively change the authority of this decision-only update.
+
 Lane C has accepted `PS1-G9` for the named `Fixture-Local SQLite Persistence
 v0` implementation and measured evaluation path:
 [Storage and Persistence Gate](Storage_and_Persistence_Gate.md) resolves the
@@ -255,6 +259,33 @@ accepts the passing run as `accepted_by_closure` and records the exact claim
 validate H1-H5, the full architecture, production readiness, distributed
 persistence, durable memory, full Context OS, external `COMMITTABLE`,
 `IRREVERSIBLE`, or `MEMORY_WRITE` execution.
+
+Lane D has accepted `PS1-G10` for the named `Fixture-Local COMMITTABLE Document
+Promotion v0` implementation and measured evaluation path. The
+[Fixture-Local COMMITTABLE Execution Gate](Fixture_Local_Committable_Execution_Gate.md)
+adds one task-specific `commit_fixture_document_candidate` action, standalone
+Approval Record, two-phase evidence/verifier contract, durable prepared intent,
+SQLite logical commit, idempotency/conflict handling, restart recovery, strict
+restore, audit, and replay only inside explicitly marked ephemeral copied
+workspaces.
+
+Experiment 007 run `20260716_020716` is `pass_acceptance_candidate`: 28/28
+failure-injection fixtures and all 15 hard gates passed, and the source-fixture
+tree hash remained unchanged. The
+[run report](../05_evaluation/Experiment_007_Fixture_Local_Committable_Execution_Run_Report.md)
+records the measured evidence. After the complete required command set passed,
+the [G10 Closure](Post_Stage_1_Fixture_Local_Committable_v0_Closure.md)
+accepted the named scope as `accepted_by_closure` and records only `validated
+for Fixture-Local COMMITTABLE Document Promotion v0`. This scope does not
+validate H1-H5, broad side-effect safety, production readiness,
+source/repository/user/external targets, `IRREVERSIBLE`, `MEMORY_WRITE`,
+durable memory, full Context OS, distributed transactions, or multi-process
+authority.
+
+The predecessor development diagnostic `20260716_015841` remains preserved as
+`failed_no_acceptance` (27/28) provenance. Its missing-evidence and aggregate-
+accounting failures were repaired in scope before the complete run was
+repeated; it contributes no closure evidence.
 
 ## Source Documents
 

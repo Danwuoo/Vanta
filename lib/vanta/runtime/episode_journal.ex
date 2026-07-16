@@ -29,12 +29,14 @@ defmodule Vanta.EpisodeJournal do
           "replay_runner" => "journal_action_sequence_replay_v0",
           "verifier_runtime" => "deterministic_rules_v0"
         },
-        "side_effect_classes_allowed" => Vanta.allowed_side_effect_classes()
+        "side_effect_classes_allowed" => Vanta.authorized_side_effect_classes(task)
       },
       "steps" => [],
       "state_hashes" => [],
       "evidence_refs" => [],
       "verifier_output_refs" => [],
+      "approval_record_refs" => [],
+      "artifact_refs" => [],
       "commit_status" => "not_started",
       "rollback_status" => "not_applicable",
       "memory_write_effects" => []
@@ -59,6 +61,18 @@ defmodule Vanta.EpisodeJournal do
       ["verifier_output_refs"],
       &append_unique(&1, verifier_output["verifier_output_id"])
     )
+  end
+
+  def record_approval(journal, approval_record) do
+    update_in(
+      journal,
+      ["approval_record_refs"],
+      &append_unique(&1, approval_record["approval_id"])
+    )
+  end
+
+  def record_artifact(journal, artifact_ref) do
+    update_in(journal, ["artifact_refs"], fn refs -> refs ++ [artifact_ref] end)
   end
 
   def set_commit_status(journal, status), do: Map.put(journal, "commit_status", status)

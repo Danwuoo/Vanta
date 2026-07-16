@@ -99,10 +99,13 @@ blocked.
 which a verified candidate document artifact would be promoted to a fixture-local
 committed artifact location in a copied run workspace.
 
-The future action name `commit_fixture_document_candidate` is a planning
-placeholder only. It is not present in current action schemas, must not appear in
-`allowed_actions`, and must not be sent to `Vanta.Runtime.run_task/3` under this
-batch.
+Within the completed `PS1-G8` planning batch, the future action name
+`commit_fixture_document_candidate` was a planning placeholder only: that batch
+did not add it to action schemas or send it to `Vanta.Runtime.run_task/3`.
+The later accepted `PS1-G10` successor now adds the explicit action and may send
+it through the runtime only under its dedicated payload, approval, copied-
+workspace, SQLite, evidence, verifier, rollback, audit, and replay gates. This
+does not retroactively turn the G8 pilot into an executable run.
 
 `OQ-SCHEMA-014` is resolved for successor design: the future executable
 surface must use the explicit `commit_fixture_document_candidate` action enum

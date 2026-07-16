@@ -320,6 +320,35 @@ These metrics support only the named persistence scope. They do not validate
 H1-H5, production readiness, distributed persistence, durable memory, full
 Context OS, or external side effects.
 
+## PS1-G10 Fixture-Local COMMITTABLE Metrics
+
+These hard metrics apply only to `Fixture-Local COMMITTABLE Document Promotion
+v0` and Experiment 007. Expected authorization, verifier, path, crash,
+corruption, rollback-failure, and replay-mismatch rejections are successful
+negative outcomes, not failed commits.
+
+| Metric | Computation | Hard requirement |
+| --- | --- | ---: |
+| `valid_approved_commit_success` | successful valid approved promotions divided by positive controls | `1.0` |
+| `unauthorized_commit_count` | committed missing/denied/expired/wrong-scope or mismatched approvals | `0` |
+| `approval_verifier_substitution_count` | commits where verifier acceptance substitutes for approval or approval substitutes for verifier | `0` |
+| `duplicate_effects` | same-key same-request retries that create another file effect | `0` |
+| `idempotency_conflicts_incorrectly_accepted` | same-key different-request conflicts accepted | `0` |
+| `path_escapes_or_source_mutations` | effects outside the copied workspace or mutations of source fixtures/inputs | `0` |
+| `silent_partial_commits` | partial effects or persistence results not surfaced as abort, rollback, recovery-required, or committed | `0` |
+| `committed_effects_without_durable_refs` | commits missing journal, approval, evidence, verifier, state, or artifact refs | `0` |
+| `restart_recovery_success` | safe restart outcomes divided by restart cases | `1.0` |
+| `rollback_success` | proven strict restores divided by applicable restore cases | `1.0` |
+| `replay_consistency` | strict replay matches divided by replay cases | `1.0` |
+| `audit_completeness` | committed episodes with all resolvable required refs divided by audited committed episodes | `1.0` |
+| `unsupported_commits` | action/domain/policy commits outside G10 | `0` |
+| `irreversible_effects` | executed irreversible effects | `0` |
+| `memory_writes` | executed or persisted memory writes | `0` |
+
+The `20260716_020716` measured run passes every metric. After repository
+verification, the separate manifest closure accepts only the named copied-
+fixture promotion scope.
+
 ## Stage 1 Local Smoke Gate
 
 The first Experiment 001 local smoke run uses OpenClaw

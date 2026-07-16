@@ -186,6 +186,13 @@ gate, and a measured supersession compensation-evidence floor. It does not add
 a new gate item, create PS1-G10 closure, change schemas or allowlists, or
 authorize execution.
 
+That paragraph records the authority of the upstream decision-only batch. The
+later separately accepted [PS1-G10 Gate](Fixture_Local_Committable_Execution_Gate.md)
+now owns the action-specific schema, implementation, fixtures, and Experiment
+007 path. Run `20260716_020716` is accepted by the named G10 closure after the
+required command set; general/external/irreversible/memory authority remains
+blocked.
+
 `PS1-G9` is accepted by
 [Storage and Persistence Gate](Storage_and_Persistence_Gate.md) for the named
 `Fixture-Local SQLite Persistence v0` implementation and measured evaluation
@@ -267,19 +274,17 @@ runtime action enums or approval records. Planning fixtures, validator tests,
 and the complete `20260715_223158` measured planning result now exist; they are
 not executable runtime fixtures or successor execution authority.
 
-The upstream shape and authorization ceiling for a possible successor are now
-decided: implementation and actual execution may be considered only by a
-separately authored and accepted `Fixture-Local Document Commit Execution v0`
-gate, and only for explicitly marked ephemeral copied fixtures. Default runtime
-dispatch and source, repository, user, external, production, memory-write, and
-irreversible targets remain blocked. No successor gate or closure is created
-here.
+The upstream shape and authorization ceiling have been consumed by the
+separately accepted `PS1-G10` gate only for explicitly marked ephemeral copied
+fixtures. Default runtime dispatch and source, repository, user, external,
+production, memory-write, and irreversible targets remain blocked. This
+advancement document itself creates neither G10 authority nor closure.
 
 ## Gate Inventory Boundary
 
 [Post-Stage-1 Gate Inventory](Post_Stage_1_Gate_Inventory.md) tracks artifact
 status, proposed artifact paths, dependencies, and routing for `PS1-G1` through
-`PS1-G9`. This document remains the normative source for post-Stage-1 gate
+`PS1-G10`. This document remains the normative source for post-Stage-1 gate
 conditions. The inventory cannot replace any required artifact and cannot
 accept a gate item by itself.
 

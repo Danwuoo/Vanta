@@ -112,6 +112,21 @@ Packet and Verifier Output references in its committed Episode Journal;
 missing, corrupt, incompatible, or hash-mismatched artifacts fail audit and
 replay.
 
+## PS1-G10 Two-Phase Evidence And Approval Boundary
+
+The fixture-local promotion path requires two schema-valid Evidence Packets:
+`pre_effect` binds the source/candidate hashes, safe target identity, approval
+ref, and no-effect state; `post_effect` binds the committed artifact hash,
+unchanged source/candidate hashes, target identity, approval ref, and artifact
+ref. Each phase has a distinct Verifier Output and both decisions must be
+`accept`.
+
+The standalone Approval Record is separately schema-validated and persisted.
+Its `approved` scope must exactly match action, target identity, candidate hash,
+gate policy version, and active validity window. Evidence and verifier results
+may reference approval, but cannot create or replace it. A missing phase,
+missing ref, corrupt artifact, or non-`accept` verifier fails closed.
+
 ## Open Questions
 
 - Which evidence fields are mandatory for Stage 1?

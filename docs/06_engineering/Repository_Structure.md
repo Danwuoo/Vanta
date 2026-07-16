@@ -37,13 +37,16 @@ runtime, or CI source-of-truth paths.
 | Schemas | `docs/03_schemas/*.schema.json` | Use [Schemas Index](../03_schemas/Schemas_Index.md) as the L3 navigation entry. Schema files define data contracts and remain the current runtime validation source. |
 | Schema impact reviews | `docs/03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md`, `docs/03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md` | Review documents only. They record no-change decisions and do not add schema enum behavior. |
 | Persistence schema impact review | `docs/03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md` | `PS1-G9` review that adds envelope/lifecycle/recovery schemas without changing existing core enum authority. |
+| G10 schema impact review | `docs/03_schemas/Fixture_Local_Committable_Schema_Impact_Review.md` | Adds only the standalone approval contract, explicit fixture-commit payload, two-phase evidence fields, and typed journal/artifact refs authorized by G10. |
 | Experiment protocols | `docs/04_experiments/*.md` outside `fixtures/` and `results/` | Protocols, plans, and benchmark definitions. They do not report results unless a measured run artifact or evaluation report is linked. |
 | Side-effect planning fixtures | `docs/04_experiments/fixtures/side_effect_planning/` | Immutable proposal templates and evaluation-only fixture oracles for the named PS1-G8 planning pilot. They are not executable runtime fixtures or approvals. |
+| Fixture-commit experiment fixtures | `docs/04_experiments/fixtures/fixture_local_committable_execution/` | Twenty-eight immutable G10 case records plus a workspace template; every run copies the template before any effect. |
 | Experiment results | `docs/04_experiments/results/<experiment>/<timestamp>/` | Use [Experiment Results README](../04_experiments/results/README.md) as the L4 result navigation entry. Preserve historical, failed, superseded, timeout, partial, measured, and planning-only result directories as provenance. |
 | Evaluation reports | `docs/05_evaluation/*.md` | Metrics, labeling policies, run reports, report templates, and reported evaluation summaries. |
 | Label packets | `docs/05_evaluation/label_packets/<packet>/` | Use [Label Packets README](../05_evaluation/label_packets/README.md) as the L5 packet navigation entry. Lane B packet artifacts, blinded items, packet-local templates, filled labels, and import summaries are evaluation artifacts, not runtime schemas or approvals. |
 | Runtime code | `lib/vanta/**/*.ex`, `lib/mix/tasks/vanta/*.ex` | Current Elixir implementation and CLI entry points. Runtime modules and Mix task modules are grouped by engineering responsibility while preserving existing module names and CLI task names. |
 | Persistence code | `lib/vanta/persistence/*.ex` | Adapter contract, Memory/SQLite adapters, and fixture-local recovery protocol. Concrete SQLite code stays behind the adapter boundary. |
+| Fixture-commit code | `lib/vanta/runtime/fixture_commit.ex`, `lib/vanta/experiments/fixture_commit_experiment*.ex`, `lib/mix/tasks/vanta/fixture_commit_experiment.ex` | The isolated G10 runtime path, validator/runner, and Mix entry point. |
 | Executable fixtures | `test/fixtures/document_ops/` | ExUnit-consumed fixture mirror. Must stay byte-for-byte synchronized with `docs/04_experiments/fixtures/document_ops/`. |
 | CI configuration | `.github/workflows/ci.yml` | GitHub Actions entry point for test layering. It runs the fast smoke alias before the full test alias and does not replace local `mix test` as the complete suite. |
 | ChatGPT Project Knowledge export | `chatgpt_docs/docs/` | Curated mirror of selected source docs. It is not the source of truth and must remain at 25 files or fewer unless the cap changes. |
@@ -76,6 +79,7 @@ docs/04_experiments/
     post_stage_1_larger_sample/<timestamp>/
     side_effect_planning/<timestamp>/      Scaffold or measured planning-pilot artifacts
     persistence_and_recovery/<timestamp>/  Experiment 006 measured persistence artifacts
+    fixture_local_committable_execution/<timestamp>/  Experiment 007 measured G10 artifacts
 
 docs/05_evaluation/
   label_packets/

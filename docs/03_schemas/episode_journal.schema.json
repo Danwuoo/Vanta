@@ -58,6 +58,27 @@
         "type": "string"
       }
     },
+    "approval_record_refs": {
+      "type": "array",
+      "description": "Typed IDs of standalone Approval Records; approval objects are never inlined.",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "artifact_refs": {
+      "type": "array",
+      "description": "Typed committed-artifact references required by G10 committed promotion.",
+      "items": {
+        "type": "object",
+        "required": ["artifact_role", "path", "content_hash", "target_identity"],
+        "properties": {
+          "artifact_role": {"const": "committed_document"},
+          "path": {"type": "string", "minLength": 1},
+          "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "target_identity": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
     "commit_status": {
       "type": "string",
       "enum": [

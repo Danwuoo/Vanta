@@ -34,6 +34,7 @@ defmodule Vanta.Persistence do
   @callback verify_artifact_integrity(term(), String.t()) :: :ok | {:error, term()}
 
   @artifact_schemas %{
+    "approval_record" => "approval_record",
     "canonical_state" => "canonical_state",
     "execution_step" => "execution_step",
     "evidence_packet" => "evidence_packet",
@@ -175,11 +176,18 @@ defmodule Vanta.Persistence do
         |> Enum.filter(&(&1["artifact_type"] == "verifier_output"))
         |> MapSet.new(&get_in(&1, ["payload", "verifier_output_id"]))
 
+      approval_ids =
+        artifacts
+        |> Enum.filter(&(&1["artifact_type"] == "approval_record"))
+        |> MapSet.new(&get_in(&1, ["payload", "approval_id"]))
+
       missing =
         []
         |> require_pointer("accepted_state_artifact", state_id, state)
         |> require_pointer("episode_journal_artifact", journal_id, journal)
         |> require_journal_refs(journal, evidence_ids, verifier_ids)
+        |> require_approval_refs(journal, approval_ids)
+        |> require_committed_artifact_refs(journal)
         |> require_final_hash(journal, state)
         |> Enum.sort()
 
@@ -231,6 +239,7 @@ defmodule Vanta.Persistence do
   defp validate_commit_request(request) do
     steps = Map.get(request, "steps", [])
     verifier_outputs = Map.get(request, "verifier_outputs", [])
+    approval_records = Map.get(request, "approval_records", [])
 
     cond do
       not is_binary(request["episode_id"]) or not is_binary(request["idempotency_key"]) ->
@@ -242,7 +251,10 @@ defmodule Vanta.Persistence do
       Enum.any?(verifier_outputs, &(&1["decision"] != "accept")) ->
         {:error, :verifier_not_accept}
 
-      Enum.any?(steps, &(&1["side_effect_class"] not in Vanta.allowed_side_effect_classes())) ->
+      Enum.any?(
+        steps,
+        &(not Vanta.side_effect_allowed?(&1["action_type"], &1["side_effect_class"]))
+      ) ->
         {:error, :unsupported_side_effect}
 
       Enum.any?(steps, &(&1["side_effect_class"] in ["IRREVERSIBLE", "MEMORY_WRITE"])) ->
@@ -255,8 +267,10 @@ defmodule Vanta.Persistence do
         with :ok <- Schema.validate("canonical_state", request["state"]),
              :ok <- Schema.validate("episode_journal", request["journal"]),
              :ok <- validate_many("execution_step", steps),
+             :ok <- validate_many("approval_record", approval_records),
              :ok <- validate_many("evidence_packet", Map.get(request, "evidence_packets", [])),
-             :ok <- validate_many("verifier_output", verifier_outputs) do
+             :ok <- validate_many("verifier_output", verifier_outputs),
+             :ok <- validate_commit_refs(request) do
           :ok
         end
     end
@@ -296,6 +310,34 @@ defmodule Vanta.Persistence do
     missing ++ evidence_missing ++ verifier_missing
   end
 
+  defp require_approval_refs(missing, nil, _approval_ids), do: missing
+
+  defp require_approval_refs(missing, journal, approval_ids) do
+    journal
+    |> get_in(["payload", "approval_record_refs"])
+    |> List.wrap()
+    |> Enum.reject(&MapSet.member?(approval_ids, &1))
+    |> Enum.map(&("approval_ref:" <> &1))
+    |> then(&(missing ++ &1))
+  end
+
+  defp require_committed_artifact_refs(missing, nil), do: missing
+
+  defp require_committed_artifact_refs(missing, journal) do
+    payload = journal["payload"]
+
+    committable? =
+      payload
+      |> Map.get("steps", [])
+      |> Enum.any?(&(&1["action_type"] == "commit_fixture_document_candidate"))
+
+    if committable? and Map.get(payload, "artifact_refs", []) == [] do
+      ["committed_artifact_refs" | missing]
+    else
+      missing
+    end
+  end
+
   defp require_final_hash(missing, nil, _state), do: missing
   defp require_final_hash(missing, _journal, nil), do: missing
 
@@ -305,6 +347,58 @@ defmodule Vanta.Persistence do
     if final_hash == get_in(state, ["payload", "state_hash"]),
       do: missing,
       else: ["final_state_hash" | missing]
+  end
+
+  defp validate_commit_refs(request) do
+    steps = Map.get(request, "steps", [])
+
+    if Enum.any?(steps, &(&1["action_type"] == "commit_fixture_document_candidate")) do
+      journal = request["journal"]
+      evidence = Map.get(request, "evidence_packets", [])
+      verifiers = Map.get(request, "verifier_outputs", [])
+      approvals = Map.get(request, "approval_records", [])
+      evidence_ids = MapSet.new(evidence, & &1["evidence_id"])
+      verifier_ids = MapSet.new(verifiers, & &1["verifier_output_id"])
+      approval_ids = MapSet.new(approvals, & &1["approval_id"])
+      journal_evidence = MapSet.new(Map.get(journal, "evidence_refs", []))
+      journal_verifiers = MapSet.new(Map.get(journal, "verifier_output_refs", []))
+      journal_approvals = MapSet.new(Map.get(journal, "approval_record_refs", []))
+      phases = MapSet.new(evidence, & &1["evidence_phase"])
+
+      cond do
+        MapSet.size(approval_ids) != 1 ->
+          {:error, :approval_record_count_invalid}
+
+        Enum.any?(approvals, &(&1["decision"] != "approved")) ->
+          {:error, :approval_not_approved}
+
+        phases != MapSet.new(["pre_effect", "post_effect"]) ->
+          {:error, :evidence_phases_incomplete}
+
+        MapSet.size(verifier_ids) != 2 ->
+          {:error, :verifier_output_count_invalid}
+
+        MapSet.size(evidence_ids) != 2 ->
+          {:error, :evidence_packet_count_invalid}
+
+        journal_evidence != evidence_ids ->
+          {:error, :journal_evidence_refs_mismatch}
+
+        journal_verifiers != verifier_ids ->
+          {:error, :journal_verifier_refs_mismatch}
+
+        journal_approvals != approval_ids ->
+          {:error, :journal_approval_refs_mismatch}
+
+        Map.get(journal, "artifact_refs", []) == [] ->
+          {:error, :journal_artifact_refs_missing}
+
+        true ->
+          :ok
+      end
+    else
+      :ok
+    end
   end
 
   defp stringify_keys(map) when is_map(map) do

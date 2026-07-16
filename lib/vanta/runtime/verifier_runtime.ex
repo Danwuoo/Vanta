@@ -23,7 +23,10 @@ defmodule Vanta.VerifierRuntime do
 
   def verify(step, evidence, context) do
     missing_fields = missing_evidence_fields(evidence)
-    forbidden_side_effect? = step["side_effect_class"] not in Vanta.allowed_side_effect_classes()
+
+    forbidden_side_effect? =
+      not Vanta.side_effect_allowed?(step["action_type"], step["side_effect_class"])
+
     policy_violations = policy_violations(step, context)
 
     cond do

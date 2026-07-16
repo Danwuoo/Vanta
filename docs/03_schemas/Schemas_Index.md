@@ -18,10 +18,11 @@ Post-Stage-1 runtime. `Vanta.Schema` loads validation contracts from this
 docs-local path. Packaged runtime assets require a later accepted migration gate
 with loader, package, and test changes.
 
-Post-Stage-1 Context OS and Side-Effect schema impact reviews are review
-documents. They record no-change planning decisions for their batches and do not
-add schema enum behavior, runtime action names, memory writes, irreversible
-effects, or full Context OS behavior.
+Post-Stage-1 Context OS and G8 Side-Effect schema impact reviews remain
+historical no-change planning decisions. The separately accepted G10 review
+adds one standalone approval contract and the explicitly scoped fixture-commit
+shape; it does not add memory writes, irreversible effects, external targets,
+or full Context OS behavior.
 
 ## Complete Schema List
 
@@ -33,6 +34,7 @@ effects, or full Context OS behavior.
 | `evidence_packet.schema.json` | Runtime schema | Structured evidence for verifier, audit, recovery, and regression handling. It is not an explanation field. |
 | `verifier_output.schema.json` | Runtime schema | Verifier decision and diagnostics. Verifier Runtime is not limited to final-answer judging. |
 | `episode_journal.schema.json` | Runtime schema | Audit and replay journal for runtime episodes. It is not durable memory. |
+| `approval_record.schema.json` | Runtime schema | Standalone approval decision and exact action/target/candidate/policy/time scope for G10; it is not verifier output or evidence. |
 | `persistence_manifest.schema.json` | Persistence schema | Fixture-local episode lifecycle, accepted state/journal pointers, and storage/runtime/hash-policy versions. |
 | `persisted_artifact.schema.json` | Persistence schema | Immutable typed artifact envelope; it does not replace core payload schemas. |
 | `recovery_record.schema.json` | Persistence schema | Prepared-effect, crash-window, rollback, and recovery metadata. |
@@ -53,6 +55,7 @@ effects, or full Context OS behavior.
 - `evidence_packet.schema.json`
 - `verifier_output.schema.json`
 - `episode_journal.schema.json`
+- `approval_record.schema.json`
 - `persistence_manifest.schema.json`
 - `persisted_artifact.schema.json`
 - `recovery_record.schema.json`
@@ -110,7 +113,8 @@ distributed storage, durable memory, or external side effects.
 | `Post_Stage_1_Context_OS_Schema_Impact_Review.md` | Context OS planning review. No schema changes in the planning batch. |
 | `Post_Stage_1_Side_Effect_Schema_Impact_Review.md` | Side-effect planning review. No schema changes and no executable `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` expansion in the planning batch. |
 | `Post_Stage_1_Persistence_Schema_Impact_Review.md` | `PS1-G9` impact review. Adds three persistence schemas while preserving existing core enum and payload authority. |
+| `Fixture_Local_Committable_Schema_Impact_Review.md` | `PS1-G10` impact review. Adds Approval Record authority, one explicit action payload, typed approval/artifact refs, and two-phase evidence fields only for the named copied-fixture path. |
 
-These review documents should be routed from manifest, spec, experiment, and
-evaluation planning documents when schema impact is being discussed. They should
-not be cited as evidence that schema behavior has changed.
+These reviews should be routed from manifest, spec, experiment, and evaluation
+documents when schema impact is discussed. The no-change reviews do not prove a
+schema change; G9 and G10 authorize only the changes their reviews enumerate.

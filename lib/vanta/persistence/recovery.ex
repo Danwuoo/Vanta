@@ -52,6 +52,66 @@ defmodule Vanta.Persistence.Recovery do
     end
   end
 
+  def prepare_committable(context, workspace, step, pre_state_hash, opts \\ []) do
+    identity = get_in(step, ["action_payload", "target_identity"])
+    target_path = identity && identity["committed_path"]
+
+    with :ok <- require_committable(step),
+         :ok <- require_path(target_path),
+         {:ok, target_abs} <- PathGuard.safe_resolve(workspace, target_path) do
+      backup_dir = PathGuard.resolve!(workspace, ".vanta_persistence_backups")
+      File.mkdir_p!(backup_dir)
+      safe_step = String.replace(step["step_id"], ~r/[^A-Za-z0-9_.-]/, "_")
+      backup_path = Path.join(backup_dir, safe_step <> ".bak")
+      metadata_path = Path.join(backup_dir, safe_step <> ".metadata.json")
+      target_preexisting = File.regular?(target_abs)
+      pre_effect_hash = if target_preexisting, do: Hash.file_hash(target_abs), else: "missing"
+
+      backup_hash =
+        if target_preexisting do
+          File.cp!(target_abs, backup_path)
+          Hash.file_hash(backup_path)
+        else
+          nil
+        end
+
+      backup_metadata = %{
+        "backup_policy" => "fixture_commit_restore",
+        "path" => target_path,
+        "backup_path" =>
+          if(target_preexisting, do: PathGuard.relative(workspace, backup_path), else: nil),
+        "metadata_path" => PathGuard.relative(workspace, metadata_path),
+        "backup_hash" => backup_hash,
+        "pre_effect_hash" => pre_effect_hash,
+        "target_preexisting" => target_preexisting
+      }
+
+      File.write!(metadata_path, Jason.encode!(backup_metadata, pretty: true))
+
+      record = %{
+        "recovery_id" => "recovery_#{step["step_id"]}",
+        "episode_id" => step["episode_id"],
+        "step_id" => step["step_id"],
+        "status" => "prepared",
+        "crash_window" => Keyword.get(opts, :crash_window, "none") |> to_string(),
+        "target_identity" =>
+          identity
+          |> Map.put("pre_effect_hash", pre_effect_hash)
+          |> Map.put("candidate_hash", get_in(step, ["action_payload", "candidate_hash"]))
+          |> Map.put(
+            "approval_record_ref",
+            get_in(step, ["action_payload", "approval_record_ref"])
+          ),
+        "pre_state_hash" => pre_state_hash,
+        "backup_metadata" => backup_metadata,
+        "effect_applied" => false,
+        "rollback_status" => "not_started"
+      }
+
+      Persistence.record_prepared_effect(context, record)
+    end
+  end
+
   def mark_effect_applied(
         context,
         recovery_record,
@@ -168,38 +228,58 @@ defmodule Vanta.Persistence.Recovery do
   defp restore_backup(workspace, record) do
     metadata = record["backup_metadata"]
     target = PathGuard.resolve!(workspace, metadata["path"])
-    backup = PathGuard.resolve!(workspace, metadata["backup_path"])
-    File.cp!(backup, target)
 
-    if Hash.file_hash(target) == metadata["pre_effect_hash"] do
-      :ok
+    if metadata["target_preexisting"] == false do
+      File.rm(target)
+
+      if File.exists?(target), do: {:error, :rollback_target_still_exists}, else: :ok
     else
-      {:error, :rollback_hash_mismatch}
+      backup = PathGuard.resolve!(workspace, metadata["backup_path"])
+      File.cp!(backup, target)
+
+      if Hash.file_hash(target) == metadata["pre_effect_hash"] do
+        :ok
+      else
+        {:error, :rollback_hash_mismatch}
+      end
     end
   end
 
   defp target_matches_pre_effect?(workspace, record) do
     metadata = record["backup_metadata"]
 
-    with path when is_binary(path) <- metadata["path"],
-         {:ok, abs_path} <- PathGuard.safe_resolve(workspace, path),
-         true <- File.regular?(abs_path) do
-      Hash.file_hash(abs_path) == metadata["pre_effect_hash"]
+    if metadata["target_preexisting"] == false do
+      with path when is_binary(path) <- metadata["path"],
+           {:ok, abs_path} <- PathGuard.safe_resolve(workspace, path) do
+        not File.exists?(abs_path)
+      else
+        _other -> false
+      end
     else
-      _other -> false
+      with path when is_binary(path) <- metadata["path"],
+           {:ok, abs_path} <- PathGuard.safe_resolve(workspace, path),
+           true <- File.regular?(abs_path) do
+        Hash.file_hash(abs_path) == metadata["pre_effect_hash"]
+      else
+        _other -> false
+      end
     end
   end
 
   defp backup_valid?(workspace, record) do
     metadata = record["backup_metadata"]
 
-    with path when is_binary(path) <- metadata["backup_path"],
-         {:ok, abs_path} <- PathGuard.safe_resolve(workspace, path),
-         true <- File.regular?(abs_path) do
-      Hash.file_hash(abs_path) == metadata["backup_hash"] and
-        metadata["backup_hash"] == metadata["pre_effect_hash"]
+    if metadata["target_preexisting"] == false do
+      true
     else
-      _other -> false
+      with path when is_binary(path) <- metadata["backup_path"],
+           {:ok, abs_path} <- PathGuard.safe_resolve(workspace, path),
+           true <- File.regular?(abs_path) do
+        Hash.file_hash(abs_path) == metadata["backup_hash"] and
+          metadata["backup_hash"] == metadata["pre_effect_hash"]
+      else
+        _other -> false
+      end
     end
   end
 
@@ -214,6 +294,15 @@ defmodule Vanta.Persistence.Recovery do
 
   defp require_reversible(%{"side_effect_class" => "REVERSIBLE"}), do: :ok
   defp require_reversible(_step), do: {:error, :not_reversible}
+
+  defp require_committable(%{
+         "action_type" => "commit_fixture_document_candidate",
+         "side_effect_class" => "COMMITTABLE",
+         "rollback_policy" => "fixture_commit_restore"
+       }),
+       do: :ok
+
+  defp require_committable(_step), do: {:error, :not_fixture_local_committable}
 
   defp require_path(path) when is_binary(path), do: :ok
   defp require_path(_path), do: {:error, :missing_target_path}

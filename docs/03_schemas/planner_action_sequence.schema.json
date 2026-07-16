@@ -58,6 +58,7 @@
         "compute_diff",
         "apply_reversible_patch",
         "record_compensable_action",
+        "commit_fixture_document_candidate",
         "validate_artifact"
       ]
     },
@@ -131,6 +132,18 @@
             },
             "action_payload": {
               "$ref": "#/definitions/applyReversibleStructuredEditPayload"
+            }
+          }
+        },
+        {
+          "properties": {
+            "action_type": {
+              "enum": [
+                "commit_fixture_document_candidate"
+              ]
+            },
+            "action_payload": {
+              "$ref": "#/definitions/commitFixtureDocumentCandidatePayload"
             }
           }
         }
@@ -281,6 +294,52 @@
         }
       },
       "additionalProperties": false
+    },
+    "commitFixtureDocumentCandidatePayload": {
+      "type": "object",
+      "required": [
+        "target_identity",
+        "source_hash",
+        "candidate_hash",
+        "approval_record_ref",
+        "approval_policy_version",
+        "idempotency_key",
+        "rollback_or_compensation_statement"
+      ],
+      "properties": {
+        "target_identity": {"$ref": "#/definitions/fixtureCommitTargetIdentity"},
+        "source_hash": {"$ref": "#/definitions/sha256"},
+        "candidate_hash": {"$ref": "#/definitions/sha256"},
+        "approval_record_ref": {"type": "string", "minLength": 1},
+        "approval_policy_version": {"type": "string", "minLength": 1},
+        "idempotency_key": {"type": "string", "minLength": 1},
+        "rollback_or_compensation_statement": {"const": "fixture_commit_restore"}
+      },
+      "additionalProperties": false
+    },
+    "fixtureCommitTargetIdentity": {
+      "type": "object",
+      "required": [
+        "fixture_id",
+        "workspace_id",
+        "workspace_marker_path",
+        "source_path",
+        "candidate_path",
+        "committed_path"
+      ],
+      "properties": {
+        "fixture_id": {"type": "string", "minLength": 1},
+        "workspace_id": {"type": "string", "minLength": 1},
+        "workspace_marker_path": {"type": "string", "minLength": 1},
+        "source_path": {"$ref": "#/definitions/relativePath"},
+        "candidate_path": {"$ref": "#/definitions/relativePath"},
+        "committed_path": {"$ref": "#/definitions/relativePath"}
+      },
+      "additionalProperties": false
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
     },
     "relativePath": {
       "type": "string",

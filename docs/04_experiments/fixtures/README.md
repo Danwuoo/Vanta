@@ -99,10 +99,16 @@ as immutable and records pre-run and post-run tree hashes.
 
 ## Boundaries
 
+Experiment 007 uses a separate immutable fixture family under
+`fixture_local_committable_execution/`: 28 JSON case records and a workspace
+template. The runner copies the template to a temporary workspace before every
+effect; the catalog source is never a commit target.
+
 - This catalog does not change fixture inclusion rules, schemas, sample-frame
   requirements, metric policy, or closure status.
 - This catalog does not authorize full Context OS, memory writes,
-  `COMMITTABLE` execution, `IRREVERSIBLE` execution, external effects, or
-  production deployment.
+  `IRREVERSIBLE` execution, external effects, production deployment, or any
+  `COMMITTABLE` execution beyond the separately accepted G10 copied-fixture
+  action.
 - Measured results remain in result directories and reports, not in this
   catalog.

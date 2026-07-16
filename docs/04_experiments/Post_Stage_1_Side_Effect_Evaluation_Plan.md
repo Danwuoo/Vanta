@@ -191,8 +191,9 @@ planning pilot and do not authorize a run.
   structured-edit output extension.
 - Approval is a standalone typed artifact referenced from the Episode Journal,
   not a verifier result, label, fixture oracle, or inline journal object.
-- A separately authored and accepted `Fixture-Local Document Commit Execution
-  v0` successor gate is required before implementation or execution.
+- The later separately accepted `PS1-G10` gate now provides the one scoped
+  implementation/execution authority for strict-restore candidate promotion in
+  marked ephemeral copied fixtures; this G8 plan itself remains planning-only.
 
 For `fixture_commit_supersede`, evaluation beyond declaration completeness must
 predeclare and measure at least:
@@ -206,8 +207,9 @@ predeclare and measure at least:
 | Stale or conflicting predecessor | Changed current hash, wrong active predecessor, or same key with a different request is rejected without mutation. |
 | Restart and replay | Restart recovery, audit completeness, ordered lineage, pointer transition, refs, hashes, and final state replay exactly. |
 
-No minimum-evidence item in this section has been executed or measured. A
-future plan must set exact metrics and floors before running the successor.
+No `fixture_commit_supersede` minimum-evidence item in this section has been
+executed or measured. Experiment 007 measures strict restore only; a future
+supersession plan must set exact metrics and floors before running.
 
 ## Pre-Run Gates For The Planning Pilot
 

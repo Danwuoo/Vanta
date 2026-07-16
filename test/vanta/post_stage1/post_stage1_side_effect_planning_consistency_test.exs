@@ -166,7 +166,7 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
   end
 
   @tag :fast_unit
-  test "COMMITTABLE planning placeholder remains outside runtime schemas and module wiring" do
+  test "G8 remains historical planning-only while G10 owns the explicit runtime schema" do
     runtime_plan = read_doc("06_engineering/Runtime_Module_Plan.md")
     spec = read_doc("02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md")
     schema_review = read_doc("03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md")
@@ -179,19 +179,19 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
 
     assert_contains(
       runtime_plan,
-      "It must not be wired into the Planner Adapter, Execution IR Compiler, Action Executor, Verifier Runtime, Commit Controller, or Episode Journal as executable runtime behavior without a later accepted schema, implementation, fixture, test, and evaluation batch.",
+      "The later accepted `PS1-G10` successor is",
       "Runtime Module Plan"
     )
 
     assert_contains(
       spec,
-      "The future action name `#{@placeholder_action}` is a planning placeholder only. It is not present in current action schemas, must not appear in `allowed_actions`, and must not be sent to `Vanta.Runtime.run_task/3` under this batch.",
+      "Within the completed `PS1-G8` planning batch, the future action name",
       "Side-effect spec"
     )
 
     assert_contains(
       schema_review,
-      "Do not add `#{@placeholder_action}` or any other `COMMITTABLE` action name.",
+      "The later separately accepted `PS1-G10` schema batch applies the upstream shape",
       "Side-effect schema impact review"
     )
 
@@ -202,8 +202,8 @@ defmodule Vanta.PostStage1SideEffectPlanningConsistencyTest do
         "03_schemas/benchmark_task.schema.json"
       ],
       fn relative_path ->
-        refute read_doc(relative_path) =~ @placeholder_action,
-               "#{relative_path} unexpectedly exposes #{@placeholder_action}"
+        assert read_doc(relative_path) =~ @placeholder_action,
+               "#{relative_path} must expose the G10-owned #{@placeholder_action}"
       end
     )
   end

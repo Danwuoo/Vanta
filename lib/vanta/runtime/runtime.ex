@@ -10,6 +10,7 @@ defmodule Vanta.Runtime do
     EvidenceBuilder,
     ExecutionIRCompiler,
     FixtureAcceptance,
+    FixtureCommit,
     Persistence,
     PlannerAdapter,
     StateManager,
@@ -39,6 +40,7 @@ defmodule Vanta.Runtime do
             steps: [],
             evidence_packets: [],
             verifier_outputs: [],
+            approval_records: [],
             observations: [],
             invalid_actions: 0,
             rollback_status: "not_applicable",
@@ -47,7 +49,8 @@ defmodule Vanta.Runtime do
             crash: nil,
             persistence: persistence,
             persistence_commits: [],
-            idempotent_replays: 0
+            idempotent_replays: 0,
+            committable_effect_count: 0
           }
 
           acc =
@@ -106,6 +109,7 @@ defmodule Vanta.Runtime do
        steps: acc.steps,
        evidence_packets: acc.evidence_packets,
        verifier_outputs: acc.verifier_outputs,
+       approval_records: acc.approval_records,
        journal: journal,
        observations: acc.observations,
        total_actions: length(action_sequence["actions"]),
@@ -115,7 +119,8 @@ defmodule Vanta.Runtime do
        task_success?: task_success?,
        persistence: persistence_descriptor(acc.persistence),
        persistence_commits: acc.persistence_commits,
-       idempotent_replays: acc.idempotent_replays
+       idempotent_replays: acc.idempotent_replays,
+       committable_effect_count: acc.committable_effect_count
      }}
   end
 
@@ -189,6 +194,39 @@ defmodule Vanta.Runtime do
     end
   end
 
+  defp run_compiled_action(
+         task,
+         workspace,
+         %{"action_type" => "commit_fixture_document_candidate"} = step,
+         acc,
+         opts
+       ) do
+    case FixtureCommit.execute(
+           task,
+           workspace,
+           step,
+           acc.state,
+           acc.journal,
+           acc.persistence,
+           opts
+         ) do
+      {:ok, outcome} ->
+        merge_fixture_commit_outcome(acc, outcome)
+
+      {:error, outcome} ->
+        acc
+        |> merge_fixture_commit_outcome(outcome)
+        |> Map.update!(:invalid_actions, &(&1 + 1))
+        |> Map.put(:stop?, true)
+
+      {:crash, point, outcome} ->
+        acc
+        |> merge_fixture_commit_outcome(outcome)
+        |> Map.put(:crash, point)
+        |> Map.put(:stop?, true)
+    end
+  end
+
   defp run_compiled_action(task, workspace, step, acc, opts) do
     identity = request_identity(task, step, acc.state)
     request_hash = Persistence.logical_request_hash(%{"request_identity" => identity})
@@ -237,6 +275,75 @@ defmodule Vanta.Runtime do
             %{acc | crash: {:persistence_prepare_failed, reason}, stop?: true, status: "aborted"}
         end
     end
+  end
+
+  defp merge_fixture_commit_outcome(acc, outcome) do
+    step_status =
+      case outcome.status do
+        "committed" -> "committed"
+        "aborted" -> "aborted"
+        _status -> "rejected"
+      end
+
+    step = Map.put(outcome.step, "status", step_status)
+
+    journal =
+      outcome.journal
+      |> ensure_journal_step(step)
+      |> record_fixture_commit_refs(
+        outcome.evidence_packets,
+        outcome.verifier_outputs,
+        outcome.approval_records
+      )
+      |> EpisodeJournal.record_state(outcome.state)
+      |> EpisodeJournal.set_commit_status(outcome.status)
+      |> EpisodeJournal.set_rollback_status(outcome.rollback_status)
+
+    %{
+      acc
+      | state: outcome.state,
+        journal: journal,
+        steps: append_unique_by_id(acc.steps, step, "step_id"),
+        evidence_packets:
+          append_unique_many(acc.evidence_packets, outcome.evidence_packets, "evidence_id"),
+        verifier_outputs:
+          append_unique_many(
+            acc.verifier_outputs,
+            outcome.verifier_outputs,
+            "verifier_output_id"
+          ),
+        approval_records:
+          append_unique_many(acc.approval_records, outcome.approval_records, "approval_id"),
+        observations: acc.observations ++ outcome.observations,
+        rollback_status: outcome.rollback_status,
+        status: outcome.status,
+        persistence_commits: acc.persistence_commits ++ List.wrap(outcome.persistence_commit),
+        idempotent_replays:
+          acc.idempotent_replays + if(outcome.idempotent_replay, do: 1, else: 0),
+        committable_effect_count: acc.committable_effect_count + outcome.effect_count
+    }
+  end
+
+  defp ensure_journal_step(journal, step) do
+    if Enum.any?(journal["steps"], &(&1["step_id"] == step["step_id"])) do
+      journal
+    else
+      EpisodeJournal.record_step(journal, step)
+    end
+  end
+
+  defp record_fixture_commit_refs(journal, evidence, verifiers, approvals) do
+    journal = Enum.reduce(evidence, journal, &EpisodeJournal.record_evidence(&2, &1))
+    journal = Enum.reduce(verifiers, journal, &EpisodeJournal.record_verifier_output(&2, &1))
+    Enum.reduce(approvals, journal, &EpisodeJournal.record_approval(&2, &1))
+  end
+
+  defp append_unique_many(values, new_values, key) do
+    Enum.reduce(new_values, values, &append_unique_by_id(&2, &1, key))
+  end
+
+  defp append_unique_by_id(values, value, key) do
+    if Enum.any?(values, &(&1[key] == value[key])), do: values, else: values ++ [value]
   end
 
   defp execute_and_verify(task, workspace, step, acc, recovery_record, key, identity, opts) do

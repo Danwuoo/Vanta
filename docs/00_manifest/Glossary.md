@@ -28,6 +28,8 @@ This glossary freezes working terminology for the Vanta documentation system. De
 | logical commit | One idempotency-keyed accepted persistence transition whose typed artifacts, Canonical State pointer, Episode Journal pointer, and commit result are written atomically. |
 | prepared effect | Durable recovery record created before a fixture-local reversible filesystem mutation, containing target identity, pre-effect hash, and backup metadata. It is not a committed effect. |
 | hash policy | Versioned rule for selecting and deterministically encoding semantic content before applying the project SHA-256 algorithm. Persistence v0 uses `canonical-json-sha256-v1`. |
+| Approval Record | Standalone runtime authorization artifact whose decision and scope bind an approver, action, target identity, candidate hash, policy version, and validity window. It is distinct from Evidence Packet and Verifier Output. |
+| fixture-local document promotion | The G10-only `commit_fixture_document_candidate` effect that copies one verified candidate into `committed/` inside an explicitly marked ephemeral copied workspace. It does not authorize source, repository, user, external, or production targets. |
 
 ## Open Questions
 

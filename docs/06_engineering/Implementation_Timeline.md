@@ -123,7 +123,23 @@ Post-Stage-1 advancement is governed by
 - Successor persistence gates may address migration beyond v0, concurrent
   multi-process authority, retention operations, or packaged schema assets;
   none are implied by `PS1-G9`.
-- Define any executable `COMMITTABLE` behavior through a later accepted schema,
-  implementation, fixture, test, and evaluation batch.
+- Define any executable `COMMITTABLE` behavior beyond the G10 copied-fixture
+  promotion through a later accepted schema, implementation, fixture, test,
+  and evaluation batch.
 - Define any full Context OS implementation through later accepted specs,
   schemas, evaluation plans, labels, and measured runs.
+
+## Phase 7: Fixture-Local COMMITTABLE Promotion v0
+
+- Gate: accepted `PS1-G10`, scoped to one explicit action inside marked
+  ephemeral copied fixture workspaces.
+- Implementation: standalone approval schema, task-specific runtime dispatch,
+  two-phase evidence/verifier, Persistence v0 prepared intent and transaction,
+  restart recovery, strict restore, audit, and replay.
+- Failure injection: 28 deterministic cases across authorization, hashes,
+  paths, evidence, verifier, idempotency, crash windows, refs, rollback, replay,
+  irreversible classification, and memory-write smuggling.
+- Measured candidate: `20260716_020716`, 28/28 cases and all 15 hard gates
+  passing; accepted by the named G10 closure after the required command set.
+- Claim boundary: no external/production target, irreversible effect, memory
+  write, durable memory, full Context OS, distributed authority, or H1-H5 claim.

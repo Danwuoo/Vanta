@@ -229,6 +229,9 @@ defmodule Vanta.Persistence.MemoryAdapter do
 
     {step_artifacts, state} = append_many(state, "execution_step", request["steps"], episode_id)
 
+    {approval_artifacts, state} =
+      append_many(state, "approval_record", request["approval_records"], episode_id)
+
     {evidence_artifacts, state} =
       append_many(state, "evidence_packet", request["evidence_packets"], episode_id)
 
@@ -256,6 +259,7 @@ defmodule Vanta.Persistence.MemoryAdapter do
       "artifact_ids" =>
         Enum.map(
           step_artifacts ++
+            approval_artifacts ++
             evidence_artifacts ++
             verifier_artifacts ++
             [state_artifact, journal_artifact],

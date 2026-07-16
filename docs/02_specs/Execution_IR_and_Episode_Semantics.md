@@ -119,6 +119,20 @@ must durably record the step identity, target identity, pre-effect hash, backup
 metadata, and unique logical-commit key. Execution IR stays an action contract;
 the persistence manifest and recovery record own storage lifecycle data.
 
+## PS1-G10 Fixture-Local COMMITTABLE Action
+
+`PS1-G10` adds exactly one action, `commit_fixture_document_candidate`, with
+side-effect class `COMMITTABLE`. Its dedicated payload binds the copied
+workspace, source, candidate, committed target, source and candidate hashes,
+target identity, idempotency key, gate policy version, approval record ref,
+strict restore policy, and required pre/post evidence.
+
+The action is not part of the general planner action set. It may compile only
+for a task that explicitly allows the action and `COMMITTABLE`, and only after
+the fixture marker, paths, hashes, Approval Record, and pre-effect verifier
+decision validate. `IRREVERSIBLE`, `MEMORY_WRITE`, external targets, and
+general `COMMITTABLE` dispatch remain blocked.
+
 ## Open Questions
 
 - What is the minimum dependency graph representation for Stage 1?
@@ -127,10 +141,9 @@ the persistence manifest and recovery record own storage lifecycle data.
   executing irreversible external actions?
 - What additional structured target types are needed after the G6 local
   interface is exercised beyond local tests?
-- Resolved pointer: the first future executable `COMMITTABLE` action shape is
-  the explicit `commit_fixture_document_candidate` enum and dedicated payload,
-  subject to a later accepted successor gate; no current enum or allowlist
-  changes are authorized.
+- Resolved by `PS1-G10`: the explicit `commit_fixture_document_candidate` enum
+  and dedicated payload are executable only through the task-specific copied-
+  fixture path; no general planner allowlist change is authorized.
 
 ## Related Documents
 

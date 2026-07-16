@@ -124,11 +124,31 @@ fixture-local reversible effect is prepared before filesystem mutation and
 recovered according to
 [Persistence and Recovery Semantics](Persistence_and_Recovery_Semantics.md).
 
+## PS1-G10 Prepared Promotion, Restore, And Replay
+
+Before candidate promotion, SQLite must contain a durable `prepared` intent
+with the idempotency/request identity, target identity, pre-effect target hash,
+backup metadata, and strict `fixture_commit_restore` policy. The file effect
+cannot be committed until post-effect evidence and verifier acceptance exist
+and one SQLite logical transaction persists state, step, Approval Record,
+pre/post evidence, pre/post verifier outputs, Episode Journal, committed
+artifact, and accepted refs.
+
+Same-key same-request retries return the recorded result without another file
+effect. Same-key different-request retries are conflicts. A crash or uncertain
+state never defaults to committed. An uncommitted effect must restore the prior
+target or remove a newly created target; failure to prove that restore becomes
+`recovery_required`.
+
+Strict replay additionally compares approval and committed-artifact refs,
+target identity, candidate/committed hashes, evidence phases, idempotency
+identity, and recovery result. Missing or corrupt refs and injected mismatch
+must fail replay. G10 v0 does not execute `fixture_commit_supersede`.
+
 ## Open Questions
 
-- Resolved pointer: copied-workspace Document Ops candidate promotion is the
-  first post-`PS1-G8` side-effect domain; executable behavior still requires a
-  separately accepted successor gate.
+- Resolved by `PS1-G10`: copied-workspace Document Ops candidate promotion is
+  executable only within the accepted task-specific G10 boundary.
 - Resolved pointer: Canonical State hash granularity is defined by `PS1-G9` and
   `canonical-json-sha256-v1`.
 - How should compensation be represented for non-reversible actions beyond the

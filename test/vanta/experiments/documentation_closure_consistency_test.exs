@@ -46,12 +46,7 @@ defmodule Vanta.DocumentationClosureConsistencyTest do
     "00_manifest/Post_Stage_1_Lane_A_20260601_113121_Closure.md",
     "00_manifest/Project_Manifest.md",
     "00_manifest/Traceability_Matrix.md",
-    "02_specs/Context_OS_and_Working_Set_Compiler_Note.md",
-    "02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md",
-    "03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md",
-    "04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md",
-    "05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md",
-    "05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md"
+    "02_specs/Context_OS_and_Working_Set_Compiler_Note.md"
   ]
 
   test "Phase 5 docs do not drift back to planned after Experiment 005 closure" do

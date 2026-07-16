@@ -4,7 +4,7 @@
 
 This document is the tracking index for post-Stage-1 gate items. It records the
 artifact status, proposed artifact path, routing dependencies, and downstream
-unlocks for `PS1-G0` through `PS1-G9`.
+unlocks for `PS1-G0` through `PS1-G10`.
 
 This inventory is not an acceptance policy, experiment plan, validation report,
 or replacement for [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md).
@@ -14,7 +14,7 @@ expansion.
 
 ## Scope
 
-This inventory covers `PS1-G1` through `PS1-G9` as defined by
+This inventory covers `PS1-G1` through `PS1-G10` as defined by
 [Post-Stage-1 Advancement Gate](Post_Stage_1_Advancement_Gate.md). It retains
 `PS1-G0` only as a met prerequisite so readers can see the full post-smoke
 routing path.
@@ -47,6 +47,7 @@ successor manifest gate that explicitly supersedes it.
 | `PS1-G7` | Broader Runtime Scope | `Accepted` | [Context OS Expansion Gate](Context_OS_Expansion_Gate.md); draft planning bundle [spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md), [schema impact review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md), and [evaluation plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md) | `docs/00_manifest/Context_OS_Expansion_Gate.md`; `docs/02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md`; `docs/03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md`; `docs/04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md` | `PS1-G0`; Phase 5 gate; Experiment 005 closure; Working Set Compiler note; `PS1-G1` through `PS1-G5` policies; `20260601_113121` accepted Lane A closure run; active Lane B packet-level human labels | Context OS specification and evaluation planning only | Runtime implementation, schema changes, full Context OS validation, learned retrieval, compression, memory governance, and H3 validation are not authorized. |
 | `PS1-G8` | Broader Runtime Scope | `Accepted; named planning pilot complete` | [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md); first planning bundle [spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md), [schema impact review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md), [evaluation plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md), and [measured planning report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md) | Planning sources plus `docs/04_experiments/results/side_effect_planning/20260715_223158/` and `docs/05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md` | `PS1-G0`; Stage 1 side-effect allowances; Commit Abort Replay Semantics; Evidence Packet and Verifier Runtime | Planning validator, immutable fixtures, rerunnable runner, and complete named fixture-local Document Ops `COMMITTABLE` planning pilot | Runtime execution of `COMMITTABLE`, `IRREVERSIBLE`, or `MEMORY_WRITE` actions is not authorized; rollback must not be assumed; planning labels and fixture oracles are not runtime approvals; the pilot is not closure acceptance. |
 | `PS1-G9` | Storage and Persistence Gate | `Accepted` | [Storage and Persistence Gate](Storage_and_Persistence_Gate.md), [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md), [schema impact review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md), [Experiment 006](../04_experiments/Experiment_006_Persistence_and_Recovery.md), [run report](../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md), and [closure](Post_Stage_1_Persistence_v0_Closure.md) | `docs/00_manifest/Storage_and_Persistence_Gate.md`; `docs/02_specs/Persistence_and_Recovery_Semantics.md`; `docs/03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md`; `docs/04_experiments/Experiment_006_Persistence_and_Recovery.md`; `docs/05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md`; `docs/00_manifest/Post_Stage_1_Persistence_v0_Closure.md` | `PS1-G0`; Stage 1 commit/replay contracts; `PS1-G6` fixture-local reversible edits; docs-local schema authority | `20260715_114209` is `accepted_by_closure`; named SQLite v0 is fixture-local persistence authority | Validation is limited to `Fixture-Local SQLite Persistence v0`; no production, distributed, durable-memory, external-side-effect, architecture, or H1-H5 claim. |
+| `PS1-G10` | Fixture-local executable side effect | `Accepted; accepted_by_closure` | [Fixture-Local COMMITTABLE Execution Gate](Fixture_Local_Committable_Execution_Gate.md), [implementation spec](../02_specs/Fixture_Local_Committable_Document_Promotion_v0.md), [schema impact review](../03_schemas/Fixture_Local_Committable_Schema_Impact_Review.md), [Experiment 007](../04_experiments/Experiment_007_Fixture_Local_Committable_Execution.md), [run report](../05_evaluation/Experiment_007_Fixture_Local_Committable_Execution_Run_Report.md), and [closure](Post_Stage_1_Fixture_Local_Committable_v0_Closure.md) | G10 gate/spec/schema/protocol, 28 fixtures, run `20260716_020716`, report, implementation, tests, and closure | `PS1-G8`; accepted executable upstream decisions; `PS1-G9` closure | `validated for Fixture-Local COMMITTABLE Document Promotion v0`; one named action in marked ephemeral copied fixtures | No general planner authority, source/repository/user/external/production target, irreversible effect, memory write, distributed authority, production readiness, broad side-effect safety, or H1-H5 claim. |
 
 ## Dependency Order
 
@@ -187,12 +188,11 @@ successor manifest gate that explicitly supersedes it.
   production readiness, or H5 validation.
 - The 2026-07-16 upstream decisions close the action-shape, approval-schema,
   first-domain, successor-authorization, and supersession-evidence questions.
-  A possible `Fixture-Local Document Commit Execution v0` gate must be authored
-  and accepted separately before explicit
-  `commit_fixture_document_candidate` implementation or execution in marked
-  ephemeral copied fixtures. This inventory records routing only; it does not
-  add a gate ID, create PS1-G10 closure, change schemas or allowlists, or
-  authorize execution.
+  The separately accepted `PS1-G10` gate now authorizes and implements the
+  explicit `commit_fixture_document_candidate` path only in marked ephemeral
+  copied fixtures. Run `20260716_020716` is a 28/28 passing acceptance
+  candidate accepted by the named G10 closure; this inventory does not itself
+  create or broaden the action-specific allowlist.
 - `PS1-G9` is accepted as the storage/persistence successor gate. Its
   implementation, measured-run, and closure states remain separately tracked
   by [Storage and Persistence Gate](Storage_and_Persistence_Gate.md). Run
