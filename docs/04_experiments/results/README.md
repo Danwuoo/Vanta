@@ -20,6 +20,7 @@ separate evaluation report and manifest closure say so.
 | `experiment_004/` | Stage 1 targeted recovery local smoke run artifacts. | Historical Stage 1 local smoke family. | Yes, for the completed local smoke result. | No |
 | `experiment_005/` | Stage 1 Working Set Compiler v0 local smoke run artifacts. | Historical Stage 1 local smoke family. | Yes, for the completed local smoke result. | No |
 | `post_stage_1_larger_sample/` | Lane A larger controlled Document Ops sample run artifacts for `PS1-LA-SAMPLE-002`. | Active Lane A result family. It contains failed, threshold-passing candidate, superseded, timeout or partial, and closure-accepted provenance. | Yes, for completed run directories with `run.json`, `summary.md`, and `fixture_inventory.md`; not every directory is accepted. | No |
+| `context_os_planning/` | `PS1-G7` deterministic artifact-backed Context OS planning evaluation artifacts. | `20260719_224209` is the complete post-freeze evaluation pilot over the accepted Lane A run and active frozen Lane B packet. | Evaluation evidence only; no model or OpenClaw measured run occurred in this pilot. | Yes |
 | `side_effect_planning/` | PS1-G8 side-effect planning scaffolds and measured planning-pilot artifacts. | `20260701_201804` is the historical scaffold; `20260715_223158` is the complete 10-fixture `committable_docops_planning_pilot`. | Planning validation only: all 15 planning metrics passed and all 16 process floors were `0`; no side-effect runtime execution occurred. | Yes |
 | `persistence_and_recovery/` | `PS1-G9` Experiment 006 SQLite persistence and deterministic failure-injection artifacts. | Active persistence result family. `20260715_114052` is retained `failed_no_acceptance`; `20260715_114209` is the complete 20-case `pass_acceptance_candidate` used by measured report and closure review. | Yes. Deterministic protocol-boundary injection is measured; no OS-level process-kill claim. | No |
 | `fixture_local_committable_execution/` | `PS1-G10` Experiment 007 approval, promotion, recovery, rollback, audit, and strict replay artifacts. | `20260716_015841` preserves a 27/28 `failed_no_acceptance` development diagnostic; repaired complete run `20260716_020716` is the 28-case `pass_acceptance_candidate` accepted by the named manifest closure. | Yes for the closure run; the predecessor is explicitly development-diagnostic provenance. | No |
@@ -35,6 +36,14 @@ That acceptance does not validate H1-H5, authorize full Context OS, approve
 production readiness, authorize memory writes, authorize irreversible effects,
 authorize runtime execution of side-effect planning surfaces, or promote
 OpenClaw local harness arms to pure model-only baselines.
+
+The `context_os_planning/20260719_224209/` result completes only the named
+artifact-backed `PS1-G7` evaluation pilot. It validates frozen controls,
+source/fixture/context traceability, Lane A structural/oracle metrics, Lane B
+human-label counts and post-freeze interpretation, reviewer-visible blinding,
+process floors, and deterministic output. It is not a full Context OS
+experiment, H3 validation, runtime or schema authority, production readiness,
+or a new closure decision.
 
 The `side_effect_planning/20260715_223158/` result completes only the named
 planning pilot. It is not closure acceptance, runtime approval, executable
@@ -83,6 +92,8 @@ not by mutating historical run artifacts.
 - [Post-Stage-1 Side-Effect Evaluation Plan](../Post_Stage_1_Side_Effect_Evaluation_Plan.md)
 - [Post-Stage-1 Lane A 20260601_113121 Run Report](../../05_evaluation/Post_Stage_1_Lane_A_20260601_113121_Run_Report.md)
 - [Post-Stage-1 Lane A 20260601_113121 Closure](../../00_manifest/Post_Stage_1_Lane_A_20260601_113121_Closure.md)
+- [Post-Stage-1 Context OS Evaluation Plan](../Post_Stage_1_Context_OS_Evaluation_Plan.md)
+- [PS1-G7 Artifact-Backed Evaluation Pilot Run Report](../../05_evaluation/Post_Stage_1_Context_OS_Evaluation_Pilot_Run_Report.md)
 - [Experiment 006 Persistence and Recovery](../Experiment_006_Persistence_and_Recovery.md)
 - [Experiment 006 Persistence and Recovery Run Report](../../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
 - [Post-Stage-1 Persistence v0 Closure](../../00_manifest/Post_Stage_1_Persistence_v0_Closure.md)

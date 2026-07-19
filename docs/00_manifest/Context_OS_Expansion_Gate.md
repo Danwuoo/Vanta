@@ -19,7 +19,13 @@ Gate policy ID: `PS1-LC-CTX-GATE-001`
 
 Status: `Accepted as PS1-G7 gate-definition artifact` on 2026-05-11.
 
-Run status: `Not yet run`.
+Original Lane A model run status: `20260601_113121` completed and
+`accepted_by_closure` for the named Lane A scope.
+
+Artifact-backed G7 evaluation pilot status: `complete` at
+`docs/04_experiments/results/context_os_planning/20260719_224209/`.
+
+Full Context OS experiment status: `Not yet run`.
 
 Label status: `complete_reported` for the first active `20260601_113121`
 Lane B packet.
@@ -45,6 +51,14 @@ use the `20260601_113121` Lane A closure run as input. They are planning
 artifacts only. They use the active Lane B labels as planning evidence, but
 they do not change schemas, implement runtime behavior, authorize memory writes
 or learned retrieval, or validate H3.
+
+The deterministic `20260719_224209` evaluation pilot validates this planning
+bundle against the frozen Lane A and Lane B artifacts without rerunning a model
+or OpenClaw. It uses an explicitly non-native, evaluation-only coordinator
+attestation for the OpenClaw agent and embedded-context-only control fields
+that were absent from the source run serialization. The pilot adds no Context
+OS runtime module, action, schema, memory authority, or side-effect authority,
+and it is not a new `accepted_by_closure` decision.
 
 The earlier `20260530_141649` packet is superseded historical material only; it
 must not be treated as the active accepted-run source for this gate.
@@ -162,6 +176,7 @@ Reports that do not satisfy this gate must use labels such as
 - [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
 - [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
 - [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
+- [PS1-G7 Artifact-Backed Evaluation Pilot Run Report](../05_evaluation/Post_Stage_1_Context_OS_Evaluation_Pilot_Run_Report.md)
 - [Post-Stage-1 Larger Sample Plan](../04_experiments/Post_Stage_1_Larger_Sample_Plan.md)
 - [Post-Stage-1 Metric Policy](../05_evaluation/Post_Stage_1_Metric_Policy.md)
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)

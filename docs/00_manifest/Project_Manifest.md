@@ -171,8 +171,7 @@ planning only:
 [Context OS Expansion Gate](Context_OS_Expansion_Gate.md) defines the
 conditions for moving beyond deterministic `Working Set Compiler v0`. It does
 not implement full Context OS, change schemas, authorize learned retrieval or
-compression, approve memory governance, collect labels, run experiments, or
-validate H3.
+compression, approve memory governance, or validate H3.
 
 A first `PS1-G7` Context OS planning bundle has been aligned to the
 `20260601_113121` Lane A closure run:
@@ -191,6 +190,16 @@ planning evidence surface only; H3, learned retrieval, memory governance,
 schema changes, runtime implementation, and full Context OS validation remain
 blocked until later accepted specs, schemas, experiments, labels, and
 implementation batches exist.
+
+The first deterministic `PS1-G7` artifact-backed evaluation pilot is complete
+at `docs/04_experiments/results/context_os_planning/20260719_224209/`, with
+[run report](../05_evaluation/Post_Stage_1_Context_OS_Evaluation_Pilot_Run_Report.md).
+It revalidates the accepted Lane A artifacts and active frozen Lane B packet
+without rerunning a model or OpenClaw, reports exact per-fixture budgets and
+arm-level Lane B raw counts, and preserves reviewer-visible blinding. The pilot
+is evaluation tooling only: it creates no new closure decision, full Context
+OS implementation, runtime action, schema authority, memory authority,
+side-effect authority, H3 claim, or production-readiness claim.
 
 Lane C has accepted `PS1-G8` for side-effect specification and evaluation
 planning only:

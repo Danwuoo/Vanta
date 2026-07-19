@@ -5,14 +5,15 @@
 Define the minimum evaluation plan for Context OS planning under `PS1-G7`,
 using the `20260601_113121` Lane A closure run as the measured input.
 
-This plan is not an experiment result. It does not run full Context OS, change
-schemas, or validate H3.
+This plan now has one deterministic artifact-backed evaluation pilot result.
+The pilot is not a new model run or a full Context OS experiment. It does not
+change schemas, add runtime authority, or validate H3.
 
 ## Status
 
 Plan ID: `PS1-LC-CTX-PLAN-001`.
 
-Plan status: `Context OS planning draft`.
+Plan status: `artifact-backed G7 evaluation pilot complete`.
 
 Gate policy version: `PS1-LC-CTX-GATE-001`.
 
@@ -25,9 +26,25 @@ Closure status: `accepted_by_closure` for the named Lane A Document Ops sample.
 Lane B label status: `complete_reported` for the first active
 `20260601_113121` packet.
 
-Run status for this plan: `Not yet run`.
+Original model run status: `20260601_113121` completed and
+`accepted_by_closure` for the named Lane A scope; it was not rerun by this
+pilot.
 
-Implementation status: `Not authorized`.
+Artifact-backed G7 evaluation pilot status: `complete` at
+`docs/04_experiments/results/context_os_planning/20260719_224209/`.
+
+Full Context OS experiment status: `Not yet run`.
+
+Implementation status: evaluation-only tooling is implemented; full Context
+OS implementation remains `Not authorized`.
+
+The pilot used `artifact_backed_post_freeze_evaluation`, loaded the accepted
+Lane A artifacts and active frozen Lane B packet, reconstructed only the
+existing bounded raw-trace and unchanged `Working Set Compiler v0` context
+selection artifacts, and issued zero model calls and zero OpenClaw measured
+runs. The post-hoc coordinator control attestation records `vanta-verifier` and
+`embedded_context_only` only for this evaluation interpretation; those fields
+were not source-run-native metadata and create no runtime authority.
 
 ## Source Evidence
 
@@ -41,6 +58,8 @@ This plan uses:
 - [Post-Stage-1 Lane B 20260601_113121 Blinded Label Packet](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/README.md)
 - [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 - [Coordinator-only post-freeze context unblind memo](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_only_post_freeze_context_unblind_memo.md)
+- [Evaluation-only coordinator control attestation](context_os_planning_control_attestation.json)
+- [PS1-G7 Artifact-Backed Evaluation Pilot Run Report](../05_evaluation/Post_Stage_1_Context_OS_Evaluation_Pilot_Run_Report.md)
 
 ## Evidence Already Supported By Lane A
 
@@ -92,7 +111,38 @@ No arm may be labeled `context_os` unless a later accepted spec defines the
 capability and the report states the implementation boundary. OpenClaw local
 harness arms must not be reported as pure model-only baselines.
 
-## Fixed Controls For A Future Run
+## Fixed Controls For The Artifact-Backed Pilot
+
+The completed pilot validates these exact frozen controls:
+
+- model: `openai-codex/gpt-5.4-mini`
+- harness: `openclaw_agent_local`
+- context planner adapter: `Vanta.OpenClawContextPlannerAdapter`
+- OpenClaw agent: `vanta-verifier`, from the evaluation-only post-hoc
+  coordinator attestation rather than source-run-native metadata
+- prompt / response budgets: `20000` / `12000` characters
+- response format: `json_only`
+- action / recovery attempt limits: `6` / `1`
+- tool policy: `embedded_context_only`, checked against the attested adapter
+  source hash and required no-tool/embedded-context fragments
+- exact baseline arm:
+  `raw_trace_bounded_openclaw_agent_local/openai-codex/gpt-5.4-mini_matched_budget`
+- exact treatment arm:
+  `working_set_compiler_v0_reference_backed_openclaw_agent_local/openai-codex/gpt-5.4-mini_matched_budget`
+
+The source run's global context budget is `null`, with the explicit pilot
+semantics `uses_frozen_per_fixture_budgets`. The complete frozen map is:
+
+| Fixture | Context budget (characters) |
+| --- | ---: |
+| `docops_ws_evidence_packet_001` | 260 |
+| `docops_ws_irrelevant_context_001` | 240 |
+| `docops_ws_omission_trap_001` | 250 |
+| `docops_ws_recovery_context_001` | 270 |
+| `docops_ws_traceability_long_001` | 280 |
+| `docops_ps1_ws_structured_edit_context_001` | 320 |
+
+## Fixed Controls For A Future Full Context OS Run
 
 Any future Context OS evaluation run using this plan must fix before execution:
 
@@ -129,9 +179,11 @@ If human or secondary labels are missing, the report must label subjective
 context-quality metrics as fixture-oracle, automated structural, or
 `Not yet run`, as applicable.
 
-## Future Artifact Contract
+## Artifact Contract
 
-A future run under this plan should write artifacts under:
+The completed artifact-backed pilot writes artifacts under this contract; a
+future authorized run must use an independently timestamped directory under
+the same result family:
 
 ```text
 docs/04_experiments/results/context_os_planning/<timestamp>/
@@ -145,10 +197,11 @@ Required files:
 - `context_artifact_inventory.md`
 - `label_packet_ref.md` or a link to the applicable Lane B packet
 
-The exact machine-readable schema remains the current schema set unless a later
-schema batch is accepted.
+The pilot contract is evaluation-local and does not add a core schema. The
+exact machine-readable runtime schema remains the current schema set unless a
+later schema batch is accepted.
 
-## Pre-Run Gates
+## Pre-Run Gates For A Future Full Context OS Experiment
 
 A future Context OS evaluation run must not start until:
 
@@ -182,7 +235,8 @@ Disallowed report labels in this plan:
 
 ## Non-goals
 
-- This plan does not run an experiment.
+- The completed pilot is a post-freeze artifact evaluation, not a new model or
+  OpenClaw measured experiment.
 - This plan itself did not collect Lane B labels.
 - This plan does not change schemas.
 - This plan does not implement full Context OS.
@@ -202,3 +256,5 @@ Disallowed report labels in this plan:
 - [Post-Stage-1 Labeling Scope and Adjudication Policy](../05_evaluation/Post_Stage_1_Labeling_Scope_and_Adjudication_Policy.md)
 - [Post-Stage-1 Lane B 20260601_113121 Label Report](../05_evaluation/Post_Stage_1_Lane_B_20260601_113121_Label_Report_Skeleton.md)
 - [Coordinator-only post-freeze context unblind memo](../05_evaluation/label_packets/post_stage_1_lane_b_20260601_113121/coordinator_only_post_freeze_context_unblind_memo.md)
+- [Evaluation-only coordinator control attestation](context_os_planning_control_attestation.json)
+- [PS1-G7 Artifact-Backed Evaluation Pilot Run Report](../05_evaluation/Post_Stage_1_Context_OS_Evaluation_Pilot_Run_Report.md)

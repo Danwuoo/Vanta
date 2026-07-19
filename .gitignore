@@ -16,4 +16,5 @@ docs/04_experiments/results/*/*/*.json
 !docs/04_experiments/results/fixture_local_committable_execution/*/fixture_results.json
 !docs/04_experiments/results/fixture_local_committable_execution/*/environment_manifest.json
 !docs/04_experiments/results/fixture_local_committable_execution/*/schema_policy_versions.json
+!docs/04_experiments/results/context_os_planning/*/run.json
 /chatgpt_docs
