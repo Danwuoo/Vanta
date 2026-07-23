@@ -201,6 +201,20 @@ is evaluation tooling only: it creates no new closure decision, full Context
 OS implementation, runtime action, schema authority, memory authority,
 side-effect authority, H3 claim, or production-readiness claim.
 
+The manifest-layer
+[PS1-G7 evaluation pilot closure candidate](Post_Stage_1_Context_OS_Evaluation_Pilot_Closure_Candidate.md)
+is now prepared with status
+`Candidate: ready_for_evaluation_only_manifest_review`. It reviews only the
+artifact consistency of the named `20260719_224209` pilot over the accepted
+`20260601_113121` Lane A source and active frozen Lane B packet. It preserves
+the residual limitation that `vanta-verifier` and `embedded_context_only` come
+from a user-authorized post-hoc coordinator attestation rather than
+source-run-native serialized metadata. The limitation does not block this
+narrow candidate, but it blocks stronger source-native execution-control,
+model-comparison, full Context OS, and H3 claims. No formal closure or new
+`accepted_by_closure` status is created, and the G7 downstream unlock remains
+unchanged.
+
 Lane C has accepted `PS1-G8` for side-effect specification and evaluation
 planning only:
 [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) defines the

@@ -43,33 +43,34 @@ Map how documents relate so readers can navigate from theory to implementation w
 35. [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
 36. [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
 37. [Post-Stage-1 Context OS Evaluation Pilot Run Report](../05_evaluation/Post_Stage_1_Context_OS_Evaluation_Pilot_Run_Report.md)
-38. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
-39. [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
-40. [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
-41. [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
-42. [Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md)
-43. [Storage and Persistence Gate](Storage_and_Persistence_Gate.md)
-44. [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md)
-45. [Post-Stage-1 Persistence Schema Impact Review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md)
-46. [Experiment 006 Persistence and Recovery](../04_experiments/Experiment_006_Persistence_and_Recovery.md)
-47. [Experiment 006 Persistence and Recovery Run Report](../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
-48. [Post-Stage-1 Persistence v0 Closure](Post_Stage_1_Persistence_v0_Closure.md)
-49. [Fixture-Local COMMITTABLE Execution Gate](Fixture_Local_Committable_Execution_Gate.md)
-50. [Fixture-Local COMMITTABLE Document Promotion v0](../02_specs/Fixture_Local_Committable_Document_Promotion_v0.md)
-51. [Fixture-Local COMMITTABLE Schema Impact Review](../03_schemas/Fixture_Local_Committable_Schema_Impact_Review.md)
-52. [Experiment 007 Fixture-Local COMMITTABLE Execution](../04_experiments/Experiment_007_Fixture_Local_Committable_Execution.md)
-53. [Experiment 007 Run Report](../05_evaluation/Experiment_007_Fixture_Local_Committable_Execution_Run_Report.md)
-54. [Post-Stage-1 Fixture-Local COMMITTABLE v0 Closure](Post_Stage_1_Fixture_Local_Committable_v0_Closure.md)
-55. [Design Theory](../01_theory/Design_Theory.md)
-56. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
-57. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
-58. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
-59. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
-60. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
-61. [Ablation Plan](../04_experiments/Ablation_Plan.md)
-62. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
-63. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
-64. [MVP Architecture](../06_engineering/MVP_Architecture.md)
+38. [Post-Stage-1 Context OS Evaluation Pilot Closure Candidate](Post_Stage_1_Context_OS_Evaluation_Pilot_Closure_Candidate.md)
+39. [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
+40. [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
+41. [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
+42. [Post-Stage-1 Side-Effect Evaluation Plan](../04_experiments/Post_Stage_1_Side_Effect_Evaluation_Plan.md)
+43. [Post-Stage-1 Side-Effect Planning Pilot Run Report](../05_evaluation/Post_Stage_1_Side_Effect_Planning_Pilot_Run_Report.md)
+44. [Storage and Persistence Gate](Storage_and_Persistence_Gate.md)
+45. [Persistence and Recovery Semantics](../02_specs/Persistence_and_Recovery_Semantics.md)
+46. [Post-Stage-1 Persistence Schema Impact Review](../03_schemas/Post_Stage_1_Persistence_Schema_Impact_Review.md)
+47. [Experiment 006 Persistence and Recovery](../04_experiments/Experiment_006_Persistence_and_Recovery.md)
+48. [Experiment 006 Persistence and Recovery Run Report](../05_evaluation/Experiment_006_Persistence_and_Recovery_Run_Report.md)
+49. [Post-Stage-1 Persistence v0 Closure](Post_Stage_1_Persistence_v0_Closure.md)
+50. [Fixture-Local COMMITTABLE Execution Gate](Fixture_Local_Committable_Execution_Gate.md)
+51. [Fixture-Local COMMITTABLE Document Promotion v0](../02_specs/Fixture_Local_Committable_Document_Promotion_v0.md)
+52. [Fixture-Local COMMITTABLE Schema Impact Review](../03_schemas/Fixture_Local_Committable_Schema_Impact_Review.md)
+53. [Experiment 007 Fixture-Local COMMITTABLE Execution](../04_experiments/Experiment_007_Fixture_Local_Committable_Execution.md)
+54. [Experiment 007 Run Report](../05_evaluation/Experiment_007_Fixture_Local_Committable_Execution_Run_Report.md)
+55. [Post-Stage-1 Fixture-Local COMMITTABLE v0 Closure](Post_Stage_1_Fixture_Local_Committable_v0_Closure.md)
+56. [Design Theory](../01_theory/Design_Theory.md)
+57. [Validation and Refutation Report](../01_theory/Validation_and_Refutation_Report.md)
+58. [Research Hypotheses](../01_theory/Research_Hypotheses.md)
+59. [Minimal Closed Loop Runtime Spec](../02_specs/Minimal_Closed_Loop_Runtime_Spec.md)
+60. [Context OS and Working Set Compiler Note](../02_specs/Context_OS_and_Working_Set_Compiler_Note.md)
+61. [Metrics Definition](../05_evaluation/Metrics_Definition.md)
+62. [Ablation Plan](../04_experiments/Ablation_Plan.md)
+63. [Experiment 004 Targeted Recovery](../04_experiments/Experiment_004_Targeted_Recovery.md)
+64. [Experiment 005 Working Set Compiler](../04_experiments/Experiment_005_Working_Set_Compiler.md)
+65. [MVP Architecture](../06_engineering/MVP_Architecture.md)
 
 ## Layer Responsibilities
 
@@ -142,6 +143,8 @@ note-graph configuration, frontmatter, or application-specific link syntax.
 -> [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
 -> [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
 -> [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
+-> [Post-Stage-1 Context OS Evaluation Pilot Run Report](../05_evaluation/Post_Stage_1_Context_OS_Evaluation_Pilot_Run_Report.md)
+-> [Post-Stage-1 Context OS Evaluation Pilot Closure Candidate](Post_Stage_1_Context_OS_Evaluation_Pilot_Closure_Candidate.md)
 -> [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
 -> [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 -> [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
@@ -381,6 +384,14 @@ metrics, active-packet Lane B human-label counts and post-freeze interpretation,
 packet blindness, process floors, and output reproducibility. It performs no
 model or OpenClaw rerun and adds no Context OS runtime, schema, closure, memory,
 or side-effect authority.
+
+[Post-Stage-1 Context OS Evaluation Pilot Closure Candidate](Post_Stage_1_Context_OS_Evaluation_Pilot_Closure_Candidate.md)
+is the manifest-layer evaluation-only governance review artifact for that named
+pilot. Its status is `Candidate: ready_for_evaluation_only_manifest_review`.
+It records the post-hoc attestation limitation and required formal-closure
+conditions, but it is not acceptance authority, creates no new
+`accepted_by_closure`, and does not unlock Context OS implementation or any
+runtime, schema, memory, side-effect, H3, or production claim.
 
 [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md) is the accepted
 `PS1-G8` gate-definition artifact. It unlocks side-effect specification, schema

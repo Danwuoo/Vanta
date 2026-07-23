@@ -257,6 +257,17 @@ packet-level context-quality labels into planning artifacts only. This bundle
 does not authorize implementation, schema changes, memory writes, learned
 retrieval, full Context OS validation, or H3 validation.
 
+The deterministic artifact-backed evaluation pilot at
+`docs/04_experiments/results/context_os_planning/20260719_224209/` is complete,
+and the
+[evaluation-only closure candidate](Post_Stage_1_Context_OS_Evaluation_Pilot_Closure_Candidate.md)
+is prepared with status
+`Candidate: ready_for_evaluation_only_manifest_review`. The candidate reviews
+only frozen artifact consistency over the accepted Lane A source and active
+Lane B packet. It preserves the non-source-run-native post-hoc attestation
+limitation and adds no G7 unlock, formal closure, runtime/schema/memory/
+side-effect authority, full Context OS claim, or H3 claim.
+
 The earlier `20260530_141649` Lane B packet and Context OS planning input are
 historical only. They were prepared before the selector-repair closure and must
 not be used as the active accepted-run routing source.
@@ -336,6 +347,7 @@ claim`.
 - [Post-Stage-1 Context OS Planning Draft Spec](../02_specs/Post_Stage_1_Context_OS_Planning_Draft_Spec.md)
 - [Post-Stage-1 Context OS Schema Impact Review](../03_schemas/Post_Stage_1_Context_OS_Schema_Impact_Review.md)
 - [Post-Stage-1 Context OS Evaluation Plan](../04_experiments/Post_Stage_1_Context_OS_Evaluation_Plan.md)
+- [Post-Stage-1 Context OS Evaluation Pilot Closure Candidate](Post_Stage_1_Context_OS_Evaluation_Pilot_Closure_Candidate.md)
 - [Side-Effect Escalation Gate](Side_Effect_Escalation_Gate.md)
 - [Post-Stage-1 Side-Effect Planning Draft Spec](../02_specs/Post_Stage_1_Side_Effect_Planning_Draft_Spec.md)
 - [Post-Stage-1 Side-Effect Schema Impact Review](../03_schemas/Post_Stage_1_Side_Effect_Schema_Impact_Review.md)
